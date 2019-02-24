@@ -1,6 +1,7 @@
 package com.example.studytogether.studytogethertest;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -64,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!user.isEmpty()) {
                         User login = dataSnapshot.child(user).getValue(User.class);
                         if(login.getPassword().equals(pwd))
-                            Toast.makeText(MainActivity.this, "Login OK!", Toast.LENGTH_SHORT).show();
+                            openHomeActivity();
+                            //Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
                     }
@@ -132,4 +134,9 @@ public class MainActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
+    public void openHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+
 }
