@@ -38,13 +38,12 @@ public class GroupFragment extends ListFragment {
     private ArrayList<String> groupName = new ArrayList<>();
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_group);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_group, container, false);
+
         database = FirebaseDatabase.getInstance();
         groups = database.getReference("Groups");
-
-        listView = (ListView) findViewById(R.id.groupList);
+        view.findViewById(R.id.groupList);
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, groupName);
         listView.setAdapter(arrayAdapter);
         groups.addChildEventListener(new ChildEventListener() {
@@ -75,9 +74,6 @@ public class GroupFragment extends ListFragment {
 
             }
         })
-
-
-
     }
 
     /*
