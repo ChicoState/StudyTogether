@@ -104,8 +104,6 @@ public class Home extends AppCompatActivity
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container,new HomeFragment()).commit();
 
-
-
     }
 
     private void setupPopupImageClick() {
@@ -262,22 +260,10 @@ public class Home extends AppCompatActivity
                                     showMessage(e.getMessage());
                                     popupClickProgress.setVisibility(View.INVISIBLE);
                                     popupAddBtn.setVisibility(View.VISIBLE);
-
-
-
                                 }
                             });
-
-
                         }
                     });
-
-
-
-
-
-
-
 
                 }
                 else {
