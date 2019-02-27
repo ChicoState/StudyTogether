@@ -10,12 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.studytogether.studytogethertest.model.Group;
+import com.example.studytogether.studytogethertest.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference users;
+    //private FirebaseFirestore database = FirebaseFirestore.getInstance();
+    //private CollectionReference userRef = database.collection("Users");
+
+    private GroupAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         //Firebase
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
+
 
         editUser = (MaterialEditText)findViewById(R.id.editUser);
         editPassword = (MaterialEditText)findViewById(R.id.editPassword);
@@ -65,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!user.isEmpty()) {
                         User login = dataSnapshot.child(user).getValue(User.class);
                         if(login.getPassword().equals(pwd))
-                            openHomeActivity();
-                            //Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                            //openHomeActivity();
+                            Toast.makeText(MainActivity.this, "Login OK!!", Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
                     }
@@ -134,9 +143,11 @@ public class MainActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
+    /*
     public void openHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
+    */
 
 }
