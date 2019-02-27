@@ -12,20 +12,20 @@
         android:id="@+id/popup_user_img"
         android:layout_width="48dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/popup_description"
+        app:layout_constraintBottom_toTopOf="@+id/popup_group_goal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/popup_title"
+        app:layout_constraintStart_toEndOf="@+id/popup_group_name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
-        android:id="@+id/popup_title"
+        android:id="@+id/popup_group_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/popup_edittext_style"
         android:ems="10"
-        android:hint="Title"
+        android:hint="Group Name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/popup_user_img"
         app:layout_constraintHorizontal_bias="0.0"
@@ -33,27 +33,28 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/popup_description"
+        android:id="@+id/popup_group_goal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/popup_edittext_style"
         android:ems="10"
-        android:hint="Description"
+        android:hint="Group Goal"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popup_title" />
+        app:layout_constraintTop_toBottomOf="@+id/popup_group_name" />
 
     <ImageView
-        android:background="#2d2d2d"
         android:id="@+id/popup_img"
         android:layout_width="0dp"
         android:layout_height="225dp"
+        android:layout_marginTop="8dp"
+        android:background="#2d2d2d"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popup_description"
+        app:layout_constraintTop_toBottomOf="@+id/popup_end_time_input"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <ImageView
@@ -85,4 +86,50 @@
         app:layout_constraintEnd_toEndOf="@+id/popup_add"
         app:layout_constraintStart_toStartOf="@+id/popup_add"
         app:layout_constraintTop_toTopOf="@+id/popup_add" />
+
+    <EditText
+        android:id="@+id/popup_group_place"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:hint="Place"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup_group_goal" />
+
+    <EditText
+        android:hint="Start Time"
+        android:id="@+id/popup_start_time_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup_group_place" />
+
+    <EditText
+        android:hint="End Time"
+        android:id="@+id/popup_end_time_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup_start_time_input" />
+
 </android.support.constraint.ConstraintLayout>

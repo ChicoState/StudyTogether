@@ -54,8 +54,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
             super(itemView);
 
             tvTitle = itemView.findViewById(R.id.row_post_title);
-            imgPost = itemView.findViewById(R.id.row_post_img);
-            imgPostProfile = itemView.findViewById(R.id.row_post_profile_img);
+            imgPost = itemView.findViewById(R.id.row_group_img);
+            imgPostProfile = itemView.findViewById(R.id.row_owner_profile_img);
         }
     }
 }

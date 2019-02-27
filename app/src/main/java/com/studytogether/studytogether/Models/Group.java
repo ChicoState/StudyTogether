@@ -5,33 +5,36 @@ import com.google.firebase.database.ServerValue;
 public class Group {
     private String groupName;
     private String groupGoal;
-    private String groupActive;
     private String groupPicture;
     private String postKey;
     private String userId;
-    private String userPhoto;
+    private String groupPlace;
+    private String groupOwnerPhoto;
+    private String startTime;
+    private String endTime;
     private Object timeStamp;
 
-    public Group(String groupName, String groupGoal, String groupActive, String groupPicture, String userId, String userPhoto) {
+    public Group(String groupName, String groupGoal, String groupPlace, String startTime, String endTime, String groupPicture, String userId, String groupOwnerPhoto) {
         this.groupName = groupName;
         this.groupGoal = groupGoal;
-        this.groupActive = groupActive;
+        this.groupPlace = groupPlace;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.groupPicture = groupPicture;
         this.userId = userId;
-        this.userPhoto = userPhoto;
+        this.groupOwnerPhoto = groupOwnerPhoto;
         this.timeStamp = ServerValue.TIMESTAMP;
     }
-
     public Group() {
     }
 
 
-    public String getPostKey() {
-        return postKey;
+    public String getGroupOwnerPhoto() {
+        return groupOwnerPhoto;
     }
 
-    public void setPostKey(String postKey) {
-        this.postKey = postKey;
+    public void setGroupOwnerPhoto(String groupOwnerPhoto) {
+        this.groupOwnerPhoto = groupOwnerPhoto;
     }
 
     public String getGroupName() {
@@ -42,26 +45,33 @@ public class Group {
         return groupGoal;
     }
 
-    public String getGroupActive() {
-        return groupActive;
-    }
-
     public String getGroupPicture() {
         return groupPicture;
+    }
+
+    public String getPostKey() {
+        return postKey;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public String getUserPhoto() {
-        return userPhoto;
+    public String getGroupPlace() {
+        return groupPlace;
+    }
+
+    public String  getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
     }
 
     public Object getTimeStamp() {
         return timeStamp;
     }
-
 
 
     public void setGroupName(String groupName) {
@@ -72,20 +82,28 @@ public class Group {
         this.groupGoal = groupGoal;
     }
 
-    public void setGroupActive(String groupActive) {
-        this.groupActive = groupActive;
-    }
-
     public void setGroupPicture(String groupPicture) {
         this.groupPicture = groupPicture;
+    }
+
+    public void setPostKey(String postKey) {
+        this.postKey = postKey;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public void setUserPhoto(String userPhoto) {
-        this.userPhoto = userPhoto;
+    public void setGroupPlace(String groupPlace) {
+        this.groupPlace = groupPlace;
+    }
+
+    public void setStartTime(String  startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public void setTimeStamp(Object timeStamp) {

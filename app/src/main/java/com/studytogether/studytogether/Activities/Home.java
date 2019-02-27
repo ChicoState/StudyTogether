@@ -41,7 +41,7 @@ import com.google.firebase.storage.UploadTask;
 import com.studytogether.studytogether.Fragments.HomeFragment;
 import com.studytogether.studytogether.Fragments.ProfileFragment;
 import com.studytogether.studytogether.Fragments.SettingsFragment;
-import com.studytogether.studytogether.Models.Post;
+import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 
 
@@ -54,9 +54,9 @@ public class Home extends AppCompatActivity
     private static final int REQUESCODE = 2 ;
     FirebaseAuth mAuth;
     FirebaseUser currentUser ;
-    Dialog popAddPost ;
-    ImageView popupUserImage,popupPostImage,popupAddBtn;
-    TextView popupTitle,popupDescription;
+    Dialog popAddGroup ;
+    ImageView popupUserImage, popupGroupImage, popupAddBtn;
+    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupStartTimeInput, popupEndTimeInput;
     ProgressBar popupClickProgress;
     private Uri pickedImgUri = null;
 
@@ -69,7 +69,6 @@ public class Home extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         // ini
-
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
@@ -77,13 +76,11 @@ public class Home extends AppCompatActivity
         iniPopup();
         setupPopupImageClick();
 
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popAddPost.show();
+                popAddGroup.show();
             }
         });
 
@@ -96,20 +93,16 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         updateNavHeader();
-
-
         // set the home fragment as the default one
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container,new HomeFragment()).commit();
-
     }
 
     private void setupPopupImageClick() {
 
 
-        popupPostImage.setOnClickListener(new View.OnClickListener() {
+        popupGroupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // here when image clicked we need to open the gallery
@@ -117,34 +110,24 @@ public class Home extends AppCompatActivity
                 // we did this before in register activity I'm just going to copy the code to save time ...
 
                 checkAndRequestForPermission();
-
-
             }
         });
-
-
-
     }
 
 
     private void checkAndRequestForPermission() {
-
 
         if (ContextCompat.checkSelfPermission(Home.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(Home.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                 Toast.makeText(Home.this,"Please accept for required permission",Toast.LENGTH_SHORT).show();
-
             }
-
-            else
-            {
+            else {
                 ActivityCompat.requestPermissions(Home.this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PReqCode);
             }
-
         }
         else
             // everything goes well : we have permission to access user gallery
@@ -153,63 +136,47 @@ public class Home extends AppCompatActivity
     }
 
 
-
-
-
     private void openGallery() {
-        //TODO: open gallery intent and wait for user to pick an image !
 
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent,REQUESCODE);
     }
 
-
-
-    // when user picked an image ...
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == REQUESCODE && data != null ) {
 
-            // the user has successfully picked an image
-            // we need to save its reference to a Uri variable
             pickedImgUri = data.getData() ;
-            popupPostImage.setImageURI(pickedImgUri);
-
+            popupGroupImage.setImageURI(pickedImgUri);
         }
-
-
     }
-
-
-
-
 
 
     private void iniPopup() {
 
-        popAddPost = new Dialog(this);
-        popAddPost.setContentView(R.layout.popup_add_post);
-        popAddPost.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popAddPost.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
-        popAddPost.getWindow().getAttributes().gravity = Gravity.TOP;
+        popAddGroup = new Dialog(this);
+        popAddGroup.setContentView(R.layout.popup_add_post);
+        popAddGroup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popAddGroup.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
+        popAddGroup.getWindow().getAttributes().gravity = Gravity.TOP;
 
         // ini popup widgets
-        popupUserImage = popAddPost.findViewById(R.id.popup_user_img);
-        popupPostImage = popAddPost.findViewById(R.id.popup_img);
-        popupTitle = popAddPost.findViewById(R.id.popup_title);
-        popupDescription = popAddPost.findViewById(R.id.popup_description);
-        popupAddBtn = popAddPost.findViewById(R.id.popup_add);
-        popupClickProgress = popAddPost.findViewById(R.id.popup_progressBar);
+        popupUserImage = popAddGroup.findViewById(R.id.popup_user_img);
+        popupGroupImage = popAddGroup.findViewById(R.id.popup_img);
+        popupGroupName = popAddGroup.findViewById(R.id.popup_group_name);
+        popupGroupGoal = popAddGroup.findViewById(R.id.popup_group_goal);
+        popupGroupPlace = popAddGroup.findViewById(R.id.popup_group_place);
+        popupStartTimeInput = popAddGroup.findViewById(R.id.popup_start_time_input);
+        popupEndTimeInput = popAddGroup.findViewById(R.id.popup_end_time_input);
+        popupAddBtn = popAddGroup.findViewById(R.id.popup_add);
+        popupClickProgress = popAddGroup.findViewById(R.id.popup_progressBar);
 
         // load Current user profile photo
 
         Glide.with(Home.this).load(currentUser.getPhotoUrl()).into(popupUserImage);
-
-
-        // Add post click Listener
 
         popupAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,17 +185,10 @@ public class Home extends AppCompatActivity
                 popupAddBtn.setVisibility(View.INVISIBLE);
                 popupClickProgress.setVisibility(View.VISIBLE);
 
-                // we need to test all input fields (Title and description ) and post image
+                if (!popupGroupName.getText().toString().isEmpty() && !popupGroupGoal.getText().toString().isEmpty() && !popupGroupPlace.getText().toString().isEmpty() && !popupStartTimeInput.getText().toString().isEmpty() && !popupEndTimeInput.getText().toString().isEmpty() && pickedImgUri != null ) {
 
-                if (!popupTitle.getText().toString().isEmpty()
-                        && !popupDescription.getText().toString().isEmpty()
-                        && pickedImgUri != null ) {
-
-                    //everything is okey no empty or null value
-                    // TODO Create Post Object and add it to firebase database
-                    // first we need to upload post Image
                     // access firebase storage
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("blog_images");
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Groups");
                     final StorageReference imageFilePath = storageReference.child(pickedImgUri.getLastPathSegment());
                     imageFilePath.putFile(pickedImgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -238,19 +198,18 @@ public class Home extends AppCompatActivity
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     String imageDownlaodLink = uri.toString();
-                                    // create post Object
-                                    Post post = new Post(popupTitle.getText().toString(),
-                                            popupDescription.getText().toString(),
+
+                                    Group group = new Group(popupGroupName.getText().toString(),
+                                            popupGroupGoal.getText().toString(),
+                                            popupGroupPlace.getText().toString(),
+                                            popupStartTimeInput.getText().toString(),
+                                            popupEndTimeInput.getText().toString(),
                                             imageDownlaodLink,
                                             currentUser.getUid(),
                                             currentUser.getPhotoUrl().toString());
 
-                                    // Add post to firebase database
 
-                                    addPost(post);
-
-
-
+                                    addGroup(group);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -264,57 +223,43 @@ public class Home extends AppCompatActivity
                             });
                         }
                     });
-
                 }
                 else {
-                    showMessage("Please verify all input fields and choose Post Image") ;
+                    showMessage("Please verify all input fields and choose Group Image") ;
                     popupAddBtn.setVisibility(View.VISIBLE);
                     popupClickProgress.setVisibility(View.INVISIBLE);
 
                 }
-
-
-
             }
         });
-
-
-
     }
 
-    private void addPost(Post post) {
+    private void addGroup(Group group) {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Posts").push();
+        DatabaseReference myRef = database.getReference("Groups").push();
 
-        // get post unique ID and upadte post key
+        // get post unique ID and update post key
         String key = myRef.getKey();
-        post.setPostKey(key);
-
+        group.setPostKey(key);
 
         // add post data to firebase database
 
-        myRef.setValue(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+        myRef.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                showMessage("Post Added successfully");
+                showMessage("Group Added successfully");
                 popupClickProgress.setVisibility(View.INVISIBLE);
                 popupAddBtn.setVisibility(View.VISIBLE);
-                popAddPost.dismiss();
+                popAddGroup.dismiss();
             }
         });
-
-
-
-
-
     }
 
 
+
     private void showMessage(String message) {
-
         Toast.makeText(Home.this,message,Toast.LENGTH_LONG).show();
-
     }
 
     @Override
@@ -369,8 +314,6 @@ public class Home extends AppCompatActivity
 
             getSupportActionBar().setTitle("Settings");
             getSupportFragmentManager().beginTransaction().replace(R.id.container,new SettingsFragment()).commit();
-
-
         }
         else if (id == R.id.nav_signout) {
 
@@ -378,8 +321,6 @@ public class Home extends AppCompatActivity
             Intent loginActivity = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(loginActivity);
             finish();
-
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -393,22 +334,15 @@ public class Home extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = headerView.findViewById(R.id.nav_username);
         TextView navUserMail = headerView.findViewById(R.id.nav_user_email);
-        ImageView navUserPhot = headerView.findViewById(R.id.nav_user_photo);
+        ImageView navUserPhoto = headerView.findViewById(R.id.nav_user_photo);
 
         navUserMail.setText(currentUser.getEmail());
         navUsername.setText(currentUser.getDisplayName());
 
         // now we will use Glide to load user image
         // first we need to import the library
-
-        Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhot);
-
-
-
-
+        Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhoto);
     }
-
-
 }
 
 /*

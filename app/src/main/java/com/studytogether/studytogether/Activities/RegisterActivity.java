@@ -1,55 +1,33 @@
 package com.studytogether.studytogether.Activities;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.storage.StorageManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.studytogether.studytogether.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.studytogether.studytogether.Fragments.HomeFragment;
-import com.studytogether.studytogether.Fragments.ProfileFragment;
-import com.studytogether.studytogether.Fragments.SettingsFragment;
-import com.studytogether.studytogether.Models.Post;
-import com.studytogether.studytogether.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -95,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
                 final String password = userPassword.getText().toString();
                 final String password2 = userPAssword2.getText().toString();
                 final String name = userName.getText().toString();
+
                 if( email.isEmpty() || name.isEmpty() || password.isEmpty()  || !password.equals(password2)) {
 
 
@@ -112,15 +91,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                     CreateUserAccount(email,name,password);
                 }
-
-
-
-
-
-
-
-
-
             }
         });
 
@@ -134,21 +104,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                     checkAndRequestForPermission();
 
-
                 }
                 else
                 {
                     openGallery();
                 }
-
-
-
-
-
             }
         });
-
-
     }
 
     private void CreateUserAccount(String email, final String name, String password) {
@@ -167,12 +129,9 @@ public class RegisterActivity extends AppCompatActivity {
                             // after we created user account we need to update his profile picture and name
                             updateUserInfo( name ,pickedImgUri,mAuth.getCurrentUser());
 
-
-
                         }
                         else
                         {
-
                             // account creation failed
                             showMessage("account creation failed" + task.getException().getMessage());
                             regBtn.setVisibility(View.VISIBLE);
@@ -181,14 +140,6 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-
-
-
-
-
     }
 
 
@@ -209,6 +160,7 @@ public class RegisterActivity extends AppCompatActivity {
                 imageFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+
                         // uri contain user image url
 
 
@@ -231,29 +183,18 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     }
                                 });
-
                     }
                 });
-
-
-
-
-
             }
         });
 
-
-
-
-
-
     }
+
     private void updateUI() {
 
         Intent homeActivity = new Intent(getApplicationContext(),Home.class);
         startActivity(homeActivity);
         finish();
-
 
     }
 
@@ -265,7 +206,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        //TODO: open gallery intent and wait for user to pick an image !
 
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
@@ -273,7 +213,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void checkAndRequestForPermission() {
-
 
         if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -306,14 +245,9 @@ public class RegisterActivity extends AppCompatActivity {
             // we need to save its reference to a Uri variable
             pickedImgUri = data.getData() ;
             ImgUserPhoto.setImageURI(pickedImgUri);
-
-
         }
-
-
     }
 }
-
 /*
 public class RegisterActivity extends AppCompatActivity {
 

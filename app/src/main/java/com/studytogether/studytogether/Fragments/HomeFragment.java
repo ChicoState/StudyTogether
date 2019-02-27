@@ -1,5 +1,4 @@
 package com.studytogether.studytogether.Fragments;
-
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,14 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.studytogether.studytogether.Adapters.GroupAdapter;
+import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.studytogether.studytogether.Adapters.PostAdapter;
-import com.studytogether.studytogether.Models.Post;
-import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +42,15 @@ public class HomeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    RecyclerView postRecyclerView;
-    PostAdapter postAdapter;
+
+    RecyclerView groupRecyclerView ;
+    GroupAdapter groupAdapter ;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    List<Post> postList;
+    DatabaseReference databaseReference ;
+    List<Group> groupList;
+
+
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -85,13 +88,14 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_home, container, false);
-        postRecyclerView  = fragmentView.findViewById(R.id.postRV);
-        postRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        postRecyclerView.setHasFixedSize(true);
+        groupRecyclerView  = fragmentView.findViewById(R.id.groupRV);
+        groupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        groupRecyclerView.setHasFixedSize(true);
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Posts");
+        databaseReference = firebaseDatabase.getReference("Groups");
         return fragmentView ;
     }
+
 
     @Override
     public void onStart() {
@@ -103,18 +107,18 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                postList = new ArrayList<>();
-                for (DataSnapshot postsnap: dataSnapshot.getChildren()) {
+                groupList = new ArrayList<>();
+                for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
-                    Post post = postsnap.getValue(Post.class);
-                    postList.add(post) ;
+                    Group group = groupsnap.getValue(Group.class);
+                    groupList.add(group) ;
 
 
 
                 }
 
-                postAdapter = new PostAdapter(getActivity(),postList);
-                postRecyclerView.setAdapter(postAdapter);
+                groupAdapter = new GroupAdapter(getActivity(),groupList);
+                groupRecyclerView.setAdapter(groupAdapter);
 
 
             }
@@ -129,7 +133,6 @@ public class HomeFragment extends Fragment {
 
     }
 
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -140,7 +143,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
