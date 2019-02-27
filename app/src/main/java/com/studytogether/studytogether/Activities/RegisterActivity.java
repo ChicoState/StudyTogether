@@ -146,29 +146,20 @@ public class RegisterActivity extends AppCompatActivity {
     // update user photo and name
     private void updateUserInfo(final String name, Uri pickedImgUri, final FirebaseUser currentUser) {
 
-        // first we need to upload user photo to firebase storage and get url
-
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child("users_photos");
         final StorageReference imageFilePath = mStorage.child(pickedImgUri.getLastPathSegment());
         imageFilePath.putFile(pickedImgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                // image uploaded succesfully
-                // now we can get our image url
-
                 imageFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-
-                        // uri contain user image url
-
 
                         UserProfileChangeRequest profleUpdate = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(name)
                                 .setPhotoUri(uri)
                                 .build();
-
 
                         currentUser.updateProfile(profleUpdate)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {

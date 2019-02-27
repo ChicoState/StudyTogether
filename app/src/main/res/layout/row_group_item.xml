@@ -38,6 +38,7 @@
         android:layout_marginRight="8dp"
         android:text="Group Name"
         android:textColor="#fff"
+        android:textSize="20dp"
         app:layout_constraintEnd_toStartOf="@+id/row_owner_profile_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView2" />
@@ -66,34 +67,36 @@
         android:layout_marginRight="8dp"
         android:text="Group Goal"
         android:textColor="#fff"
+        android:textSize="15dp"
         app:layout_constraintEnd_toStartOf="@+id/row_owner_profile_img"
         app:layout_constraintStart_toStartOf="@+id/row_group_img"
         app:layout_constraintTop_toBottomOf="@+id/row_group_name" />
 
     <TextView
         android:id="@+id/row_start_time_input"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
-        android:layout_marginLeft="45dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="Start Time"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/row_group_place"
+        app:layout_constraintVertical_bias="0.6" />
 
     <TextView
         android:id="@+id/row_end_time_input"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="45dp"
-        android:layout_marginRight="45dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="End Time"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/row_owner_profile_img"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
 
     <TextView
@@ -110,4 +113,43 @@
         app:layout_constraintEnd_toStartOf="@+id/row_owner_profile_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/row_group_goal" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="192dp" />
+
+    <TextView
+        android:textColor="#fff"
+        android:id="@+id/row_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Start:"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/row_start_time_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
+
+    <TextView
+        android:textColor="#fff"
+        android:id="@+id/row_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="End:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/row_end_time_input"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
 </android.support.constraint.ConstraintLayout>
