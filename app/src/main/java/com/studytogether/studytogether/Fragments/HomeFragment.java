@@ -112,25 +112,16 @@ public class HomeFragment extends Fragment {
 
                     Group group = groupsnap.getValue(Group.class);
                     groupList.add(group) ;
-
-
-
                 }
 
                 groupAdapter = new GroupAdapter(getActivity(),groupList);
                 groupRecyclerView.setAdapter(groupAdapter);
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
