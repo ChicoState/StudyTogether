@@ -56,7 +56,7 @@ public class Home extends AppCompatActivity
     FirebaseUser currentUser ;
     Dialog popAddGroup ;
     ImageView popupUserImage, popupGroupImage, popupAddBtn;
-    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupStartTimeInput, popupEndTimeInput;
+    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupNumOfGroupMembers, popupStartTimeInput, popupEndTimeInput;
     ProgressBar popupClickProgress;
     private Uri pickedImgUri = null;
 
@@ -130,7 +130,6 @@ public class Home extends AppCompatActivity
             }
         }
         else
-            // everything goes well : we have permission to access user gallery
             openGallery();
 
     }
@@ -169,6 +168,7 @@ public class Home extends AppCompatActivity
         popupGroupName = popAddGroup.findViewById(R.id.popup_group_name);
         popupGroupGoal = popAddGroup.findViewById(R.id.popup_group_goal);
         popupGroupPlace = popAddGroup.findViewById(R.id.popup_group_place);
+        popupNumOfGroupMembers = popAddGroup.findViewById(R.id.popup_num_of_group_members);
         popupStartTimeInput = popAddGroup.findViewById(R.id.popup_start_time_input);
         popupEndTimeInput = popAddGroup.findViewById(R.id.popup_end_time_input);
         popupAddBtn = popAddGroup.findViewById(R.id.popup_add);
@@ -199,6 +199,7 @@ public class Home extends AppCompatActivity
                                     Group group = new Group(popupGroupName.getText().toString(),
                                             popupGroupGoal.getText().toString(),
                                             popupGroupPlace.getText().toString(),
+                                            popupNumOfGroupMembers.getText().toString(),
                                             popupStartTimeInput.getText().toString(),
                                             popupEndTimeInput.getText().toString(),
                                             imageDownlaodLink,
@@ -236,7 +237,7 @@ public class Home extends AppCompatActivity
         DatabaseReference myRef = database.getReference("Groups").push();
 
         String key = myRef.getKey();
-        group.setPostKey(key);
+        group.setGroupKey(key);
 
         myRef.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

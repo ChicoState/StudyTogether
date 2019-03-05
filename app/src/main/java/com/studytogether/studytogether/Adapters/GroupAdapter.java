@@ -28,15 +28,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View row = LayoutInflater.from(mContext).inflate(R.layout.row_group_item,parent,false);
+        View row = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
         return new MyViewHolder(row);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.tvGroupName.setText(mGroupData.get(position).getGroupName());
-        holder.tvGroupGoal.setText(mGroupData.get(position).getGroupGoal());
         holder.tvGroupPlace.setText(mGroupData.get(position).getGroupPlace());
+        holder.tvNumOfGroupMembers.setText(mGroupData.get(position).getNum_of_group_members());
         holder.tvStartTimeInput.setText(mGroupData.get(position).getStartTime());
         holder.tvEndTimeInput.setText(mGroupData.get(position).getEndTime());
         Glide.with(mContext).load(mGroupData.get(position).getGroupPicture()).into(holder.imgGroup);
@@ -50,8 +50,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvGroupName;
-        TextView tvGroupGoal;
         TextView tvGroupPlace;
+        TextView tvNumOfGroupMembers;
         TextView tvStartTimeInput;
         TextView tvEndTimeInput;
         ImageView imgGroup;
@@ -62,8 +62,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
             super(itemView);
 
             tvGroupName = itemView.findViewById(R.id.row_group_name);
-            tvGroupGoal = itemView.findViewById(R.id.row_group_goal);
             tvGroupPlace = itemView.findViewById(R.id.row_group_place);
+            tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
             tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             imgGroup = itemView.findViewById(R.id.row_group_img);
