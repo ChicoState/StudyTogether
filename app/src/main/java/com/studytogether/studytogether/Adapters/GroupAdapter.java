@@ -72,3 +72,78 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     }
 }
 
+    /*
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    groupListFiltered = mGroupData;
+                } else {
+                    List<Group> filteredList = new ArrayList<>();
+                    for (Group row : mGroupData) {
+
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.getGroupName().toLowerCase().contains(charString.toLowerCase()) || row.getGroupPlace().toLowerCase().contains(charString.toLowerCase()) || row.getGroupGoal().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    groupListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = groupListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                groupListFiltered = (ArrayList<Group>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+
+    @Override
+    public Filter getFilter() {
+        return groupFilter;
+    }
+
+    private Filter groupFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Group> filteredList = new ArrayList<>();
+
+            if (charSequence == null || charSequence.length() == 0) {
+                filteredList.addAll(mGroupDataCopy);
+            } else {
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for (Group item : mGroupDataCopy) {
+                    if (item.getGroupName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mGroupData.clear();
+            mGroupData.addAll( (ArrayList<Group>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+    */
+
+
+
