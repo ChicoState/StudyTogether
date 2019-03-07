@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,8 +50,7 @@ public class HomeFragment extends Fragment {
     DatabaseReference databaseReference ;
     List<Group> groupList;
 
-
-
+    private GroupAdapter.GroupAdapterListener listener;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -113,6 +113,7 @@ public class HomeFragment extends Fragment {
                     Group group = groupsnap.getValue(Group.class);
                     groupList.add(group) ;
                 }
+                Collections.reverse(groupList);
 
                 groupAdapter = new GroupAdapter(getActivity(),groupList);
                 groupRecyclerView.setAdapter(groupAdapter);
@@ -125,7 +126,7 @@ public class HomeFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void ongroupRecyclerViewButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
@@ -155,5 +156,9 @@ public class HomeFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public interface GroupAdapterListener {
+        void onGroupSelected(Group group);
     }
 }

@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,15 +15,19 @@ import com.bumptech.glide.Glide;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> {
-    Context mContext;
-    List<Group> mGroupData;
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> implements Filterable {
+    private Context mContext;
+    private List<Group> srcGroups;
+    private List<Group> filteredGroup;
+    private GroupAdapterListener listener;
 
-    public GroupAdapter(Context mContext, List<Group> mGroupData) {
+    public GroupAdapter(Context mContext, List<Group> srcGroups) {
         this.mContext = mContext;
-        this.mGroupData = mGroupData;
+        this.srcGroups = srcGroups;
+        this.filteredGroup = srcGroups  ;
     }
 
     @NonNull
@@ -34,18 +40,50 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.tvGroupName.setText(mGroupData.get(position).getGroupName());
-        holder.tvGroupPlace.setText(mGroupData.get(position).getGroupPlace());
-        holder.tvNumOfGroupMembers.setText(mGroupData.get(position).getNum_of_group_members());
-        holder.tvStartTimeInput.setText(mGroupData.get(position).getStartTime());
-        holder.tvEndTimeInput.setText(mGroupData.get(position).getEndTime());
-        Glide.with(mContext).load(mGroupData.get(position).getGroupPicture()).into(holder.imgGroup);
-        Glide.with(mContext).load(mGroupData.get(position).getGroupOwnerPhoto()).into(holder.imgOwnerProfile);
+        final Group group = filteredGroup.get(position);
+        holder.tvGroupName.setText(group.getGroupName());
+        holder.tvGroupPlace.setText(group.getGroupPlace());
+        holder.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
+        holder.tvStartTimeInput.setText(group.getStartTime());
+        holder.tvEndTimeInput.setText(group.getEndTime());
+        Glide.with(mContext).load(group.getGroupPicture()).into(holder.imgGroup);
+        Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(holder.imgOwnerProfile);
     }
 
     @Override
     public int getItemCount() {
-        return mGroupData.size();
+        return filteredGroup.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String searchString = charSequence.toString();
+                if (searchString.isEmpty()) {
+                    filteredGroup = srcGroups;
+                }
+                else {
+                    List<Group> resultList = new ArrayList<>();
+                    for (Group group : srcGroups) {
+                        if (group.getGroupName().toLowerCase().contains(searchString.toLowerCase())) {
+                            resultList.add(group);
+                        }
+                    }
+                    filteredGroup = resultList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredGroup;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredGroup = (ArrayList<Group>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -68,8 +106,21 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // send selected contact in callback
+                    listener.onGroupSelected(filteredGroup.get(getAdapterPosition()));
+                }
+            });
         }
     }
+
+    public interface GroupAdapterListener {
+        void onGroupSelected(Group group);
+    }
+
 }
 
     /*

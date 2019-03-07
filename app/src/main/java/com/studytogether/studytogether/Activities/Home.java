@@ -2,6 +2,8 @@ package com.studytogether.studytogether.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.View;
@@ -36,9 +39,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -49,12 +55,19 @@ import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.GroupAdapterListener {
 
+    private SearchView searchView;
+    GroupAdapter adapter;
+
+    RecyclerView groupRecyclerView ;
+    DatabaseReference databaseReference ;
+    List<Group> groupList;
 
     private static final int PReqCode = 2 ;
     private static final int REQUESCODE = 2 ;
@@ -262,6 +275,12 @@ public class Home extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -272,7 +291,41 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.home, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // listening to search query text change
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                if (adapter == null) {
+                    Toast.makeText(getApplicationContext(),"adapter is null", Toast.LENGTH_SHORT).show();
+                } else {
+                    adapter.getFilter().filter(query);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                if (adapter == null) {
+                    Toast.makeText(getApplicationContext(),"adapter is null", Toast.LENGTH_SHORT).show();
+                } else {
+                    adapter.getFilter().filter(query);
+                }
+                return false;
+            }
+        });
         return true;
     }
 
@@ -281,6 +334,9 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_search) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -324,5 +380,10 @@ public class Home extends AppCompatActivity
         navUsername.setText(currentUser.getDisplayName());
 
         Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhoto);
+    }
+
+    @Override
+    public void onGroupSelected(Group group) {
+        Toast.makeText(getApplicationContext(), "Selected: " + group.getGroupName() + ", " + group.getGroupPlace(), Toast.LENGTH_LONG).show();
     }
 }
