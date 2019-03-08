@@ -5,36 +5,31 @@ import com.google.firebase.database.ServerValue;
 public class Group {
     private String groupName;
     private String groupGoal;
-    private String groupPicture;
-    private String postKey;
-    private String userId;
     private String groupPlace;
-    private String groupOwnerPhoto;
+    private String num_of_group_members;
     private String startTime;
     private String endTime;
+    private String groupPicture;
+    private String groupKey;
+    private String ownerId;
+    private String groupOwnerPhoto;
+    private String groupActive;
     private Object timeStamp;
 
-    public Group(String groupName, String groupGoal, String groupPlace, String startTime, String endTime, String groupPicture, String userId, String groupOwnerPhoto) {
+    public Group(String groupName, String groupGoal, String groupPlace, String num_of_group_members, String startTime, String endTime, String groupPicture, String ownerId, String groupOwnerPhoto) {
         this.groupName = groupName;
         this.groupGoal = groupGoal;
         this.groupPlace = groupPlace;
+        this.num_of_group_members = num_of_group_members;
         this.startTime = startTime;
         this.endTime = endTime;
         this.groupPicture = groupPicture;
-        this.userId = userId;
+        this.ownerId = ownerId;
         this.groupOwnerPhoto = groupOwnerPhoto;
+        this.groupActive = "Open";
         this.timeStamp = ServerValue.TIMESTAMP;
     }
     public Group() {
-    }
-
-
-    public String getGroupOwnerPhoto() {
-        return groupOwnerPhoto;
-    }
-
-    public void setGroupOwnerPhoto(String groupOwnerPhoto) {
-        this.groupOwnerPhoto = groupOwnerPhoto;
     }
 
     public String getGroupName() {
@@ -45,28 +40,40 @@ public class Group {
         return groupGoal;
     }
 
-    public String getGroupPicture() {
-        return groupPicture;
-    }
-
-    public String getPostKey() {
-        return postKey;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
     public String getGroupPlace() {
         return groupPlace;
     }
 
-    public String  getStartTime() {
+    public String getNum_of_group_members() {
+        return num_of_group_members;
+    }
+
+    public String getStartTime() {
         return startTime;
     }
 
     public String getEndTime() {
         return endTime;
+    }
+
+    public String getGroupPicture() {
+        return groupPicture;
+    }
+
+    public String getGroupKey() {
+        return groupKey;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public String getGroupOwnerPhoto() {
+        return groupOwnerPhoto;
+    }
+
+    public String getGroupActive() {
+        return groupActive;
     }
 
     public Object getTimeStamp() {
@@ -82,28 +89,40 @@ public class Group {
         this.groupGoal = groupGoal;
     }
 
-    public void setGroupPicture(String groupPicture) {
-        this.groupPicture = groupPicture;
-    }
-
-    public void setPostKey(String postKey) {
-        this.postKey = postKey;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public void setGroupPlace(String groupPlace) {
         this.groupPlace = groupPlace;
     }
 
-    public void setStartTime(String  startTime) {
+    public void setNum_of_group_members(String num_of_group_members) {
+        this.num_of_group_members = num_of_group_members;
+    }
+
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public void setGroupPicture(String groupPicture) {
+        this.groupPicture = groupPicture;
+    }
+
+    public void setGroupKey(String groupKey) {
+        this.groupKey = groupKey;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public void setGroupOwnerPhoto(String groupOwnerPhoto) {
+        this.groupOwnerPhoto = groupOwnerPhoto;
+    }
+
+    public void setGroupActive(String groupActive) {
+        this.groupActive = groupActive;
     }
 
     public void setTimeStamp(Object timeStamp) {
