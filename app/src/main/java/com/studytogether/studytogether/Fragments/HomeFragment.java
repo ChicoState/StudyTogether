@@ -97,6 +97,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        updateList();
         //inflater.inflate(R.menu.home, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -109,15 +110,38 @@ public class HomeFragment extends Fragment {
 
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
-                public boolean onQueryTextChange(String newText) {
-                    Toast.makeText(getContext(), "Fragment onQueryTextChange", Toast.LENGTH_LONG).show();
-                    groupAdapter.getFilter().filter(newText);
+                public boolean onQueryTextChange(final String query) {
+                    if (groupAdapter == null) {
+                        Toast.makeText(getContext(), "GroupAdapter is null", Toast.LENGTH_LONG).show();
+                    }
+                    //groupAdapter.getFilter().filter(newText);
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            groupList = new ArrayList<>();
+                            for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+
+                                Group group = groupsnap.getValue(Group.class);
+                                if (group.getGroupName().toLowerCase().contains(query.toLowerCase())) {
+                                    groupList.add(group);
+                                }
+                            }
+                            Collections.reverse(groupList);
+
+                            groupAdapter = new GroupAdapter(getActivity(),groupList);
+                            groupRecyclerView.setAdapter(groupAdapter);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
                     return true;
                 }
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    Toast.makeText(getContext(), "Fragment onQueryTextSubmit", Toast.LENGTH_LONG).show();
-                    groupAdapter.getFilter().filter(query);
+                    //groupAdapter.getFilter().filter(query);
                     return true;
                 }
             };
@@ -160,6 +184,10 @@ public class HomeFragment extends Fragment {
 
         // Get List Posts from the database
 
+        updateList();
+    }
+
+    private void updateList() {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

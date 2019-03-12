@@ -11,12 +11,19 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> implements Filterable{
@@ -24,6 +31,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     private List<Group> srcGroups;
     private List<Group> filteredGroup;
     private GroupAdapterListener listener;
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference ;
+    List<Group> groupList;
 
     public GroupAdapter(Context mContext, List<Group> srcGroups) {
         this.mContext = mContext;
@@ -67,6 +78,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
                 }
                 else {
                     List<Group> resultList = new ArrayList<>();
+                    if (srcGroups.isEmpty()) {
+                        Toast.makeText(mContext, "srcGroups is empty", Toast.LENGTH_LONG).show();
+                    }
                     for (Group group : srcGroups) {
                         if (group.getGroupName().toLowerCase().contains(searchString.toLowerCase())) {
                             resultList.add(group);
