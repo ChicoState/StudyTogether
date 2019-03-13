@@ -3,6 +3,7 @@ package com.studytogether.studytogether.Adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,30 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> implements Filterable {
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> implements Filterable{
     private Context mContext;
     private List<Group> srcGroups;
     private List<Group> filteredGroup;
     private GroupAdapterListener listener;
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference ;
+    List<Group> groupList;
 
     public GroupAdapter(Context mContext, List<Group> srcGroups) {
         this.mContext = mContext;
@@ -66,6 +78,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
                 }
                 else {
                     List<Group> resultList = new ArrayList<>();
+                    if (srcGroups.isEmpty()) {
+                        Toast.makeText(mContext, "srcGroups is empty", Toast.LENGTH_LONG).show();
+                    }
                     for (Group group : srcGroups) {
                         if (group.getGroupName().toLowerCase().contains(searchString.toLowerCase())) {
                             resultList.add(group);
@@ -80,6 +95,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredGroup.clear();
                 filteredGroup = (ArrayList<Group>) filterResults.values;
                 notifyDataSetChanged();
             }
@@ -111,10 +127,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
                 @Override
                 public void onClick(View view) {
                     // send selected contact in callback
-                    listener.onGroupSelected(filteredGroup.get(getAdapterPosition()));
+                    //listener.onGroupSelected(filteredGroup.get(getAdapterPosition()));
                 }
             });
         }
+    }
+
+    public void changeSrcList (List<Group> newSrcGroups) {
+        srcGroups = newSrcGroups;
     }
 
     public interface GroupAdapterListener {
@@ -122,79 +142,3 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     }
 
 }
-
-    /*
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
-                if (charString.isEmpty()) {
-                    groupListFiltered = mGroupData;
-                } else {
-                    List<Group> filteredList = new ArrayList<>();
-                    for (Group row : mGroupData) {
-
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
-                        if (row.getGroupName().toLowerCase().contains(charString.toLowerCase()) || row.getGroupPlace().toLowerCase().contains(charString.toLowerCase()) || row.getGroupGoal().toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(row);
-                        }
-                    }
-
-                    groupListFiltered = filteredList;
-                }
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = groupListFiltered;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                groupListFiltered = (ArrayList<Group>) filterResults.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
-
-
-    @Override
-    public Filter getFilter() {
-        return groupFilter;
-    }
-
-    private Filter groupFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<Group> filteredList = new ArrayList<>();
-
-            if (charSequence == null || charSequence.length() == 0) {
-                filteredList.addAll(mGroupDataCopy);
-            } else {
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-
-                for (Group item : mGroupDataCopy) {
-                    if (item.getGroupName().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(item);
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-
-            return filterResults;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            mGroupData.clear();
-            mGroupData.addAll( (ArrayList<Group>) filterResults.values);
-            notifyDataSetChanged();
-        }
-    };
-    */
-
-
-
