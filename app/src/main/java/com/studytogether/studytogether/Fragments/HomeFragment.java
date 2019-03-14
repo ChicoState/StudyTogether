@@ -61,8 +61,6 @@ public class HomeFragment extends Fragment {
     DatabaseReference databaseReference ;
     List<Group> groupList;
 
-    private GroupAdapter.GroupAdapterListener listener;
-
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -98,7 +96,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         updateList();
-        //inflater.inflate(R.menu.home, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
@@ -115,6 +112,9 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(getContext(), "GroupAdapter is null", Toast.LENGTH_LONG).show();
                     }
                     //groupAdapter.getFilter().filter(newText);
+
+                    //Filtering Group list
+                    //User can search by group name, group place, and group goal
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment {
                             for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                                 Group group = groupsnap.getValue(Group.class);
-                                if (group.getGroupName().toLowerCase().contains(query.toLowerCase())) {
+                                if (group.getGroupName().toLowerCase().contains(query.toLowerCase()) || group.getGroupPlace().toLowerCase().contains(query.toLowerCase()) || group.getGroupGoal().toLowerCase().contains(query.toLowerCase())) {
                                     groupList.add(group);
                                 }
                             }
@@ -241,9 +241,5 @@ public class HomeFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public interface GroupAdapterListener {
-        void onGroupSelected(Group group);
     }
 }

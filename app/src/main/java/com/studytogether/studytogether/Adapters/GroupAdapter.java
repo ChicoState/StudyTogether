@@ -1,7 +1,10 @@
 package com.studytogether.studytogether.Adapters;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Activities.GroupDetailActivity;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 
@@ -30,11 +35,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     private Context mContext;
     private List<Group> srcGroups;
     private List<Group> filteredGroup;
-    private GroupAdapterListener listener;
-
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference ;
-    List<Group> groupList;
+    Dialog myDialog;
 
     public GroupAdapter(Context mContext, List<Group> srcGroups) {
         this.mContext = mContext;
@@ -47,11 +48,13 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View row = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
-        return new MyViewHolder(row);
+        final MyViewHolder viewHolder = new MyViewHolder(row);
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         final Group group = filteredGroup.get(position);
         holder.tvGroupName.setText(group.getGroupName());
         holder.tvGroupPlace.setText(group.getGroupPlace());
@@ -60,6 +63,22 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
         holder.tvEndTimeInput.setText(group.getEndTime());
         Glide.with(mContext).load(group.getGroupPicture()).into(holder.imgGroup);
         Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(holder.imgOwnerProfile);
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(mContext, "Group Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, GroupDetailActivity.class);
+
+                // passing data to the book activity
+                intent.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                intent.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                intent.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                intent.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                // start the activity
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -110,6 +129,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
         TextView tvEndTimeInput;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
+        CardView cardView;
 
 
         public MyViewHolder(View itemView) {
@@ -122,23 +142,38 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
+            cardView = itemView.findViewById(R.id.cardview_group);
 
+            /*
+            //Item click
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // send selected contact in callback
-                    //listener.onGroupSelected(filteredGroup.get(getAdapterPosition()));
+                    mClickListener.onItemClick(view, getAdapterPosition());
                 }
             });
+            //Item long click
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mClickListener.onItemLongClick(view, getAdapterPosition());
+                    return true;
+                }
+            });
+            */
         }
     }
 
-    public void changeSrcList (List<Group> newSrcGroups) {
-        srcGroups = newSrcGroups;
+    private GroupAdapter.ClickListener mClickListener;
+
+    //Interface to send Callbacks
+    public interface ClickListener {
+        void onItemClick(View view, int position);
+        void onItemLongClick(View view, int position);
     }
 
-    public interface GroupAdapterListener {
-        void onGroupSelected(Group group);
+    public void setOnClickListener(GroupAdapter.ClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
 }

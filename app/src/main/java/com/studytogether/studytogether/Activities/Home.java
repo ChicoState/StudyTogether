@@ -67,7 +67,7 @@ import java.util.List;
 
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.GroupAdapterListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private SearchView searchView;
     GroupAdapter adapter;
@@ -399,10 +399,5 @@ public class Home extends AppCompatActivity
         navUsername.setText(currentUser.getDisplayName());
 
         Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhoto);
-    }
-
-    @Override
-    public void onGroupSelected(Group group) {
-        Toast.makeText(getApplicationContext(), "Selected: " + group.getGroupName() + ", " + group.getGroupPlace(), Toast.LENGTH_LONG).show();
     }
 }
