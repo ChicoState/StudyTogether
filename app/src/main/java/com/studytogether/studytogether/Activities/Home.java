@@ -58,6 +58,7 @@ import com.google.firebase.storage.UploadTask;
 import com.studytogether.studytogether.Fragments.HomeFragment;
 import com.studytogether.studytogether.Fragments.ProfileFragment;
 import com.studytogether.studytogether.Fragments.SettingsFragment;
+import com.studytogether.studytogether.Fragments.TutorFragment;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
@@ -376,6 +377,9 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_profile) {
             getSupportActionBar().setTitle("Profile");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new ProfileFragment()).commit();
+        } else if (id == R.id.nav_tutor) {
+            getSupportActionBar().setTitle("Tutors");
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new TutorFragment()).commit();
         } else if (id == R.id.nav_settings) {
             getSupportActionBar().setTitle("Settings");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new SettingsFragment()).commit();

@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_person_black_24dp"
             android:title="Profile" />
         <item
+            android:id="@+id/nav_tutor"
+            android:icon="@drawable/ic_tutor"
+            android:title="Tutors" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />

@@ -86,6 +86,13 @@ public class Group {
         return timeStamp;
     }
 
+    public boolean getHasTutor() {
+        if (getTutor() != null)
+            return true;
+        else
+            return false;
+    }
+
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -138,4 +145,5 @@ public class Group {
     public void setTimeStamp(Object timeStamp) {
         this.timeStamp = timeStamp;
     }
+
 }
