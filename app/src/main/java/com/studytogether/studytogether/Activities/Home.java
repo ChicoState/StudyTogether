@@ -36,6 +36,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +68,7 @@ import java.util.List;
 
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.GroupAdapterListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private SearchView searchView;
     GroupAdapter adapter;
@@ -86,6 +87,7 @@ public class Home extends AppCompatActivity
     ImageView popupUserImage, popupGroupImage, popupAddBtn;
     TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupNumOfGroupMembers, popupStartTimeInput, popupEndTimeInput;
     ProgressBar popupClickProgress;
+    Spinner popupSpinner;
     private Uri pickedImgUri = null;
 
     private void initGroupAdapter() {
@@ -206,6 +208,7 @@ public class Home extends AppCompatActivity
         popupEndTimeInput = popAddGroup.findViewById(R.id.popup_end_time_input);
         popupAddBtn = popAddGroup.findViewById(R.id.popup_add);
         popupClickProgress = popAddGroup.findViewById(R.id.popup_progressBar);
+        popupSpinner = popAddGroup.findViewById(R.id.popup_spinner);
 
         Glide.with(Home.this).load(currentUser.getPhotoUrl()).into(popupUserImage);
 
@@ -232,6 +235,7 @@ public class Home extends AppCompatActivity
                                     Group group = new Group(popupGroupName.getText().toString(),
                                             popupGroupGoal.getText().toString(),
                                             popupGroupPlace.getText().toString(),
+                                            popupSpinner.getSelectedItem().toString(),
                                             popupNumOfGroupMembers.getText().toString(),
                                             popupStartTimeInput.getText().toString(),
                                             popupEndTimeInput.getText().toString(),
@@ -399,10 +403,5 @@ public class Home extends AppCompatActivity
         navUsername.setText(currentUser.getDisplayName());
 
         Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhoto);
-    }
-
-    @Override
-    public void onGroupSelected(Group group) {
-        Toast.makeText(getApplicationContext(), "Selected: " + group.getGroupName() + ", " + group.getGroupPlace(), Toast.LENGTH_LONG).show();
     }
 }

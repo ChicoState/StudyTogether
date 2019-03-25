@@ -14,12 +14,14 @@ public class Group {
     private String ownerId;
     private String groupOwnerPhoto;
     private String groupActive;
+    private String tutor;
     private Object timeStamp;
 
-    public Group(String groupName, String groupGoal, String groupPlace, String num_of_group_members, String startTime, String endTime, String groupPicture, String ownerId, String groupOwnerPhoto) {
+    public Group(String groupName, String groupGoal, String groupPlace, String tutor, String num_of_group_members, String startTime, String endTime, String groupPicture, String ownerId, String groupOwnerPhoto) {
         this.groupName = groupName;
         this.groupGoal = groupGoal;
         this.groupPlace = groupPlace;
+        this.tutor = tutor;
         this.num_of_group_members = num_of_group_members;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -76,6 +78,10 @@ public class Group {
         return groupActive;
     }
 
+    public String getTutor() {
+        return tutor;
+    }
+
     public Object getTimeStamp() {
         return timeStamp;
     }
@@ -123,6 +129,10 @@ public class Group {
 
     public void setGroupActive(String groupActive) {
         this.groupActive = groupActive;
+    }
+
+    public void setTutor(String tutor) {
+        this.tutor = tutor;
     }
 
     public void setTimeStamp(Object timeStamp) {

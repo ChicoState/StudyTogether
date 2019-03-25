@@ -122,15 +122,41 @@
         app:layout_constraintTop_toBottomOf="@+id/popup_start_time_input" />
 
     <EditText
-        android:hint="Current Group Members"
         android:id="@+id/popup_num_of_group_members"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/popup_edittext_style"
         android:ems="10"
+        android:hint="Current Group Members"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup_spinner" />
+
+    <TextView
+        android:id="@+id/popup_spinner_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="What is for?"
+        android:textColor="#000"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup_group_place" />
+
+    <Spinner
+        android:id="@+id/popup_spinner"
+        android:layout_width="263dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/popup_spinner_question"
         app:layout_constraintTop_toBottomOf="@+id/popup_group_place" />
 
 </android.support.constraint.ConstraintLayout>
