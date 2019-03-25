@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.studytogether.studytogether.R;
@@ -41,7 +42,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText userEmail,userPassword,userPAssword2,userName;
     private ProgressBar loadingProgress;
     private Button regBtn;
-
     private FirebaseAuth mAuth;
 
     @Override

@@ -35,7 +35,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     private Context mContext;
     private List<Group> srcGroups;
     private List<Group> filteredGroup;
-    Dialog myDialog;
 
     public GroupAdapter(Context mContext, List<Group> srcGroups) {
         this.mContext = mContext;
@@ -48,7 +47,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View row = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
+        View row_tutor = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
         final MyViewHolder viewHolder = new MyViewHolder(row);
+        final MyViewHolder tutorViewHolder = new MyViewHolder(row_tutor);
 
         return viewHolder;
     }
@@ -64,21 +65,24 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
         Glide.with(mContext).load(group.getGroupPicture()).into(holder.imgGroup);
         Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(holder.imgOwnerProfile);
 
+        /*
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Toast.makeText(mContext, "Group Clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(mContext, GroupDetailActivity.class);
+                int position = getAdapterPosition();
 
-                // passing data to the book activity
+                // passing data to the GroupDetailActivity
                 intent.putExtra("GroupName",filteredGroup.get(position).getGroupName());
                 intent.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                 intent.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
                 intent.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                // start the activity
+                // start the GroupDetailActivity
                 mContext.startActivity(intent);
             }
         });
+        */
     }
 
     @Override
@@ -144,23 +148,23 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
             cardView = itemView.findViewById(R.id.cardview_group);
 
-            /*
-            //Item click
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mClickListener.onItemClick(view, getAdapterPosition());
+                    Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                    int position = getAdapterPosition();
+
+                    // passing data to the GroupDetailActivity
+                    groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                    groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                    groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                    groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                    groupDetailActivity.putExtra("addedDate", timestamp);
+                    // start the GroupDetailActivity
+                    mContext.startActivity(groupDetailActivity);
                 }
             });
-            //Item long click
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    mClickListener.onItemLongClick(view, getAdapterPosition());
-                    return true;
-                }
-            });
-            */
         }
     }
 
