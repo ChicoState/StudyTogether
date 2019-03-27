@@ -34,9 +34,11 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Adapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +60,7 @@ import com.google.firebase.storage.UploadTask;
 import com.studytogether.studytogether.Fragments.HomeFragment;
 import com.studytogether.studytogether.Fragments.ProfileFragment;
 import com.studytogether.studytogether.Fragments.SettingsFragment;
+import com.studytogether.studytogether.Fragments.TutorFragment;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
@@ -87,7 +90,8 @@ public class Home extends AppCompatActivity
     ImageView popupUserImage, popupGroupImage, popupAddBtn;
     TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupNumOfGroupMembers, popupStartTimeInput, popupEndTimeInput;
     ProgressBar popupClickProgress;
-    Spinner popupSpinner;
+    Switch popupSwitch;
+    Boolean tutoring = false;
     private Uri pickedImgUri = null;
 
     private void initGroupAdapter() {
@@ -188,6 +192,10 @@ public class Home extends AppCompatActivity
         }
     }
 
+    private Boolean getTutor() {
+        return tutoring;
+    }
+
 
     private void iniPopup() {
 
@@ -208,7 +216,18 @@ public class Home extends AppCompatActivity
         popupEndTimeInput = popAddGroup.findViewById(R.id.popup_end_time_input);
         popupAddBtn = popAddGroup.findViewById(R.id.popup_add);
         popupClickProgress = popAddGroup.findViewById(R.id.popup_progressBar);
-        popupSpinner = popAddGroup.findViewById(R.id.popup_spinner);
+        popupSwitch = popAddGroup.findViewById(R.id.popup_switch);
+        popupSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                tutoring = isChecked;
+                if(isChecked) {
+                    Toast.makeText(Home.this, "tutoring", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Home.this, "NOT tutoring", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         Glide.with(Home.this).load(currentUser.getPhotoUrl()).into(popupUserImage);
 
@@ -235,7 +254,7 @@ public class Home extends AppCompatActivity
                                     Group group = new Group(popupGroupName.getText().toString(),
                                             popupGroupGoal.getText().toString(),
                                             popupGroupPlace.getText().toString(),
-                                            popupSpinner.getSelectedItem().toString(),
+                                            tutoring.toString(),
                                             popupNumOfGroupMembers.getText().toString(),
                                             popupStartTimeInput.getText().toString(),
                                             popupEndTimeInput.getText().toString(),
@@ -373,6 +392,9 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_home) {
             getSupportActionBar().setTitle("Home");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
+        } else if (id == R.id.nav_tutor) {
+            getSupportActionBar().setTitle("Tutoring");
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new TutorFragment()).commit();
         } else if (id == R.id.nav_profile) {
             getSupportActionBar().setTitle("Profile");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new ProfileFragment()).commit();

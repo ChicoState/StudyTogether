@@ -31,7 +31,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> implements Filterable{
+public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable{
+    private static final int TYPE_STUDY = 1;
+    private static final int TYPE_TUTOR = 2;
+
+
     private Context mContext;
     private List<Group> srcGroups;
     private List<Group> filteredGroup;
@@ -42,47 +46,63 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
         this.filteredGroup = srcGroups  ;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        //return super.getItemViewType(position);
+        final Group group = filteredGroup.get(position);
+        if (group.getTutor().toLowerCase().contains("true")) {
+            return TYPE_TUTOR;
+        } else {
+            return TYPE_STUDY;
+        }
+    }
+
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+        View view = null;
 
-        View row = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
-        View row_tutor = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
-        final MyViewHolder viewHolder = new MyViewHolder(row);
-        final MyViewHolder tutorViewHolder = new MyViewHolder(row_tutor);
+        switch (viewType) {
+            case TYPE_STUDY:
+                view = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
+                viewHolder = new MyViewHolder(view);
+                break;
 
+            case TYPE_TUTOR:
+                view = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_tutor,parent,false);
+                viewHolder = new MyViewHolderTutor(view);
+                break;
+        }
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         final Group group = filteredGroup.get(position);
-        holder.tvGroupName.setText(group.getGroupName());
-        holder.tvGroupPlace.setText(group.getGroupPlace());
-        holder.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
-        holder.tvStartTimeInput.setText(group.getStartTime());
-        holder.tvEndTimeInput.setText(group.getEndTime());
-        Glide.with(mContext).load(group.getGroupPicture()).into(holder.imgGroup);
-        Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(holder.imgOwnerProfile);
 
-        /*
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Toast.makeText(mContext, "Group Clicked", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(mContext, GroupDetailActivity.class);
-                int position = getAdapterPosition();
-
-                // passing data to the GroupDetailActivity
-                intent.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                intent.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
-                intent.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                intent.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                // start the GroupDetailActivity
-                mContext.startActivity(intent);
-            }
-        });
-        */
+        switch (holder.getItemViewType()) {
+            case TYPE_STUDY:
+                MyViewHolder myViewHolder = (MyViewHolder) holder;
+                myViewHolder.tvGroupName.setText(group.getGroupName());
+                myViewHolder.tvGroupPlace.setText(group.getGroupPlace());
+                myViewHolder.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
+                myViewHolder.tvStartTimeInput.setText(group.getStartTime());
+                myViewHolder.tvEndTimeInput.setText(group.getEndTime());
+                Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolder.imgGroup);
+                Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolder.imgOwnerProfile);
+                break;
+            case TYPE_TUTOR:
+                MyViewHolderTutor myViewHolderTutor = (MyViewHolderTutor) holder;
+                myViewHolderTutor.tvGroupName.setText(group.getGroupName());
+                myViewHolderTutor.tvGroupPlace.setText(group.getGroupPlace());
+                myViewHolderTutor.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
+                myViewHolderTutor.tvStartTimeInput.setText(group.getStartTime());
+                myViewHolderTutor.tvEndTimeInput.setText(group.getEndTime());
+                Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolderTutor.imgGroup);
+                Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolderTutor.imgOwnerProfile);
+                break;
+        }
     }
 
     @Override
@@ -161,6 +181,55 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
                     groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
                     long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                     groupDetailActivity.putExtra("addedDate", timestamp);
+                    if(filteredGroup.get(position).getTutor().contains("true")) {
+                        Toast.makeText(mContext, "tutoring", Toast.LENGTH_LONG).show();
+                    }
+                    // start the GroupDetailActivity
+                    mContext.startActivity(groupDetailActivity);
+                }
+            });
+        }
+    }
+
+    public class MyViewHolderTutor extends RecyclerView.ViewHolder {
+        TextView tvGroupName;
+        TextView tvGroupPlace;
+        TextView tvNumOfGroupMembers;
+        TextView tvStartTimeInput;
+        TextView tvEndTimeInput;
+        ImageView imgGroup;
+        ImageView imgOwnerProfile;
+        CardView cardView;
+
+
+        public MyViewHolderTutor(View itemView) {
+            super(itemView);
+
+            tvGroupName = itemView.findViewById(R.id.row_group_name);
+            tvGroupPlace = itemView.findViewById(R.id.row_group_place);
+            tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
+            tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
+            tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
+            imgGroup = itemView.findViewById(R.id.row_group_img);
+            imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
+            cardView = itemView.findViewById(R.id.cardview_group);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                    int position = getAdapterPosition();
+
+                    // passing data to the GroupDetailActivity
+                    groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                    groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                    groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                    groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                    groupDetailActivity.putExtra("addedDate", timestamp);
+                    if(filteredGroup.get(position).getTutor().contains("true")) {
+                        Toast.makeText(mContext, "tutoring", Toast.LENGTH_LONG).show();
+                    }
                     // start the GroupDetailActivity
                     mContext.startActivity(groupDetailActivity);
                 }
