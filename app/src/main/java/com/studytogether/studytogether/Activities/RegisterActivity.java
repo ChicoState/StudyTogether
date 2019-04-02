@@ -89,7 +89,15 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else {
                     // Create a user accout
-                    CreateUserAccount(email,name,password);
+                    if (email.contains("@csuchico.edu")) {
+                        CreateUserAccount(email, name, password);
+                    }
+                    else
+                    {
+                        showMessage("Please sign up with a CSU Chico email");
+                        regBtn.setVisibility(View.VISIBLE);
+                        loadingProgress.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
         });
