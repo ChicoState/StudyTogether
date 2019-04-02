@@ -31,115 +31,122 @@ import java.util.Collections;
 import java.util.List;
 
 public class TutorFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    // Declare a interaction listener for URI
     private OnFragmentInteractionListener mListener;
 
+    // Declare a searchView for the filter at appBar
     private SearchView searchView = null;
+    // Declare a queryTextListener to take a query from a User
     private SearchView.OnQueryTextListener queryTextListener;
 
-
-    RecyclerView groupRecyclerView ;
-    GroupAdapter groupAdapter ;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference ;
+    // Declare to set up the groupAdapter
+    RecyclerView groupRecyclerView;
+    // Declare the groupAdapter, and it holds groupList
+    // The groupAdapter needs for this fragment because it's groupList will be showed in TutorFragment
+    GroupAdapter groupAdapter;
+    // Declare to hold groups
     List<Group> groupList;
 
+    // Firebase
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference ;
+
+    // Constructor of TutorFragment
     public TutorFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TutorFragment newInstance(String param1, String param2) {
-        TutorFragment fragment = new TutorFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    // OnCreate for the first call of this fragment of activity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
         setHasOptionsMenu(true);
     }
 
+    // Search Filter, working on appBar
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Get groupList from the database
         updateList();
+        // Get the menu item: search
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        // Set up searchManager
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
+        // Check the item condition
         if (searchItem != null) {
+            // If item is null, reset the item
             searchView = (SearchView) searchItem.getActionView();
         }
         if (searchView != null) {
+            // Connect the searchView item with searchManager
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
+            // Get a query from a User
             queryTextListener = new SearchView.OnQueryTextListener() {
+                // onDataChange detect user's query as real time
                 @Override
                 public boolean onQueryTextChange(final String query) {
+                    // Check groupAdapter
                     if (groupAdapter == null) {
                         Toast.makeText(getContext(), "GroupAdapter is null", Toast.LENGTH_LONG).show();
+                        return false;
                     }
-                    //groupAdapter.getFilter().filter(newText);
 
-                    //Filtering Group list
-                    //User can search by group name, group place, and group goal
+                    //Filtering groupList
+                    //User can search by group's name, group's place, and group's goal in Tutor lists
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                            // Reset the groupList
                             groupList = new ArrayList<>();
+                            // Take groupList from database and loop through whole groups
                             for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
+                                // Grab each group
                                 Group group = groupsnap.getValue(Group.class);
-                                if (group.getTutor().toLowerCase().contains(query.toLowerCase()) || group.getGroupName().toLowerCase().contains(query.toLowerCase()) || group.getGroupPlace().toLowerCase().contains(query.toLowerCase()) || group.getGroupGoal().toLowerCase().contains(query.toLowerCase()) ) {
-                                    groupList.add(group);
+                                // If groupName, groupPlace, or groupGoal holds query
+                                if (group.getGroupName().toLowerCase().contains(query.toLowerCase()) || group.getGroupPlace().toLowerCase().contains(query.toLowerCase()) || group.getGroupGoal().toLowerCase().contains(query.toLowerCase())) {
+                                    // Add only tutor groups
+                                    if (group.getTutor().contains("true")) {
+                                        //  Add the group in groupList
+                                        groupList.add(group);
+                                    }
                                 }
                             }
+                            // Reverse the groupList to see the recently added groups on top
                             Collections.reverse(groupList);
 
+                            // Set recyclerView through groupAdapter
                             groupAdapter = new GroupAdapter(getActivity(),groupList);
                             groupRecyclerView.setAdapter(groupAdapter);
                         }
 
+                        // When the database doesn't response
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
                     return true;
                 }
+                // This function is called when a user press the return button after type some query
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     return true;
                 }
             };
+            // Pass the query into searchView
             searchView.setOnQueryTextListener(queryTextListener);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    // Option for items on appBar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -148,19 +155,25 @@ public class TutorFragment extends Fragment {
             default:
                 break;
         }
+        // Pass the query into searchView
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
 
+    // onCreateView creates and returns the view hierarchy associated with the fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_tutor, container, false);
+        // Set up recyclerView
         groupRecyclerView  = fragmentView.findViewById(R.id.tutorRV);
         groupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         groupRecyclerView.setHasFixedSize(true);
+
+        // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
+        // Take a reference of Groups
         databaseReference = firebaseDatabase.getReference("Groups");
         return fragmentView ;
     }
@@ -171,26 +184,34 @@ public class TutorFragment extends Fragment {
         super.onStart();
 
         // Get List Posts from the database
-
         updateList();
     }
 
+    // Update groupList
     private void updateList() {
+        // Update groupList when a group is added
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // tutoringFilter Flag
                 String tutoringFilter = "true";
 
+                // Reinitialize the groupList
                 groupList = new ArrayList<>();
+                // Loop whole groups
                 for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                     Group group = groupsnap.getValue(Group.class);
+                    // If the group is for tutoring,
                     if(group.getTutor().toLowerCase().contains(tutoringFilter.toLowerCase())){
+                        // Add the group
                         groupList.add(group);
                     }
                 }
+                // Reverse the groupList to see the recently added groups on top
                 Collections.reverse(groupList);
 
+                // Set recyclerView using groupAdapter
                 groupAdapter = new GroupAdapter(getActivity(),groupList);
                 groupRecyclerView.setAdapter(groupAdapter);
             }
@@ -199,13 +220,6 @@ public class TutorFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void ongroupRecyclerViewButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -219,18 +233,7 @@ public class TutorFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
