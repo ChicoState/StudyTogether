@@ -89,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else {
                     // Create a user accout
-                    if (email.contains("@csuchico.edu")) {
+                    if (email.contains("@mail.csuchico.edu")) {
                         CreateUserAccount(email, name, password);
                     }
                     else
