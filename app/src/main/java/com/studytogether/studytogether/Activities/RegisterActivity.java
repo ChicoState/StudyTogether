@@ -12,9 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.studytogether.studytogether.R;
@@ -43,6 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText userEmail,userPassword,userPAssword2,userName;
     private ProgressBar loadingProgress;
     private Button regBtn;
+    private Switch tutorSwitch;
+    private Boolean isTutor;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -61,6 +65,14 @@ public class RegisterActivity extends AppCompatActivity {
         loadingProgress = findViewById(R.id.regProgressBar);
         regBtn = findViewById(R.id.regBtn);
         loadingProgress.setVisibility(View.INVISIBLE);
+        tutorSwitch = findViewById(R.id.tutorSwitch);
+
+        tutorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isTutor = b;
+            }
+        });
 
         // Get Firebase authorization instance
         mAuth = FirebaseAuth.getInstance();
