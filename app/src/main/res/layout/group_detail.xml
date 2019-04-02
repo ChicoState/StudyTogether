@@ -74,5 +74,14 @@
             android:text="Added Date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detail_group_img" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Group added:  "
+            app:layout_constraintEnd_toStartOf="@+id/detail_group_added"
+            app:layout_constraintTop_toBottomOf="@+id/detail_group_img" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

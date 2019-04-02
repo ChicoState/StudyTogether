@@ -3,6 +3,8 @@ package com.studytogether.studytogether.Models;
 import com.google.firebase.database.ServerValue;
 
 public class Group {
+
+    // All attributes
     private String groupName;
     private String groupGoal;
     private String groupPlace;
@@ -17,6 +19,7 @@ public class Group {
     private String tutor;
     private Object timeStamp;
 
+    // Constructor
     public Group(String groupName, String groupGoal, String groupPlace, String tutor, String num_of_group_members, String startTime, String endTime, String groupPicture, String ownerId, String groupOwnerPhoto) {
         this.groupName = groupName;
         this.groupGoal = groupGoal;

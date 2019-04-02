@@ -1,4 +1,5 @@
 package com.studytogether.studytogether.Fragments;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.net.Uri;
@@ -9,28 +10,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.studytogether.studytogether.Adapters.GroupAdapter;
-import com.studytogether.studytogether.Models.Group;
-import com.studytogether.studytogether.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Adapters.GroupAdapter;
+import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class TutorFragment extends Fragment {
 
     // Declare a interaction listener for URI
     private OnFragmentInteractionListener mListener;
@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
     // Declare to set up the groupAdapter
     RecyclerView groupRecyclerView;
     // Declare the groupAdapter, and it holds groupList
-    // The groupAdapter needs for this fragment because it's groupList will be showed in HomeFragment
+    // The groupAdapter needs for this fragment because it's groupList will be showed in TutorFragment
     GroupAdapter groupAdapter;
     // Declare to hold groups
     List<Group> groupList;
@@ -52,15 +52,18 @@ public class HomeFragment extends Fragment {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference ;
 
-    // Constructor of HomeFragment
-    public HomeFragment() {
+    // Constructor of TutorFragment
+    public TutorFragment() {
         // Required empty public constructor
     }
 
     // OnCreate for the first call of this fragment of activity
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+        }
         setHasOptionsMenu(true);
     }
 
@@ -95,7 +98,7 @@ public class HomeFragment extends Fragment {
                     }
 
                     //Filtering groupList
-                    //User can search by group's name, group's place, and group's goal
+                    //User can search by group's name, group's place, and group's goal in Tutor lists
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -109,8 +112,11 @@ public class HomeFragment extends Fragment {
                                 Group group = groupsnap.getValue(Group.class);
                                 // If groupName, groupPlace, or groupGoal holds query
                                 if (group.getGroupName().toLowerCase().contains(query.toLowerCase()) || group.getGroupPlace().toLowerCase().contains(query.toLowerCase()) || group.getGroupGoal().toLowerCase().contains(query.toLowerCase())) {
-                                    //  Add the group in groupList
-                                    groupList.add(group);
+                                    // Add only tutor groups
+                                    if (group.getTutor().contains("true")) {
+                                        //  Add the group in groupList
+                                        groupList.add(group);
+                                    }
                                 }
                             }
                             // Reverse the groupList to see the recently added groups on top
@@ -159,9 +165,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_home, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_tutor, container, false);
         // Set up recyclerView
-        groupRecyclerView  = fragmentView.findViewById(R.id.groupRV);
+        groupRecyclerView  = fragmentView.findViewById(R.id.tutorRV);
         groupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         groupRecyclerView.setHasFixedSize(true);
 
@@ -177,7 +183,7 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // Get groupList from the database
+        // Get List Posts from the database
         updateList();
     }
 
@@ -185,9 +191,10 @@ public class HomeFragment extends Fragment {
     private void updateList() {
         // Update groupList when a group is added
         databaseReference.addValueEventListener(new ValueEventListener() {
-            // Detect the changes
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // tutoringFilter Flag
+                String tutoringFilter = "true";
 
                 // Reinitialize the groupList
                 groupList = new ArrayList<>();
@@ -195,8 +202,11 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                     Group group = groupsnap.getValue(Group.class);
-                    // Add group
-                    groupList.add(group) ;
+                    // If the group is for tutoring,
+                    if(group.getTutor().toLowerCase().contains(tutoringFilter.toLowerCase())){
+                        // Add the group
+                        groupList.add(group);
+                    }
                 }
                 // Reverse the groupList to see the recently added groups on top
                 Collections.reverse(groupList);
@@ -222,7 +232,6 @@ public class HomeFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
