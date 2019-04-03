@@ -98,6 +98,10 @@ public class RegisterActivity extends AppCompatActivity {
                     // -button and let the progress-button disappear
                     regBtn.setVisibility(View.VISIBLE);
                     loadingProgress.setVisibility(View.INVISIBLE);
+                } else if (!email.contains("@mail.csuchico.edu")) {
+                    showMessage("Please use the school mail as @mail.csuchico.edu") ;
+                    regBtn.setVisibility(View.VISIBLE);
+                    loadingProgress.setVisibility(View.INVISIBLE);
                 }
                 else {
                     // Create a user accout
