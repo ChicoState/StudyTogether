@@ -16,6 +16,7 @@
         android:id="@+id/cardview_tutor"
         android:layout_width="match_parent"
         android:layout_height="270dp"
+        android:background="@color/colorPrimaryDark"
         app:cardCornerRadius="8dp"
         app:cardElevation="10dp"
         app:contentPaddingTop="8dp"
@@ -39,6 +40,14 @@
                 android:layout_alignParentTop="true"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_launcher_background" />
+            <ImageView
+                android:id="@+id/row_ribbon"
+                android:layout_width="60dp"
+                android:layout_height="150dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                app:srcCompat="@drawable/card_view_ribbon" />
 
             <ImageView
                 android:id="@+id/row_img_gradient"
@@ -57,40 +66,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:elevation="8dp"
                 android:text="GroupName"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
-                app:layout_constraintStart_toStartOf="@+id/row_img_gradient"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@+id/row_img_gradient"
+                app:layout_constraintStart_toStartOf="@+id/row_img_gradient" />
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:civ_border_width="1dp"
+                app:civ_border_color="#FF000000"
                 android:id="@+id/row_owner_profile_img"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginRight="12dp"
+                android:layout_marginBottom="0dp"
                 android:elevation="12dp"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="1dp"
+                app:layout_constraintBottom_toTopOf="@+id/row_group_owner_name"
                 app:layout_constraintEnd_toEndOf="@+id/row_img_gradient"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_launcher_background" />
 
             <TextView
                 android:id="@+id/row_group_owner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:elevation="8dp"
                 android:text="OwnerName"
                 android:textColor="#ffffff"
                 android:textSize="14dp"
-                app:layout_constraintEnd_toEndOf="@+id/row_img_gradient"
-                app:layout_constraintTop_toBottomOf="@+id/row_owner_profile_img" />
+                app:layout_constraintBottom_toBottomOf="@+id/row_img_gradient"
+                app:layout_constraintEnd_toEndOf="@+id/row_img_gradient" />
 
 
             <TextView
@@ -181,23 +191,18 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="3dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="TUTORING"
-                android:textColor="#FFF"
-                android:textSize="30dp"
+                android:layout_marginTop="15dp"
                 android:elevation="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.287"
+                android:text="TUTOR"
+                android:textColor="#FFF"
+                android:textSize="15dp"
+                android:rotation="-45"
+                app:layout_constraintStart_toStartOf="@+id/row_img_gradient"
+                app:layout_constraintTop_toTopOf="@+id/row_img_gradient"
                 tools:ignore="MissingConstraints" />
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
