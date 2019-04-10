@@ -397,6 +397,7 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_signout) {
             // If the user want to sign out, sign out through Firebase authorization
             FirebaseAuth.getInstance().signOut();
+            mAuth.signOut();
             // Get intent
             Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
             // Go to login Activity
