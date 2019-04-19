@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -47,6 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         // Set the content with activity_login layout
         setContentView(R.layout.activity_login);
 
+        // Hide appBar
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getSupportActionBar().hide();
+
         // Set up items
         loginProgress = findViewById(R.id.login_progress);
         btnGoogleLogin = findViewById(R.id.google_login_btn);
@@ -58,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         HomeActivity = new Intent(this,com.studytogether.studytogether.Activities.Home.class);
 
         loginPhoto = findViewById(R.id.login_photo);
+        loginPhoto.setImageResource(R.drawable.logo);
 
         // Set the progress-button as invisible mode
         loginProgress.setVisibility(View.INVISIBLE);
@@ -139,8 +147,8 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUIGoogle(FirebaseUser user) {
         if (user != null) {
 
-            String photo = String.valueOf(user.getPhotoUrl());
-            Picasso.with(LoginActivity.this).load(photo).into(loginPhoto);
+            //String photo = String.valueOf(user.getPhotoUrl());
+            //Picasso.with(LoginActivity.this).load(photo).into(loginPhoto);
 
             startActivity(HomeActivity);
             finish();

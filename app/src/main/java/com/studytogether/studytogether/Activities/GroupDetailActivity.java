@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ public class GroupDetailActivity extends AppCompatActivity {
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
     ImageView detailGroupImg;
+    Button detailChatButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +45,8 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupImg = findViewById(R.id.detail_group_img);
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
 
+        detailChatButton = findViewById(R.id.chat_btn);
+
 
         // Create intent
         Intent intent = getIntent();
@@ -60,6 +65,17 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         String date = timestampToString(getIntent().getExtras().getLong("addedDate"));
         detailGroupAddedDate.setText(date);
+
+
+        detailChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent chatActivity = new Intent(getApplicationContext(), GroupChatActivity.class);
+                // Go to login Activity
+                startActivity(chatActivity);
+                finish();
+            }
+        });
 
     }
 

@@ -27,6 +27,8 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".Activities.GroupDetailActivity"/>
+        <activity android:name=".Activities.GroupChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
