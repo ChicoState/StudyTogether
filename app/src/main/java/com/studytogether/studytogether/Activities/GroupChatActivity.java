@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -21,6 +22,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     // Create items
     TextView chatGroupName;
+    ImageView chatGroupImage;
     Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
 
@@ -33,7 +35,15 @@ public class GroupChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_chat);
 
         Intent intent = getIntent();
-        final String groupName = intent.getExtras().getString("GroupName");
+        String chatGroupName = "groupName";
+        if(intent.getExtras() == null) {
+            //groupName = intent.getExtras().getString("GroupName");
+            showMessage("getExtras is null");
+        }
+        else {
+            chatGroupName = intent.getExtras().getString("GroupName");
+        }
+        chatGroupName = intent.getExtras().getString("GroupName");
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -41,7 +51,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.toolbar_text);
-        collapsingToolbar.setTitle(groupName);
+        collapsingToolbar.setTitle(chatGroupName);
 
         loadBackdrop();
 
@@ -50,13 +60,19 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void loadBackdrop() {
         final ImageView imageView = findViewById(R.id.backdrop);
-        //Glide.with(this).load(Cheeses.getRandomCheeseDrawable()).apply(RequestOptions.centerCropTransform()).into(imageView);
+        String imageUrl = getIntent().getStringExtra("GroupImg");
+        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //getMenuInflater().inflate(R.menu.sample_actions, menu);
         return true;
+    }
+
+    // Show message to the user
+    private void showMessage(String text) {
+        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
     }
 
 

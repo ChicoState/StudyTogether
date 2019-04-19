@@ -66,17 +66,6 @@ public class GroupDetailActivity extends AppCompatActivity {
         String date = timestampToString(getIntent().getExtras().getLong("addedDate"));
         detailGroupAddedDate.setText(date);
 
-
-        detailChatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent chatActivity = new Intent(getApplicationContext(), GroupChatActivity.class);
-                // Go to login Activity
-                startActivity(chatActivity);
-                finish();
-            }
-        });
-
     }
 
 

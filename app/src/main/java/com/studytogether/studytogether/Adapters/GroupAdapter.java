@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.studytogether.studytogether.Activities.GroupChatActivity;
 import com.studytogether.studytogether.Activities.GroupDetailActivity;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.R;
@@ -150,6 +151,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                    Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
                     // Grab the group's position
                     int position = getAdapterPosition();
 
@@ -160,8 +162,14 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
                     long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                     groupDetailActivity.putExtra("addedDate", timestamp);
+
+                    groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                    groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                    groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                    groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+
                     // start the GroupDetailActivity
-                    mContext.startActivity(groupDetailActivity);
+                    mContext.startActivity(groupChatActivity);
                 }
             });
         }
@@ -200,6 +208,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                    Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
                     int position = getAdapterPosition();
 
                     // passing data to the GroupDetailActivity
@@ -209,8 +218,14 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
                     long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                     groupDetailActivity.putExtra("addedDate", timestamp);
+
+                    groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                    groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                    groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                    groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+
                     // start the GroupDetailActivity
-                    mContext.startActivity(groupDetailActivity);
+                    mContext.startActivity(groupChatActivity);
                 }
             });
         }
