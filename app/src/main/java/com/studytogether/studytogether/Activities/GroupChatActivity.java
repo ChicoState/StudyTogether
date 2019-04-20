@@ -18,12 +18,19 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.studytogether.studytogether.R;
 
 import java.util.Calendar;
 import java.util.Locale;
 
 public class GroupChatActivity extends AppCompatActivity {
+
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
 
     // Create items
     TextView chatGroupName;
@@ -38,6 +45,10 @@ public class GroupChatActivity extends AppCompatActivity {
 
         // Set the contentView with group_detail
         setContentView(R.layout.activity_group_chat);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
         Intent intent = getIntent();
         String chatGroupName = intent.getExtras().getString("GroupName");
