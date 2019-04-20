@@ -3,11 +3,15 @@ package com.studytogether.studytogether.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,15 +40,11 @@ public class GroupChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_chat);
 
         Intent intent = getIntent();
-        String chatGroupName = "groupName";
-        if(intent.getExtras() == null) {
-            //groupName = intent.getExtras().getString("GroupName");
-            showMessage("getExtras is null");
-        }
-        else {
-            chatGroupName = intent.getExtras().getString("GroupName");
-        }
-        chatGroupName = intent.getExtras().getString("GroupName");
+        String chatGroupName = intent.getExtras().getString("GroupName");
+        String chatGroupPlace = intent.getExtras().getString("GroupPlace");
+        String chatGroupGoal = intent.getExtras().getString("GroupGoal");
+        int chatGroupPosition = intent.getIntExtra("position", 0);
+        String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,15 +54,29 @@ public class GroupChatActivity extends AppCompatActivity {
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.toolbar_text);
         collapsingToolbar.setTitle(chatGroupName);
 
-        loadBackdrop();
-
-
-    }
-
-    private void loadBackdrop() {
         final ImageView imageView = findViewById(R.id.backdrop);
         String imageUrl = getIntent().getStringExtra("GroupImg");
-        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
+        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);;
+
+        final AppBarLayout appbarLayout = (AppBarLayout)findViewById(R.id.chat_appbar_layout);
+        FloatingActionButton groupDetail = (FloatingActionButton) findViewById(R.id.group_detail_btn);
+        // If the floating action button is clicked,
+        groupDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent groupDetailActivity = new Intent(getApplicationContext(), GroupDetailActivity.class);
+
+                // passing data to the GroupDetailActivity
+                groupDetailActivity.putExtra("GroupName", chatGroupName);
+                groupDetailActivity.putExtra("GroupPlace", chatGroupPlace);
+                groupDetailActivity.putExtra("GroupGoal", chatGroupGoal);
+                groupDetailActivity.putExtra("GroupImg",imageUrl);
+                groupDetailActivity.putExtra("addedDate", groupCreated);
+                startActivity(groupDetailActivity);
+            }
+        });
+
+
     }
 
     @Override
@@ -83,12 +97,24 @@ public class GroupChatActivity extends AppCompatActivity {
         return true;
     }
 
+
+    // Get server time and convert into String
+    private String timestampToString(long time) {
+
+        // Get time
+        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+        calendar.setTimeInMillis(time);
+        // Reform the time and cast into String type
+        String date = DateFormat.format("MM-dd-yyyy",calendar).toString();
+        return date;
+
+
+    }
+
     // Show message to the user
     private void showMessage(String text) {
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
     }
-
-
 
 }
 
