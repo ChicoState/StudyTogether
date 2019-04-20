@@ -46,17 +46,17 @@ public class GroupChatActivity extends AppCompatActivity {
         int chatGroupPosition = intent.getIntExtra("position", 0);
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.chat_collapsing_toolbar);
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.toolbar_text);
         collapsingToolbar.setTitle(chatGroupName);
 
-        final ImageView imageView = findViewById(R.id.backdrop);
+        final ImageView imageView = findViewById(R.id.chat_backdrop);
         String imageUrl = getIntent().getStringExtra("GroupImg");
-        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);;
+        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
 
         final AppBarLayout appbarLayout = (AppBarLayout)findViewById(R.id.chat_appbar_layout);
         FloatingActionButton groupDetail = (FloatingActionButton) findViewById(R.id.group_detail_btn);

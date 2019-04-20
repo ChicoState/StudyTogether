@@ -3,16 +3,24 @@ package com.studytogether.studytogether.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.studytogether.studytogether.R;
 
 import java.util.Calendar;
@@ -23,7 +31,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
-    ImageView detailGroupImg;
     Button detailChatButton;
 
     @Override
@@ -33,16 +40,11 @@ public class GroupDetailActivity extends AppCompatActivity {
         // Set the contentView with group_detail
         setContentView(R.layout.group_detail);
 
-        // Hide appBar
-        Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getSupportActionBar().hide();
 
         // Set up items with layouts
         detailGroupName = findViewById(R.id.detail_group_name);
         detailGroupPlace = findViewById(R.id.detail_group_place);
         detailGroupGoal = findViewById(R.id.detail_group_goal);
-        detailGroupImg = findViewById(R.id.detail_group_img);
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
 
         detailChatButton = findViewById(R.id.chat_btn);
@@ -54,40 +56,58 @@ public class GroupDetailActivity extends AppCompatActivity {
         String groupName = intent.getExtras().getString("GroupName");
         String groupPlace = intent.getExtras().getString("GroupPlace");
         String groupGoal = intent.getExtras().getString("GroupGoal");
+        String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
-        String imageUrl = getIntent().getStringExtra("GroupImg");
-        Glide.with(this).asBitmap().load(imageUrl).into(detailGroupImg);
+
+        final Toolbar toolbar = findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.detail_collapsing_toolbar);
+        collapsingToolbar.setExpandedTitleTextAppearance(R.style.toolbar_text);
+        collapsingToolbar.setTitle(groupName);
+
+        final ImageView imageView = findViewById(R.id.detail_backdrop);
+        String detailGroupImageUrl = getIntent().getStringExtra("GroupImg");
+        Glide.with(this).load(detailGroupImageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
+
 
         // Set items with info
         detailGroupName.setText(groupName);
         detailGroupPlace.setText(groupPlace);
         detailGroupGoal.setText(groupGoal);
+        detailGroupAddedDate.setText(groupCreated);
 
-        String date = timestampToString(getIntent().getExtras().getLong("addedDate"));
-        detailGroupAddedDate.setText(date);
+        final AppBarLayout appbarLayout = (AppBarLayout)findViewById(R.id.detail_appbar_layout);
+        FloatingActionButton quitGroup = (FloatingActionButton) findViewById(R.id.group_quit_btn);
+        // If the floating action button is clicked,
+        quitGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent groupDetailActivity = new Intent(getApplicationContext(), GroupDetailActivity.class);
+
+                //startActivity(groupDetailActivity);
+            }
+        });
 
     }
 
-
-
-    // Grab the image url
-    private void getIncomingIntent(){
-        if(getIntent().hasExtra("image_url")){
-
-            String imageUrl = getIntent().getStringExtra("image_url");
-
-            setImage(imageUrl);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
-    // Grab the exact image
-    private void setImage(String imageUrl){
 
-        ImageView image = findViewById(R.id.image);
-        Glide.with(this)
-                .asBitmap()
-                .load(imageUrl)
-                .into(image);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
     }
 
     // Get server time and convert into String
@@ -99,8 +119,11 @@ public class GroupDetailActivity extends AppCompatActivity {
         // Reform the time and cast into String type
         String date = DateFormat.format("MM-dd-yyyy",calendar).toString();
         return date;
+    }
 
-
+    // Show message to the user
+    private void showMessage(String text) {
+        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
     }
 
 }
