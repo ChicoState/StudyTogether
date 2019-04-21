@@ -8,6 +8,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -46,6 +48,13 @@ public class GroupChatActivity extends AppCompatActivity {
     Toolbar toolbar;
     Button btnAddComment;
     String GroupKey;
+
+
+    private RecyclerView commentRecyclerView;
+    private RecyclerView.Adapter chatAdapter;
+    private RecyclerView.LayoutManager chatLayoutManager;
+
+
     private CollapsingToolbarLayout collapsingToolbar;
 
 
@@ -62,12 +71,14 @@ public class GroupChatActivity extends AppCompatActivity {
 
         userComment = findViewById(R.id.chat_editText);
         btnAddComment = findViewById(R.id.chat_add_button);
+        commentRecyclerView  = findViewById(R.id.commentRV);
+        commentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentRecyclerView.setHasFixedSize(true);
 
         Intent intent = getIntent();
         String chatGroupName = intent.getExtras().getString("GroupName");
         String chatGroupPlace = intent.getExtras().getString("GroupPlace");
         String chatGroupGoal = intent.getExtras().getString("GroupGoal");
-        int chatGroupPosition = intent.getIntExtra("position", 0);
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
         GroupKey = getIntent().getExtras().getString("groupKey");
 
@@ -129,6 +140,10 @@ public class GroupChatActivity extends AppCompatActivity {
                 });
             }
         });
+
+
+        // Take a reference of GroupChat
+        DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat");
 
     }
 
