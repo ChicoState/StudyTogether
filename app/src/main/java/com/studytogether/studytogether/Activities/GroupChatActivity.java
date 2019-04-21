@@ -27,12 +27,18 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Adapters.ChatAdapter;
 import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class GroupChatActivity extends AppCompatActivity {
@@ -47,8 +53,8 @@ public class GroupChatActivity extends AppCompatActivity {
     EditText userComment;
     Toolbar toolbar;
     Button btnAddComment;
-    String GroupKey;
 
+    List<GroupChat> commentList;
 
     private RecyclerView commentRecyclerView;
     private RecyclerView.Adapter chatAdapter;
@@ -75,12 +81,19 @@ public class GroupChatActivity extends AppCompatActivity {
         commentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentRecyclerView.setHasFixedSize(true);
 
+        // use a linear layout manager
+        chatLayoutManager = new LinearLayoutManager(this);
+        commentRecyclerView.setLayoutManager(chatLayoutManager);
+
+
         Intent intent = getIntent();
         String chatGroupName = intent.getExtras().getString("GroupName");
         String chatGroupPlace = intent.getExtras().getString("GroupPlace");
         String chatGroupGoal = intent.getExtras().getString("GroupGoal");
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
-        GroupKey = getIntent().getExtras().getString("groupKey");
+        String groupKey = intent.getExtras().getString("GroupKey");
+
+
 
         final Toolbar toolbar = findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
@@ -113,12 +126,15 @@ public class GroupChatActivity extends AppCompatActivity {
         });
 
 
+        updateComment(groupKey);
+
+
         btnAddComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 btnAddComment.setVisibility(View.INVISIBLE);
-                DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat").child(GroupKey).push();
+                DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat").child(groupKey).push();
                 String comment_content = userComment.getText().toString();
                 String userId = firebaseUser.getUid();
                 String userName = firebaseUser.getDisplayName();
@@ -140,11 +156,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-        // Take a reference of GroupChat
-        DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat");
-
     }
 
     @Override
@@ -163,6 +174,38 @@ public class GroupChatActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
+    }
+
+    private void updateComment(String groupKey) {
+        // Take a reference of GroupChat
+        DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat").child(groupKey);
+
+
+        // specify an adapter
+        commentReference.addValueEventListener(new ValueEventListener() {
+            // Detect the changes
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // Reinitialize the groupList
+                commentList = new ArrayList<>();
+                // Loop whole comments
+                for (DataSnapshot commentsnap: dataSnapshot.getChildren()) {
+
+                    GroupChat comment = commentsnap.getValue(GroupChat.class);
+                    // Add comment
+                    commentList.add(comment) ;
+                }
+
+                // Set recyclerView using chatAdapter
+                chatAdapter = new ChatAdapter(GroupChatActivity.this,commentList);
+                commentRecyclerView.setAdapter(chatAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
 

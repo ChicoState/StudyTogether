@@ -150,23 +150,18 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
                     Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
-                    // Grab the group's position
                     int position = getAdapterPosition();
-
-                    // passing data to the GroupDetailActivity
-                    groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                    groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
-                    groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                    groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
-                    groupDetailActivity.putExtra("addedDate", timestamp);
+                    groupChatActivity.putExtra("GroupPosition",position);
+                    groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
                     groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
                     groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                     groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
                     groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                    groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
+                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                    groupChatActivity.putExtra("addedDate", timestamp);
 
                     // start the GroupDetailActivity
                     mContext.startActivity(groupChatActivity);
@@ -210,6 +205,8 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                     Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
                     int position = getAdapterPosition();
+                    groupChatActivity.putExtra("GroupPosition",position);
+                    groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
                     groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
                     groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());

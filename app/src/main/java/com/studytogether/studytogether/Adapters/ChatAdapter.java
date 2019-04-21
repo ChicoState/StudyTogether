@@ -1,18 +1,17 @@
 package com.studytogether.studytogether.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.studytogether.studytogether.Activities.GroupChatActivity;
 import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.R;
 
@@ -39,7 +38,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         View view = null;
 
         // Inflate with row_group_item_new view
-        view = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_new,parent,false);
+        view = LayoutInflater.from(mContext).inflate(R.layout.row_comment,parent,false);
         // Pass the view into viewHolder
         viewHolder = new ChatViewHolder(view);
 
@@ -51,9 +50,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final GroupChat groupChat = groupChats.get(position);
 
         ChatViewHolder chatViewHolder = (ChatViewHolder) holder;
-        chatViewHolder.tvChatUserName.setText(groupChat.getuserName());
-        chatViewHolder.tvChatUserComment.setText(groupChat.getContent());
-        Glide.with(mContext).load(groupChat.getuserImage()).into(chatViewHolder.imgChatUser);
+
+        if(groupChat != null) {
+            if(groupChat.getuserName() != null && groupChat.getContent() != null && groupChat.getuserImage() != null) {
+                chatViewHolder.tvChatUserName.setText(groupChat.getuserName());
+                chatViewHolder.tvChatUserComment.setText(groupChat.getContent());
+                Glide.with(mContext).load(groupChat.getuserImage()).into(chatViewHolder.imgChatUser);
+            }
+        }
     }
 
     @Override
