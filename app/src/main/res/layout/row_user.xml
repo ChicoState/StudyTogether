@@ -22,7 +22,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             app:civ_border_width="1dp"
             app:civ_border_color="#FF000000"
-            android:id="@+id/row_user_img"
+            android:id="@+id/row_user_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -36,29 +36,30 @@
             android:scaleType="centerCrop" />
 
         <TextView
-            android:id="@+id/row_user_name"
+            android:id="@+id/row_big_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:textSize="17dp"
+            android:textColor="#000"
             android:text="userName"
-            app:layout_constraintStart_toEndOf="@+id/row_user_img"
+            app:layout_constraintStart_toEndOf="@+id/row_user_image"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
-            android:id="@+id/row_user_comment"
+            android:id="@+id/row_user_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="contents"
-            android:textColor="#000"
+            android:text="email"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/row_user_img"
-            app:layout_constraintTop_toBottomOf="@+id/row_user_name" />
+            app:layout_constraintStart_toEndOf="@+id/row_user_image"
+            app:layout_constraintTop_toBottomOf="@+id/row_big_user_name" />
     </android.support.constraint.ConstraintLayout>
 </RelativeLayout>
