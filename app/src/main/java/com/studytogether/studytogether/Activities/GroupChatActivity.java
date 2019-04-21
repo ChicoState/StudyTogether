@@ -2,6 +2,7 @@ package com.studytogether.studytogether.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,15 +13,21 @@ import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.R;
 
 import java.util.Calendar;
@@ -35,7 +42,10 @@ public class GroupChatActivity extends AppCompatActivity {
     // Create items
     TextView chatGroupName;
     ImageView chatGroupImage;
+    EditText userComment;
     Toolbar toolbar;
+    Button btnAddComment;
+    String GroupKey;
     private CollapsingToolbarLayout collapsingToolbar;
 
 
@@ -50,12 +60,16 @@ public class GroupChatActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
 
+        userComment = findViewById(R.id.chat_editText);
+        btnAddComment = findViewById(R.id.chat_add_button);
+
         Intent intent = getIntent();
         String chatGroupName = intent.getExtras().getString("GroupName");
         String chatGroupPlace = intent.getExtras().getString("GroupPlace");
         String chatGroupGoal = intent.getExtras().getString("GroupGoal");
         int chatGroupPosition = intent.getIntExtra("position", 0);
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
+        GroupKey = getIntent().getExtras().getString("groupKey");
 
         final Toolbar toolbar = findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
@@ -87,6 +101,34 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
+
+        btnAddComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                btnAddComment.setVisibility(View.INVISIBLE);
+                DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat").child(GroupKey).push();
+                String comment_content = userComment.getText().toString();
+                String userId = firebaseUser.getUid();
+                String userName = firebaseUser.getDisplayName();
+                String userImage = firebaseUser.getPhotoUrl().toString();
+                GroupChat groupChat = new GroupChat(comment_content,userId,userImage,userName);
+
+                commentReference.setValue(groupChat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        showMessage("comment added");
+                        userComment.setText("");
+                        btnAddComment.setVisibility(View.VISIBLE);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showMessage("fail to add comment : "+e.getMessage());
+                    }
+                });
+            }
+        });
 
     }
 
@@ -126,6 +168,5 @@ public class GroupChatActivity extends AppCompatActivity {
     private void showMessage(String text) {
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
     }
-
 }
 

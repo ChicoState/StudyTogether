@@ -215,7 +215,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                     groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
                     groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                    groupChatActivity.putExtra("position",position);
+                    groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
                     long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                     groupChatActivity.putExtra("addedDate", timestamp);
 
