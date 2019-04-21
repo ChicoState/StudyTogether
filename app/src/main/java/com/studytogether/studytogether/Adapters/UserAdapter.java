@@ -1,4 +1,85 @@
 package com.studytogether.studytogether.Adapters;
 
-public class UserAdapter {
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.studytogether.studytogether.Models.User;
+import com.studytogether.studytogether.R;
+
+import java.util.List;
+
+public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private Context mContext;
+    // Declare groupChats
+    private List<User> users;
+
+    // ChatAdapter Constructor
+    public UserAdapter(Context mContext, List<User> users) {
+        this.mContext = mContext;
+        this.users = users;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Declare viewHolder and initialize to null
+        RecyclerView.ViewHolder viewHolder = null;
+        // Declare view and initialize to null
+        View view = null;
+
+        // Inflate with row_group_item_new view
+        view = LayoutInflater.from(mContext).inflate(R.layout.row_user,parent,false);
+        // Pass the view into viewHolder
+        viewHolder = new ChatViewHolder(view);
+
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        final User user = users.get(position);
+
+        ChatViewHolder chatViewHolder = (ChatViewHolder) holder;
+
+        if(user != null) {
+            if(user.getuserName() != null && user.getUserEmail() != null && user.getuserImage() != null) {
+                chatViewHolder.tvChatUserName.setText(user.getuserName());
+                chatViewHolder.tvChatUserEmail.setText(user.getUserEmail());
+                Glide.with(mContext).load(user.getuserImage()).into(chatViewHolder.imgChatUser);
+            }
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return users.size();
+    }
+
+    // Create myViewHolder as RecyclerView.ViewHolder
+    public class ChatViewHolder extends RecyclerView.ViewHolder {
+        TextView tvChatUserName;
+        TextView tvChatUserEmail;
+        ImageView imgChatUser;
+
+
+
+        // Create myViewHolder
+        public ChatViewHolder(View itemView) {
+            super(itemView);
+
+            // Set the attributes with each item
+            tvChatUserName = itemView.findViewById(R.id.row_big_user_name);
+            tvChatUserEmail = itemView.findViewById(R.id.row_user_email);
+            imgChatUser = itemView.findViewById(R.id.row_user_image);
+
+        }
+    }
 }
