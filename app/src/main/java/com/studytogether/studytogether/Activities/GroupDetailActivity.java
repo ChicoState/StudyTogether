@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Adapters.UserAdapter;
+import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.Models.User;
 import com.studytogether.studytogether.R;
@@ -151,6 +152,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
                 DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
+                Group group;
 
 
 
