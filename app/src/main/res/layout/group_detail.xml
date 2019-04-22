@@ -63,6 +63,27 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="#68c7f9"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/detail_join_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#68c7f9"
+                        android:text="Join in" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -133,20 +154,6 @@
                             android:layout_marginRight="16dp"
                             android:text="Added Date"/>
 
-
-                        <Button
-                            android:id="@+id/chat_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:background="@drawable/round_bg"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
-                            android:text="Chat with Group" />
-
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -182,6 +189,7 @@
 
 
                     <android.support.v7.widget.RecyclerView
+                        android:id="@+id/userRV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </LinearLayout>
@@ -191,17 +199,5 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/group_quit_btn"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        app:layout_anchor="@id/detail_appbar_layout"
-        app:layout_anchorGravity="bottom|right|end"
-        app:srcCompat="@drawable/ic_info_48dp"
-        android:layout_margin="@dimen/fab_margin"
-        app:fabSize="normal"
-        android:scaleType="center"
-        android:clickable="true"/>
 
 </android.support.design.widget.CoordinatorLayout>

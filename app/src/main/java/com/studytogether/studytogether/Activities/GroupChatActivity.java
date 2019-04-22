@@ -119,7 +119,8 @@ public class GroupChatActivity extends AppCompatActivity {
                 groupDetailActivity.putExtra("GroupName", chatGroupName);
                 groupDetailActivity.putExtra("GroupPlace", chatGroupPlace);
                 groupDetailActivity.putExtra("GroupGoal", chatGroupGoal);
-                groupDetailActivity.putExtra("GroupImg",imageUrl);
+                groupDetailActivity.putExtra("GroupImg", imageUrl);
+                groupDetailActivity.putExtra("GroupKey", groupKey);
                 groupDetailActivity.putExtra("addedDate", groupCreated);
                 startActivity(groupDetailActivity);
             }
@@ -144,7 +145,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 commentReference.setValue(groupChat).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        showMessage("comment added");
                         userComment.setText("");
                         btnAddComment.setVisibility(View.VISIBLE);
                     }

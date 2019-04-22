@@ -51,9 +51,9 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if(user != null) {
             if(user.getuserName() != null && user.getUserEmail() != null && user.getuserImage() != null) {
-                chatViewHolder.tvChatUserName.setText(user.getuserName());
-                chatViewHolder.tvChatUserEmail.setText(user.getUserEmail());
-                Glide.with(mContext).load(user.getuserImage()).into(chatViewHolder.imgChatUser);
+                chatViewHolder.tvUserUserName.setText(user.getuserName());
+                chatViewHolder.tvUserUserEmail.setText(user.getUserEmail());
+                Glide.with(mContext).load(user.getuserImage()).into(chatViewHolder.imgUserUserPhoto);
             }
         }
     }
@@ -65,9 +65,9 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Create myViewHolder as RecyclerView.ViewHolder
     public class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView tvChatUserName;
-        TextView tvChatUserEmail;
-        ImageView imgChatUser;
+        TextView tvUserUserName;
+        TextView tvUserUserEmail;
+        ImageView imgUserUserPhoto;
 
 
 
@@ -76,9 +76,9 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
 
             // Set the attributes with each item
-            tvChatUserName = itemView.findViewById(R.id.row_big_user_name);
-            tvChatUserEmail = itemView.findViewById(R.id.row_user_email);
-            imgChatUser = itemView.findViewById(R.id.row_user_image);
+            tvUserUserName = itemView.findViewById(R.id.row_big_user_name);
+            tvUserUserEmail = itemView.findViewById(R.id.row_user_email);
+            imgUserUserPhoto = itemView.findViewById(R.id.row_user_image);
 
         }
     }
