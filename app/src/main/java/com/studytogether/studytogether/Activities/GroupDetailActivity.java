@@ -99,6 +99,8 @@ public class GroupDetailActivity extends AppCompatActivity {
         String groupKey = intent.getExtras().getString("GroupKey");
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
+        String userId = firebaseUser.getUid();
+
 
         final Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -146,6 +148,12 @@ public class GroupDetailActivity extends AppCompatActivity {
                         showMessage("fail to add comment : "+e.getMessage());
                     }
                 });
+
+
+                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
+
+
+
             }
         });
 
