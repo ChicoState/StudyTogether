@@ -96,12 +96,13 @@
                         android:inputType="textPersonName"
                         android:hint="Comment" />
 
+
                     <Button
                         android:id="@+id/chat_add_button"
-                        android:layout_width="wrap_content"
+                        android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/round_bg"
+                        android:background="#68c7f9"
                         android:text="Send" />
                 </LinearLayout>
 
