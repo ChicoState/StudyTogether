@@ -37,6 +37,7 @@ import com.studytogether.studytogether.Adapters.UserAdapter;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.Models.User;
+import com.studytogether.studytogether.Models.UserGroupList;
 import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ public class GroupDetailActivity extends AppCompatActivity {
     Button detailJoinButton;
 
     List<User> userList;
+
+    Boolean alreadyJoined;
 
     private RecyclerView userRecyclerView;
     private RecyclerView.Adapter userAdapter;
@@ -97,6 +100,13 @@ public class GroupDetailActivity extends AppCompatActivity {
         String groupName = intent.getExtras().getString("GroupName");
         String groupPlace = intent.getExtras().getString("GroupPlace");
         String groupGoal = intent.getExtras().getString("GroupGoal");
+        String tutor = intent.getExtras().getString("tutor");
+        String numOfGroupMember = intent.getExtras().getString("numOfGroupMember");
+        String startTime = intent.getExtras().getString("startTime");
+        String endTime = intent.getExtras().getString("endTime");
+        String groupPicture = getIntent().getStringExtra("GroupPicture");
+        String ownerId = intent.getExtras().getString("OwnerId");
+        String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
         String groupKey = intent.getExtras().getString("GroupKey");
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
@@ -112,8 +122,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(groupName);
 
         final ImageView imageView = findViewById(R.id.detail_backdrop);
-        String detailGroupImageUrl = getIntent().getStringExtra("GroupImg");
-        Glide.with(this).load(detailGroupImageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
+        Glide.with(this).load(groupPicture).apply(RequestOptions.centerCropTransform()).into(imageView);
 
 
         // Set items with info
@@ -126,12 +135,56 @@ public class GroupDetailActivity extends AppCompatActivity {
         updateUser(groupKey);
 
 
+
+
+        alreadyJoined = false;
+
+
+        DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
+        userGroupListReference.addValueEventListener(new ValueEventListener() {
+            // Detect the changes
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                List<String> groupList = new ArrayList<>();
+                for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+
+                    UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
+                    showMessage(userGroupList.getGroupKey());
+
+                    if(groupKey.equals(userGroupList.getGroupKey())) {
+                        alreadyJoined = true;
+                    }
+                }
+                showMessage("alreadyjoined is "+ alreadyJoined);
+                if(alreadyJoined) {
+                    detailJoinButton.setVisibility(View.INVISIBLE);
+                    showMessage("You are already joined the group");
+                }
+                else {
+                    showMessage("Come on in!");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
+
+
         detailJoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
                 DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey).push();
+
+                DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+
+                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
+
+                showMessage("Welcome!");
                 String userEmail = firebaseUser.getEmail();
                 String userId = firebaseUser.getUid();
                 String userName = firebaseUser.getDisplayName();
@@ -151,11 +204,20 @@ public class GroupDetailActivity extends AppCompatActivity {
                 });
 
 
-                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
-                Group group;
+                Group group = new Group(groupName, groupGoal, groupPlace, tutor, numOfGroupMember, startTime, endTime, groupPicture, ownerId, groupOwnerPhoto );
+                UserGroupList userGroupList = new UserGroupList(group, groupKey);
 
-
-
+                userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        detailJoinButton.setVisibility(View.INVISIBLE);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showMessage("fail to add comment : "+e.getMessage());
+                    }
+                });
             }
         });
 

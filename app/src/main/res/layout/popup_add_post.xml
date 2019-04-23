@@ -133,7 +133,7 @@
         android:background="@drawable/popup_edittext_style"
         android:ems="10"
         android:hint="Current Group Members"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

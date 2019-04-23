@@ -88,11 +88,20 @@ public class GroupChatActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String chatGroupName = intent.getExtras().getString("GroupName");
-        String chatGroupPlace = intent.getExtras().getString("GroupPlace");
-        String chatGroupGoal = intent.getExtras().getString("GroupGoal");
-        String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
+
+        String groupName = intent.getExtras().getString("GroupName");
+        String groupPlace = intent.getExtras().getString("GroupPlace");
+        String groupGoal = intent.getExtras().getString("GroupGoal");
+        String tutor = intent.getExtras().getString("tutor");
+        String numOfGroupMember = intent.getExtras().getString("numOfGroupMember");
+        String startTime = intent.getExtras().getString("startTime");
+        String endTime = intent.getExtras().getString("endTime");
+        String groupPicture = getIntent().getStringExtra("GroupPicture");
+        String ownerId = intent.getExtras().getString("OwnerId");
+        String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
         String groupKey = intent.getExtras().getString("GroupKey");
+        String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
+
 
 
 
@@ -102,11 +111,10 @@ public class GroupChatActivity extends AppCompatActivity {
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.chat_collapsing_toolbar);
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.toolbar_text);
-        collapsingToolbar.setTitle(chatGroupName);
+        collapsingToolbar.setTitle(groupName);
 
         final ImageView imageView = findViewById(R.id.chat_backdrop);
-        String imageUrl = getIntent().getStringExtra("GroupImg");
-        Glide.with(this).load(imageUrl).apply(RequestOptions.centerCropTransform()).into(imageView);
+        Glide.with(this).load(groupPicture).apply(RequestOptions.centerCropTransform()).into(imageView);
 
         final AppBarLayout appbarLayout = (AppBarLayout)findViewById(R.id.chat_appbar_layout);
         FloatingActionButton groupDetail = (FloatingActionButton) findViewById(R.id.group_detail_btn);
@@ -117,12 +125,21 @@ public class GroupChatActivity extends AppCompatActivity {
                 Intent groupDetailActivity = new Intent(getApplicationContext(), GroupDetailActivity.class);
 
                 // passing data to the GroupDetailActivity
-                groupDetailActivity.putExtra("GroupName", chatGroupName);
-                groupDetailActivity.putExtra("GroupPlace", chatGroupPlace);
-                groupDetailActivity.putExtra("GroupGoal", chatGroupGoal);
-                groupDetailActivity.putExtra("GroupImg", imageUrl);
+                groupDetailActivity.putExtra("GroupName", groupName);
+                groupDetailActivity.putExtra("GroupGoal", groupGoal);
+                groupDetailActivity.putExtra("GroupPlace", groupPlace);
+                groupDetailActivity.putExtra("GroupImg", groupOwnerPhoto);
+                groupDetailActivity.putExtra("tutor",tutor);
+                groupDetailActivity.putExtra("numOfGroupMember",numOfGroupMember);
+                groupDetailActivity.putExtra("startTime",startTime);
+                groupDetailActivity.putExtra("endTime",endTime);
+                groupDetailActivity.putExtra("GroupPicture",groupPicture);
+                groupDetailActivity.putExtra("OwnerId",ownerId);
+                groupDetailActivity.putExtra("GroupOwnerPhoto",groupOwnerPhoto);
+
                 groupDetailActivity.putExtra("GroupKey", groupKey);
                 groupDetailActivity.putExtra("addedDate", groupCreated);
+
                 startActivity(groupDetailActivity);
             }
         });
