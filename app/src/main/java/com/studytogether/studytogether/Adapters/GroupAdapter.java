@@ -13,15 +13,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Activities.GroupChatActivity;
 import com.studytogether.studytogether.Activities.GroupDetailActivity;
 import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.Models.UserGroupList;
 import com.studytogether.studytogether.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // GroupAdapter for recyclerView
 public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
 
     // View Type
     private static final int TYPE_STUDY = 1;
@@ -135,6 +148,10 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public MyViewHolder(View itemView) {
             super(itemView);
 
+            firebaseAuth = FirebaseAuth.getInstance();
+            firebaseUser = firebaseAuth.getCurrentUser();
+            firebaseDatabase = FirebaseDatabase.getInstance();
+
             // Set the attributes with each item
             tvGroupName = itemView.findViewById(R.id.row_group_name);
             tvGroupPlace = itemView.findViewById(R.id.row_group_place);
@@ -150,21 +167,68 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
+                    String userId = firebaseUser.getUid();
                     int position = getAdapterPosition();
-                    groupChatActivity.putExtra("GroupPosition",position);
-                    groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+                    String groupKey = filteredGroup.get(position).getGroupKey();
 
-                    groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                    groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
-                    groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                    groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                    groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
-                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
-                    groupChatActivity.putExtra("addedDate", timestamp);
+                    DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
+                    userGroupListReference.addValueEventListener(new ValueEventListener() {
+                        Boolean alreadyJoined = false;
+                        // Detect the changes
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    // start the GroupDetailActivity
-                    mContext.startActivity(groupChatActivity);
+                            for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+
+                                UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
+
+                                if(groupKey.equals(userGroupList.getGroupKey())) {
+                                    alreadyJoined = true;
+                                }
+                            }
+                            if(alreadyJoined) {
+                                Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
+                                groupChatActivity.putExtra("GroupPosition",position);
+                                groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+
+                                groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                                groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupChatActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
+                                groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
+                                long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                                groupChatActivity.putExtra("addedDate", timestamp);
+
+                                // start the GroupDetailActivity
+                                mContext.startActivity(groupChatActivity);
+                            }
+                            else {
+                                Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                                groupDetailActivity.putExtra("GroupPosition",position);
+                                groupDetailActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+
+                                groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                                groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupDetailActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
+                                groupDetailActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
+                                long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                                groupDetailActivity.putExtra("addedDate", timestamp);
+
+                                // start the GroupDetailActivity
+                                mContext.startActivity(groupDetailActivity);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+
+
+
+
+
                 }
             });
         }
@@ -187,6 +251,10 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public MyViewHolderTutor(View itemView) {
             super(itemView);
 
+            firebaseAuth = FirebaseAuth.getInstance();
+            firebaseUser = firebaseAuth.getCurrentUser();
+            firebaseDatabase = FirebaseDatabase.getInstance();
+
             // Set the attributes with each item
             tvGroupName = itemView.findViewById(R.id.row_group_name);
             tvGroupPlace = itemView.findViewById(R.id.row_group_place);
@@ -203,21 +271,63 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View view) {
 
-                    Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
+                    String userId = firebaseUser.getUid();
                     int position = getAdapterPosition();
-                    groupChatActivity.putExtra("GroupPosition",position);
-                    groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+                    String groupKey = filteredGroup.get(position).getGroupKey();
 
-                    groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                    groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
-                    groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                    groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
-                    groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
-                    long timestamp = (long) filteredGroup.get(position).getTimeStamp();
-                    groupChatActivity.putExtra("addedDate", timestamp);
+                    DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
+                    userGroupListReference.addValueEventListener(new ValueEventListener() {
+                        Boolean alreadyJoined = false;
+                        // Detect the changes
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    // start the GroupDetailActivity
-                    mContext.startActivity(groupChatActivity);
+                            for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+
+                                UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
+
+                                if(groupKey.equals(userGroupList.getGroupKey())) {
+                                    alreadyJoined = true;
+                                }
+                            }
+                            if(alreadyJoined) {
+                                Intent groupChatActivity = new Intent(mContext, GroupChatActivity.class);
+                                groupChatActivity.putExtra("GroupPosition",position);
+                                groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+
+                                groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                                groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                                groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
+                                long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                                groupChatActivity.putExtra("addedDate", timestamp);
+
+                                // start the GroupDetailActivity
+                                mContext.startActivity(groupChatActivity);
+                            }
+                            else {
+                                Intent groupDetailActivity = new Intent(mContext, GroupDetailActivity.class);
+                                groupDetailActivity.putExtra("GroupPosition",position);
+                                groupDetailActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
+
+                                groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
+                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+                                groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                                groupDetailActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
+                                long timestamp = (long) filteredGroup.get(position).getTimeStamp();
+                                groupDetailActivity.putExtra("addedDate", timestamp);
+
+                                // start the GroupDetailActivity
+                                mContext.startActivity(groupDetailActivity);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
                 }
             });
         }

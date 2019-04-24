@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,11 +56,10 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
-    Button detailJoinButton;
+    Button detailJoinButton, detailQuickButton;
 
     List<User> userList;
 
-    Boolean alreadyJoined;
 
     private RecyclerView userRecyclerView;
     private RecyclerView.Adapter userAdapter;
@@ -84,6 +85,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
+        detailQuickButton = findViewById(R.id.detail_quick_btn);
 
         userRecyclerView  = findViewById(R.id.userRV);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -137,32 +139,31 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
 
-        alreadyJoined = false;
 
 
         DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
         userGroupListReference.addValueEventListener(new ValueEventListener() {
+            Boolean alreadyJoined = false;
+
             // Detect the changes
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                List<String> groupList = new ArrayList<>();
                 for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                     UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
-                    showMessage(userGroupList.getGroupKey());
 
                     if(groupKey.equals(userGroupList.getGroupKey())) {
                         alreadyJoined = true;
                     }
                 }
-                showMessage("alreadyjoined is "+ alreadyJoined);
                 if(alreadyJoined) {
-                    detailJoinButton.setVisibility(View.INVISIBLE);
-                    showMessage("You are already joined the group");
+                    detailJoinButton.setVisibility(View.GONE);
+                    detailQuickButton.setVisibility(View.VISIBLE);
                 }
                 else {
-                    showMessage("Come on in!");
+                    detailJoinButton.setVisibility(View.VISIBLE);
+                    detailQuickButton.setVisibility(View.GONE);
                 }
             }
 
@@ -184,7 +185,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                 DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
 
-                showMessage("Welcome!");
                 String userEmail = firebaseUser.getEmail();
                 String userId = firebaseUser.getUid();
                 String userName = firebaseUser.getDisplayName();
@@ -194,7 +194,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                 userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        detailJoinButton.setVisibility(View.INVISIBLE);
+                        detailJoinButton.setVisibility(View.GONE);
+                        detailQuickButton.setVisibility(View.VISIBLE);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -210,7 +211,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                 userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        detailJoinButton.setVisibility(View.INVISIBLE);
+                        detailJoinButton.setVisibility(View.GONE);
+                        detailQuickButton.setVisibility(View.VISIBLE);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -218,6 +220,100 @@ public class GroupDetailActivity extends AppCompatActivity {
                         showMessage("fail to add comment : "+e.getMessage());
                     }
                 });
+            }
+        });
+
+
+
+
+        detailQuickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey);
+
+                DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+
+                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
+
+
+                userGroupListReference.addValueEventListener(new ValueEventListener() {
+                    // Detect the changes
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        Boolean alreadyJoined = false;
+
+                        // Reinitialize the groupList
+                        // Loop whole groups
+                        for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+                            UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
+
+                            if(groupKey.equals(userGroupList.getGroupKey())) {
+                                userGroupListReference.child(groupsnap.getKey()).setValue(null);
+                                alreadyJoined = false;
+                            }
+                        }
+                        if(alreadyJoined) {
+                            detailJoinButton.setVisibility(View.GONE);
+                            detailQuickButton.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            detailJoinButton.setVisibility(View.VISIBLE);
+                            detailQuickButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+
+                userReference.addValueEventListener(new ValueEventListener() {
+                    // Detect the changes
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Boolean alreadyJoined = false;
+
+
+
+                        userList = new ArrayList<>();
+                        // Reinitialize the groupList
+                        // Loop whole groups
+                        for (DataSnapshot usersnap: dataSnapshot.getChildren()) {
+                            User user = usersnap.getValue(User.class);
+
+                            if(userId.equals(user.getuserId())) {
+                                userReference.child(usersnap.getKey()).setValue(null);
+                                alreadyJoined = false;
+                            }
+                            else {
+                                userList.add(user);
+                            }
+                        }
+                        if(alreadyJoined) {
+                            detailJoinButton.setVisibility(View.GONE);
+                            detailQuickButton.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            detailJoinButton.setVisibility(View.VISIBLE);
+                            detailQuickButton.setVisibility(View.GONE);
+
+                            Intent homeIntent = new Intent(GroupDetailActivity.this, Home.class);
+                            startActivity(homeIntent);
+                            finish();
+                        }
+
+                        userAdapter = new UserAdapter(GroupDetailActivity.this,userList);
+                        userRecyclerView.setAdapter(userAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
             }
         });
 
@@ -290,6 +386,14 @@ public class GroupDetailActivity extends AppCompatActivity {
     // Show message to the user
     private void showMessage(String text) {
         Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG).show();
+    }
+
+    // Back-button
+    @Override
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(GroupDetailActivity.this, Home.class);
+        startActivity(homeIntent);
+        finish();
     }
 
 }
