@@ -37,7 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     // Items
     private Button btnGoogleLogin;
     private ProgressBar loginProgress;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;// ...
+// Initialize Firebase Auth
     private Intent HomeActivity;
     private ImageView loginPhoto;
 
