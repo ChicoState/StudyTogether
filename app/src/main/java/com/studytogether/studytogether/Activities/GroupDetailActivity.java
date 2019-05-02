@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.BoringLayout;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Adapters.GroupAdapter;
 import com.studytogether.studytogether.Adapters.UserAdapter;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.GroupChat;
@@ -56,7 +58,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
-    Button detailJoinButton, detailQuickButton;
+    Button detailJoinButton, detailQuickButton, detailTerminateGroupButton;
 
     List<User> userList;
 
@@ -86,6 +88,10 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
         detailQuickButton = findViewById(R.id.detail_quick_btn);
+        detailTerminateGroupButton = findViewById(R.id.detail_terminate_btn);
+        detailJoinButton.setVisibility(View.GONE);
+        detailQuickButton.setVisibility(View.GONE);
+        detailTerminateGroupButton.setVisibility(View.GONE);
 
         userRecyclerView  = findViewById(R.id.userRV);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -138,9 +144,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
 
-
-
-
         DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
         userGroupListReference.addValueEventListener(new ValueEventListener() {
             Boolean alreadyJoined = false;
@@ -157,14 +160,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                         alreadyJoined = true;
                     }
                 }
-                if(alreadyJoined) {
-                    detailJoinButton.setVisibility(View.GONE);
-                    detailQuickButton.setVisibility(View.VISIBLE);
-                }
-                else {
-                    detailJoinButton.setVisibility(View.VISIBLE);
-                    detailQuickButton.setVisibility(View.GONE);
-                }
+
+                buttonController(alreadyJoined, firebaseUser.getUid(), groupKey);
             }
 
             @Override
@@ -194,8 +191,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        detailJoinButton.setVisibility(View.GONE);
-                        detailQuickButton.setVisibility(View.VISIBLE);
+                        buttonController(true, firebaseUser.getUid(), groupKey);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -211,8 +207,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        detailJoinButton.setVisibility(View.GONE);
-                        detailQuickButton.setVisibility(View.VISIBLE);
+                        buttonController(true, firebaseUser.getUid(), groupKey);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -229,6 +224,9 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailQuickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                firebaseAuth = FirebaseAuth.getInstance();
+                firebaseUser = firebaseAuth.getCurrentUser();
 
                 DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey);
 
@@ -254,14 +252,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                                 alreadyJoined = false;
                             }
                         }
-                        if(alreadyJoined) {
-                            detailJoinButton.setVisibility(View.GONE);
-                            detailQuickButton.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            detailJoinButton.setVisibility(View.VISIBLE);
-                            detailQuickButton.setVisibility(View.GONE);
-                        }
+
+                        buttonController(alreadyJoined, firebaseUser.getUid(), groupKey);
                     }
 
                     @Override
@@ -292,14 +284,10 @@ public class GroupDetailActivity extends AppCompatActivity {
                                 userList.add(user);
                             }
                         }
-                        if(alreadyJoined) {
-                            detailJoinButton.setVisibility(View.GONE);
-                            detailQuickButton.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            detailJoinButton.setVisibility(View.VISIBLE);
-                            detailQuickButton.setVisibility(View.GONE);
 
+                        buttonController(alreadyJoined, firebaseUser.getUid(), groupKey);
+
+                        if(alreadyJoined == false) {
                             Intent homeIntent = new Intent(GroupDetailActivity.this, Home.class);
                             startActivity(homeIntent);
                             finish();
@@ -313,6 +301,44 @@ public class GroupDetailActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+
+            }
+        });
+
+        detailTerminateGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                firebaseAuth = FirebaseAuth.getInstance();
+                firebaseUser = firebaseAuth.getCurrentUser();
+
+                DatabaseReference userReference = firebaseDatabase.getReference("User");
+
+                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList");
+
+                DatabaseReference groupChatReference = firebaseDatabase.getReference("GroupChat");
+
+                DatabaseReference groupReference = firebaseDatabase.getReference("Groups");
+
+
+
+
+                userReference.child(groupKey).setValue(null);
+
+                userGroupListReference.child(groupKey).setValue(null);
+
+                groupChatReference.child(groupKey).setValue(null);
+
+                groupReference.child(groupKey).setValue(null);
+
+
+
+
+                Intent homeIntent = new Intent(GroupDetailActivity.this, Home.class);
+                startActivity(homeIntent);
+                finish();
 
             }
         });
@@ -363,6 +389,48 @@ public class GroupDetailActivity extends AppCompatActivity {
                 // Set recyclerView using userAdapter
                 userAdapter = new UserAdapter(GroupDetailActivity.this,userList);
                 userRecyclerView.setAdapter(userAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void buttonController(Boolean alreadyJoined, String currentUserId, String groupKey) {
+
+        DatabaseReference currentGroupReference = firebaseDatabase.getReference("Groups");
+
+        currentGroupReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Loop whole groups
+                for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+
+                    Group group = groupsnap.getValue(Group.class);
+                    if(groupKey.contains(group.getGroupKey())) {
+                        String currentGroupOwnerId = group.getOwnerId();
+
+                        if (alreadyJoined) {
+                            detailJoinButton.setVisibility(View.GONE);
+                            if (currentUserId.equals(currentGroupOwnerId)) {
+                                detailTerminateGroupButton.setVisibility(View.VISIBLE);
+                            } else {
+                                detailTerminateGroupButton.setVisibility(View.GONE);
+                                detailQuickButton.setVisibility(View.VISIBLE);
+                            }
+                        } else {
+                            if(firebaseUser.getUid().equals(currentGroupOwnerId)){
+                                detailJoinButton.setVisibility(View.GONE);
+                                detailTerminateGroupButton.setVisibility(View.VISIBLE);
+                            } else {
+                                detailJoinButton.setVisibility(View.VISIBLE);
+                            }
+                            detailQuickButton.setVisibility(View.GONE);
+                        }
+
+                    }
+                }
             }
 
             @Override

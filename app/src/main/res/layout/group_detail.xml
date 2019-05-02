@@ -175,11 +175,10 @@
                     android:orientation="vertical">
 
 
-                    <TextView
-                        android:id="@+id/textView6"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/userRV"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Map will be located" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -194,11 +193,42 @@
                     android:orientation="vertical">
 
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/userRV"
+                    <TextView
+                        android:id="@+id/textView6"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="wrap_content"
+                        android:text="Map will be located" />
                 </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:textAlignment="center"
+                        android:text="IF YOU CLICK THIS BUTTON, THE GROUP WILL BE TERMINATED AND DATA WILL BE DELETED" />
+
+                    <Button
+                        android:id="@+id/detail_terminate_btn"
+                        android:textColor="#fff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="40dp"
+                        android:background="#ff0000"
+                        android:text="Terminate this group" />
+
+                </RelativeLayout>
             </android.support.v7.widget.CardView>
 
 

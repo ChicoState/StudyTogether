@@ -44,6 +44,8 @@ import com.studytogether.studytogether.Fragments.ProfileFragment;
 import com.studytogether.studytogether.Fragments.SettingsFragment;
 import com.studytogether.studytogether.Fragments.TutorFragment;
 import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.Models.User;
+import com.studytogether.studytogether.Models.UserGroupList;
 import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
 
@@ -67,6 +69,10 @@ public class Home extends AppCompatActivity
     // Firebase
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
+
+    DatabaseReference userReference;
+
+    DatabaseReference userGroupListReference;
 
     // Dialog for popup
     Dialog popAddGroup;
@@ -272,6 +278,7 @@ public class Home extends AppCompatActivity
 
                                     // Add the group
                                     addGroup(group);
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -325,6 +332,47 @@ public class Home extends AppCompatActivity
                 popAddGroup.dismiss();
             }
         });
+
+
+        userReference = database.getReference("User").child(key).push();
+
+        userGroupListReference = database.getReference("UserGroupList").child(currentUser.getUid()).push();
+
+
+        String userEmail = currentUser.getEmail();
+        String userId = currentUser.getUid();
+        String userName = currentUser.getDisplayName();
+        String userImage = currentUser.getPhotoUrl().toString();
+        User user = new User(userEmail,userId,userImage,userName);
+
+
+        userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                showMessage("Successfully added");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showMessage("fail to add comment : "+e.getMessage());
+            }
+        });
+
+
+        UserGroupList userGroupList = new UserGroupList(group, key);
+
+        userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                showMessage("Successfully added");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showMessage("fail to add comment : "+e.getMessage());
+            }
+        });
+
     }
 
     // Print Message into user
@@ -389,6 +437,8 @@ public class Home extends AppCompatActivity
             getSupportActionBar().setTitle("Tutoring");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new TutorFragment()).commit();
         } else if (id == R.id.nav_profile) {
+            //Intent profileActivity = new Intent(this, ProfileActivity.class);
+            //startActivity(profileActivity);
             getSupportActionBar().setTitle("Profile");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new ProfileFragment()).commit();
         } else if (id == R.id.nav_settings) {

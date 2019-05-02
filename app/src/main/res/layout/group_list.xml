@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.TutorFragment">
-
+    tools:context=".Fragments.GroupListFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/tutorRV"
+        android:id="@+id/my_group_listRV"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

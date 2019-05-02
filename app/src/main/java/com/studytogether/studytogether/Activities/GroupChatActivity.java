@@ -15,6 +15,7 @@ import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -85,6 +86,8 @@ public class GroupChatActivity extends AppCompatActivity {
         // use a linear layout manager
         chatLayoutManager = new LinearLayoutManager(this);
         commentRecyclerView.setLayoutManager(chatLayoutManager);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 
         Intent intent = getIntent();
