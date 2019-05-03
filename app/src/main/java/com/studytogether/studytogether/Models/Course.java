@@ -14,14 +14,14 @@ public class Course {
     private int startMin;
     private int endHour;
     private int endMin;
-    private Boolean mon;
-    private Boolean tue;
-    private Boolean wed;
-    private Boolean tur;
-    private Boolean fri;
+    private boolean monday;
+    private boolean tuesday;
+    private boolean wednesday;
+    private boolean thursday;
+    private boolean friday;
     private String buildingRoom;
 
-    public Course(String subject, int categoryNum, String courseTitle, int startHour, int startMin, int endHour, int endMin, Boolean mon, Boolean tue, Boolean wed, Boolean tur, Boolean fri, String buildingRoom) {
+    public Course(String subject, int categoryNum, String courseTitle, int startHour, int startMin, int endHour, int endMin, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, String buildingRoom) {
         this.subject = subject;
         this.categoryNum = categoryNum;
         this.courseTitle = courseTitle;
@@ -29,11 +29,11 @@ public class Course {
         this.startMin = startMin;
         this.endHour = endHour;
         this.endMin = endMin;
-        this.mon = mon;
-        this.tue = tue;
-        this.wed = wed;
-        this.tur = tur;
-        this.fri = fri;
+        this.monday = monday;
+        this.tuesday = tuesday;
+        this.wednesday = wednesday;
+        this.thursday = thursday;
+        this.friday = friday;
         this.buildingRoom = buildingRoom;
     }
 
@@ -72,6 +72,31 @@ public class Course {
         return buildingRoom;
     }
 
+    public boolean isMonday() {
+        return monday;
+    }
+
+    public boolean isTuesday() {
+        return tuesday;
+    }
+
+    public boolean isWednesday() {
+        return wednesday;
+    }
+
+    public boolean isThursday() {
+        return thursday;
+    }
+
+    public boolean isFriday() {
+        return friday;
+    }
+
+
+
+
+
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -102,5 +127,25 @@ public class Course {
 
     public void setBuildingRoom(String buildingRoom) {
         this.buildingRoom = buildingRoom;
+    }
+
+    public void setMonday(boolean monday) {
+        this.monday = monday;
+    }
+
+    public void setTuesday(boolean tuesday) {
+        this.tuesday = tuesday;
+    }
+
+    public void setWednesday(boolean wednesday) {
+        this.wednesday = wednesday;
+    }
+
+    public void setThursday(boolean thursday) {
+        this.thursday = thursday;
+    }
+
+    public void setFriday(boolean friday) {
+        this.friday = friday;
     }
 }

@@ -457,8 +457,10 @@ public class Home extends AppCompatActivity
             getSupportActionBar().setTitle("Profile");
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new ProfileFragment()).commit();
         } else if (id == R.id.nav_settings) {
-            getSupportActionBar().setTitle("Settings");
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
+            getSupportActionBar().setTitle("AddCourse");
+            Intent addCourseActivity = new Intent(this, AddCourse.class);
+            startActivity(addCourseActivity);
+            //getSupportFragmentManager().beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
         } else if (id == R.id.nav_signout) {
             // If the user want to sign out, sign out through Firebase authorization
             //FirebaseAuth.getInstance().signOut();

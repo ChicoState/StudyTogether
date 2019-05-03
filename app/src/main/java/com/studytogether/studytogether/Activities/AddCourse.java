@@ -34,9 +34,7 @@ public class AddCourse extends AppCompatActivity {
     CheckBox mon, tue, wed, tur, fri;
 
     private int startHour, startMin, endHour, endMin;
-    private Boolean monCheck, tueCheck, wedCheck, turCheck, friCheck;
-
-    List<Boolean> courseDays;
+    private boolean monCheck, tueCheck, wedCheck, turCheck, friCheck;
 
 
     TimePickerDialog timePickerDialog;
@@ -52,7 +50,7 @@ public class AddCourse extends AppCompatActivity {
 
         courseSubject = findViewById(R.id.edit_subject);
         categoryNum = findViewById(R.id.edit_category_num);
-        courseTitle = findViewById(R.id.edit_category_num);
+        courseTitle = findViewById(R.id.edit_course_title);
 
         startTime = findViewById(R.id.edit_start_time);
         endTime = findViewById(R.id.edit_end_time);
@@ -63,7 +61,7 @@ public class AddCourse extends AppCompatActivity {
         mon = findViewById(R.id.mon);
         tue = findViewById(R.id.tue);
         wed = findViewById(R.id.wed);
-        tur = findViewById(R.id.tur);
+        tur = findViewById(R.id.thur);
         fri = findViewById(R.id.fri);
 
 
@@ -83,6 +81,8 @@ public class AddCourse extends AppCompatActivity {
                                               int minute) {
 
                             startTime.setText(hourOfDay + " : " + minute);
+                            startHour = hourOfDay;
+                            startMin = minute;
                         }
                     }, startHour, startMin, false);
             timePickerDialog.show();
@@ -101,60 +101,12 @@ public class AddCourse extends AppCompatActivity {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
-
                             endTime.setText(hourOfDay + " : " + minute);
+                            endHour = hourOfDay;
+                            endMin = minute;
                         }
                     }, endHour, endMin, false);
             timePickerDialog.show();
-        });
-
-
-
-
-        mon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                monCheck = false;
-                if (((CheckBox) v).isChecked()) {
-                    monCheck = true;
-                }
-            }
-        });
-        tue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tueCheck = false;
-                if (((CheckBox) v).isChecked()) {
-                    tueCheck = true;
-                }
-            }
-        });
-        wed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wedCheck = false;
-                if (((CheckBox) v).isChecked()) {
-                    wedCheck = true;
-                }
-            }
-        });
-        tur.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turCheck = false;
-                if (((CheckBox) v).isChecked()) {
-                    turCheck = true;
-                }
-            }
-        });
-        fri.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                friCheck = false;
-                if (((CheckBox) v).isChecked()) {
-                    friCheck = true;
-                }
-            }
         });
 
 
@@ -164,6 +116,12 @@ public class AddCourse extends AppCompatActivity {
         addCourseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean monChecked = ((CheckBox) findViewById(R.id.mon)).isChecked();
+                boolean tueChecked = ((CheckBox) findViewById(R.id.tue)).isChecked();
+                boolean wedChecked = ((CheckBox) findViewById(R.id.wed)).isChecked();
+                boolean thurChecked = ((CheckBox) findViewById(R.id.thur)).isChecked();
+                boolean friChecked = ((CheckBox) findViewById(R.id.fri)).isChecked();
+                showMessage("mon: "+ monChecked + "tue: "+ tueChecked);
                 Course course = new Course(
                         courseSubject.getText().toString(),
                         Integer.parseInt(categoryNum.getText().toString()),
@@ -172,11 +130,11 @@ public class AddCourse extends AppCompatActivity {
                         startMin,
                         endHour,
                         endMin,
-                        monCheck,
-                        tueCheck,
-                        wedCheck,
-                        turCheck,
-                        friCheck,
+                        monChecked,
+                        tueChecked,
+                        wedChecked,
+                        thurChecked,
+                        friChecked,
                         buildingRoom.getText().toString());
                 addCourse(course);
             }
@@ -194,7 +152,7 @@ public class AddCourse extends AppCompatActivity {
         courseReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                showMessage("Course Added successfully");
+                //showMessage("Course Added successfully");
             }
         });
     }
