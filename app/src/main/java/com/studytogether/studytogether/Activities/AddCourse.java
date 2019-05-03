@@ -10,9 +10,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.R;
@@ -175,7 +178,30 @@ public class AddCourse extends AppCompatActivity {
                         turCheck,
                         friCheck,
                         buildingRoom.getText().toString());
+                addCourse(course);
             }
         });
+    }
+    private void addCourse(Course course) {
+        // Firebase
+        // Get database instance
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        DatabaseReference courseReference = database.getReference("Course").push();
+
+
+        // SuccessListener
+        courseReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                showMessage("Course Added successfully");
+            }
+        });
+    }
+
+    // Print Message into user
+    private void showMessage(String message) {
+        // Long time showed up message
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
