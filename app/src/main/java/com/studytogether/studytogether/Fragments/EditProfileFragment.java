@@ -1,7 +1,10 @@
 package com.studytogether.studytogether.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,7 +17,10 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.studytogether.studytogether.R;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,6 +50,7 @@ public class EditProfileFragment extends Fragment {
 
     ImageView editUserPhoto;
     TextView editUserName, editUserEmail;
+    Button addCourse;
 
     public EditProfileFragment() {
     }
@@ -61,6 +69,8 @@ public class EditProfileFragment extends Fragment {
         editUserName = fragmentView.findViewById(R.id.edit_profile_user_name);
         editUserEmail = fragmentView.findViewById(R.id.edit_profile_user_email);
         editUserPhoto = fragmentView.findViewById(R.id.edit_profile_user_photo);
+
+
 
         editUserName.setText(userName);
         editUserEmail.setText(userEmail);
@@ -105,6 +115,8 @@ public class EditProfileFragment extends Fragment {
         return fragmentView;
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -140,6 +152,59 @@ public class EditProfileFragment extends Fragment {
         }
 
 
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        addCourse = (Button) getActivity().findViewById(R.id.edit_add_course_button);
+
+        addCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder spinnerBuilder = new AlertDialog.Builder(getContext());
+                View addCourseSpinnerView = getLayoutInflater().inflate(R.layout.add_course_spinner, null);
+                spinnerBuilder.setTitle("Choose subject and category number");
+                Spinner subjectSpinner = (Spinner) addCourseSpinnerView.findViewById(R.id.subjectSpinner);
+                Spinner categoryNumSpinner = (Spinner) addCourseSpinnerView.findViewById(R.id.categoryNumSpinner);
+
+                ArrayAdapter<String> subjectAdapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.courseSubjectList));
+                subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                subjectSpinner.setAdapter(subjectAdapter);
+
+                ArrayAdapter<String> categoryNumAdapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.csciCategoryNum));
+                categoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                categoryNumSpinner.setAdapter(categoryNumAdapter);
+
+                spinnerBuilder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(!subjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…")) {
+                            Toast.makeText(getActivity(), subjectSpinner.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+
+                spinnerBuilder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                spinnerBuilder.setView(addCourseSpinnerView);
+                AlertDialog dialog = spinnerBuilder.create();
+                dialog.show();
+
+            }
+        });
     }
 
 }

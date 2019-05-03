@@ -15,4 +15,16 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string-array name="courseSubjectList">
+        <item>Choose subject…</item>
+        <item>CSCI</item>
+        <item>CINS</item>
+        <item>EECE</item>
+    </string-array>
+    <string-array name="csciCategoryNum">
+        <item>Choose course number…</item>
+        <item>101</item>
+        <item>111</item>
+        <item>211</item>
+    </string-array>
 </resources>
