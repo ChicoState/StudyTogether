@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     static final int GOOGLE_SIGN_IN = 123;
 
     // Items
-    private Button btnGoogleLogin;
+    private SignInButton signInButton;
     private ProgressBar loginProgress;
     private FirebaseAuth mAuth;// ...
 // Initialize Firebase Auth
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set up items
         loginProgress = findViewById(R.id.login_progress);
-        btnGoogleLogin = findViewById(R.id.google_login_btn);
+        signInButton = (SignInButton) findViewById(R.id.google_login_btn);
 
         // Firebase authorization
         mAuth = FirebaseAuth.getInstance();
@@ -78,11 +79,12 @@ public class LoginActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
+        signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showMessage("google login btn clicked");
-                SignInGoogle();
+                Intent signinInent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signinInent, GOOGLE_SIGN_IN);
             }
         });
     }
