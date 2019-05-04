@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.R;
@@ -17,12 +18,12 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context mContext;
 
-    private List<Course> coursess;
+    private List<Course> courses;
 
     // CourseAdapter Constructor
-    public CourseAdapter(Context mContext, List<Course> coursess) {
+    public CourseAdapter(Context mContext, List<Course> courses) {
         this.mContext = mContext;
-        this.coursess = coursess;
+        this.courses = courses;
     }
 
     @NonNull
@@ -43,12 +44,12 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        final Course course = coursess.get(position);
+        final Course course = courses.get(position);
 
         CourseViewHolder courseViewHolder = (CourseViewHolder) holder;
 
         if(course != null) {
-            if(course.getSubject() != null && String.valueOf(course.getCategoryNum()) != null && course.getCourseTitle() != null) {
+            if(course.getSubject() != null && course.getCourseTitle() != null) {
                 courseViewHolder.tvSubject.setText(course.getSubject());
                 courseViewHolder.tvCategoryNum.setText(String.valueOf(course.getCategoryNum()));
                 courseViewHolder.tvCourseTitle.setText(course.getCourseTitle());
@@ -58,7 +59,7 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return 0;
+        return courses.size();
     }
 
     // Create myViewHolder as RecyclerView.ViewHolder
@@ -77,6 +78,8 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvSubject = itemView.findViewById(R.id.row_subject);
             tvCategoryNum = itemView.findViewById(R.id.row_category_num);
             tvCourseTitle = itemView.findViewById(R.id.row_course_title);
+            Toast.makeText(mContext," Adapter in CourseViewHolder",Toast.LENGTH_LONG).show();
+
 
         }
     }

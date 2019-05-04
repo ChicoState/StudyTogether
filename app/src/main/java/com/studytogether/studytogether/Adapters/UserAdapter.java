@@ -38,7 +38,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         // Inflate with row_group_item_new view
         view = LayoutInflater.from(mContext).inflate(R.layout.row_user,parent,false);
         // Pass the view into viewHolder
-        viewHolder = new ChatViewHolder(view);
+        viewHolder = new UserViewHolder(view);
 
         return viewHolder;
     }
@@ -47,7 +47,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final User user = users.get(position);
 
-        ChatViewHolder chatViewHolder = (ChatViewHolder) holder;
+        UserViewHolder chatViewHolder = (UserViewHolder) holder;
 
         if(user != null) {
             if(user.getuserName() != null && user.getUserEmail() != null && user.getuserImage() != null) {
@@ -64,7 +64,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     // Create myViewHolder as RecyclerView.ViewHolder
-    public class ChatViewHolder extends RecyclerView.ViewHolder {
+    public class UserViewHolder extends RecyclerView.ViewHolder {
         TextView tvUserUserName;
         TextView tvUserUserEmail;
         ImageView imgUserUserPhoto;
@@ -72,7 +72,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
         // Create myViewHolder
-        public ChatViewHolder(View itemView) {
+        public UserViewHolder(View itemView) {
             super(itemView);
 
             // Set the attributes with each item

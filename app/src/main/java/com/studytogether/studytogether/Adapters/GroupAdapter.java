@@ -84,7 +84,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             case TYPE_TUTOR:
                 // Inflate with row_group_item_tutor view
-                view = LayoutInflater.from(mContext).inflate(R.layout.row_group_item_tutor,parent,false);
+                view = LayoutInflater.from(mContext).inflate(R.layout.row_group_tutor_here,parent,false);
                 // Pass the view into viewHolder
                 viewHolder = new MyViewHolderTutor(view);
                 break;

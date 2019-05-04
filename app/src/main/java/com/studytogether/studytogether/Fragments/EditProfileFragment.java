@@ -68,6 +68,7 @@ public class EditProfileFragment extends Fragment {
     RecyclerView courseRecyclerView;
     CourseAdapter courseAdapter;
     List<Course> courseList;
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
 
     public EditProfileFragment() {
     }
@@ -95,28 +96,7 @@ public class EditProfileFragment extends Fragment {
 
 
         courseRecyclerView  = fragmentView.findViewById(R.id.courseListRV);
-        courseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        courseRecyclerView.setHasFixedSize(true);
 
-        DatabaseReference tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId);
-        tutorCourseListReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                courseList = new ArrayList<>();
-                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
-                    Course course = coursesnap.getValue(Course.class);
-                    courseList.add(course);
-                }
-                courseAdapter = new CourseAdapter(getActivity(),courseList);
-                courseRecyclerView.setAdapter(courseAdapter);
-            }
-
-            // When the database doesn't response
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
 
 
@@ -161,6 +141,40 @@ public class EditProfileFragment extends Fragment {
         return fragmentView;
     }
 
+    private void updateTutorCourseList() {
+
+        courseRecyclerView.setLayoutManager(linearLayoutManager);
+        courseRecyclerView.setHasFixedSize(true);
+
+        // Firebase
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+
+        String currentUserId = firebaseUser.getUid();
+
+        DatabaseReference tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId);
+        tutorCourseListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                courseList = new ArrayList<>();
+                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+                    Course course = coursesnap.getValue(Course.class);
+                    courseList.add(course);
+                    //Toast.makeText(getContext()," Currenr userid: " + currentUserId + "  course name: " + course.getCourseTitle(),Toast.LENGTH_LONG).show();
+                }
+                courseAdapter = new CourseAdapter(getActivity(),courseList);
+                courseRecyclerView.setAdapter(courseAdapter);
+            }
+
+            // When the database doesn't response
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
 
 
     @Override
@@ -203,6 +217,8 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+
+        updateTutorCourseList();
 
         // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -290,5 +306,24 @@ public class EditProfileFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Get List Posts from the database
+        updateTutorCourseList();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
 
 }
