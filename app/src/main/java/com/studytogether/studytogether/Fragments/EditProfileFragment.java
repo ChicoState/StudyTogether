@@ -26,12 +26,17 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.R;
 
 import java.net.URI;
@@ -47,6 +52,9 @@ public class EditProfileFragment extends Fragment {
     // Firebase
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference tutorCourseListReference;
+    DatabaseReference courseReference;
 
     ImageView editUserPhoto;
     TextView editUserName, editUserEmail;
@@ -158,6 +166,14 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
 
+        // Firebase
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        String currentUserId = firebaseUser.getUid();
+        tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId).push();
+        courseReference = firebaseDatabase.getReference("Course");
+
         addCourse = (Button) getActivity().findViewById(R.id.edit_add_course_button);
 
         addCourse.setOnClickListener(new View.OnClickListener() {
@@ -185,8 +201,38 @@ public class EditProfileFragment extends Fragment {
                 spinnerBuilder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if(!subjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…")) {
+                        if((!subjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…")) && (!categoryNumSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose course number…"))) {
                             Toast.makeText(getActivity(), subjectSpinner.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+
+
+                            courseReference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    //courseList = new ArrayList<>();
+                                    for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                        Course course = coursesnap.getValue(Course.class);
+                                        String courseNum = String.valueOf(course.getCategoryNum());
+
+                                        if((course.getSubject().contains(subjectSpinner.getSelectedItem().toString())) && (courseNum.contains(categoryNumSpinner.getSelectedItem().toString()))) {
+                                            // SuccessListener
+                                            tutorCourseListReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getContext(),"Successfully added",Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+
+                                // When the database doesn't response
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+
                             dialogInterface.dismiss();
                         }
                     }

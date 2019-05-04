@@ -10,6 +10,7 @@ public class Course {
     private String subject;
     private int categoryNum;
     private String courseTitle;
+    /*
     private int startHour;
     private int startMin;
     private int endHour;
@@ -20,11 +21,13 @@ public class Course {
     private boolean thursday;
     private boolean friday;
     private String buildingRoom;
+    */
 
-    public Course(String subject, int categoryNum, String courseTitle, int startHour, int startMin, int endHour, int endMin, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, String buildingRoom) {
+    public Course(String subject, int categoryNum, String courseTitle/*, int startHour, int startMin, int endHour, int endMin, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, String buildingRoom*/) {
         this.subject = subject;
         this.categoryNum = categoryNum;
         this.courseTitle = courseTitle;
+        /*
         this.startHour = startHour;
         this.startMin = startMin;
         this.endHour = endHour;
@@ -35,6 +38,7 @@ public class Course {
         this.thursday = thursday;
         this.friday = friday;
         this.buildingRoom = buildingRoom;
+        */
     }
 
     public Course() {
@@ -51,6 +55,23 @@ public class Course {
     public String getCourseTitle() {
         return courseTitle;
     }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setCategoryNum(int categoryNum) {
+        this.categoryNum = categoryNum;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
+    }
+
+
+
+
+    /*
 
     public int getStartHour() {
         return startHour;
@@ -94,21 +115,6 @@ public class Course {
 
 
 
-
-
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public void setCategoryNum(int categoryNum) {
-        this.categoryNum = categoryNum;
-    }
-
-    public void setCourseTitle(String courseTitle) {
-        this.courseTitle = courseTitle;
-    }
-
     public void setStartHour(int startHour) {
         this.startHour = startHour;
     }
@@ -148,4 +154,5 @@ public class Course {
     public void setFriday(boolean friday) {
         this.friday = friday;
     }
+    */
 }

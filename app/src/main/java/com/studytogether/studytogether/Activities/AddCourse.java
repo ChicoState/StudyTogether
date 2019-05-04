@@ -31,18 +31,18 @@ public class AddCourse extends AppCompatActivity {
 
     EditText courseSubject, categoryNum, courseTitle, startTime, endTime, buildingRoom;
     Button addCourseButton;
-    CheckBox mon, tue, wed, tur, fri;
+    //CheckBox mon, tue, wed, tur, fri;
 
-    private int startHour, startMin, endHour, endMin;
-    private boolean monCheck, tueCheck, wedCheck, turCheck, friCheck;
+    //private int startHour, startMin, endHour, endMin;
+    //private boolean monCheck, tueCheck, wedCheck, turCheck, friCheck;
 
 
-    TimePickerDialog timePickerDialog;
+    //TimePickerDialog timePickerDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_course);
+        setContentView(R.layout.add_course_simple);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -52,11 +52,15 @@ public class AddCourse extends AppCompatActivity {
         categoryNum = findViewById(R.id.edit_category_num);
         courseTitle = findViewById(R.id.edit_course_title);
 
+
+        addCourseButton = findViewById(R.id.add_course_button);
+
+        /*
         startTime = findViewById(R.id.edit_start_time);
         endTime = findViewById(R.id.edit_end_time);
         buildingRoom = findViewById(R.id.edit_building_room);
 
-        addCourseButton = findViewById(R.id.add_course_button);
+
 
         mon = findViewById(R.id.mon);
         tue = findViewById(R.id.tue);
@@ -108,6 +112,7 @@ public class AddCourse extends AppCompatActivity {
                     }, endHour, endMin, false);
             timePickerDialog.show();
         });
+        */
 
 
 
@@ -116,16 +121,19 @@ public class AddCourse extends AppCompatActivity {
         addCourseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 boolean monChecked = ((CheckBox) findViewById(R.id.mon)).isChecked();
                 boolean tueChecked = ((CheckBox) findViewById(R.id.tue)).isChecked();
                 boolean wedChecked = ((CheckBox) findViewById(R.id.wed)).isChecked();
                 boolean thurChecked = ((CheckBox) findViewById(R.id.thur)).isChecked();
                 boolean friChecked = ((CheckBox) findViewById(R.id.fri)).isChecked();
                 showMessage("mon: "+ monChecked + "tue: "+ tueChecked);
+                */
                 Course course = new Course(
                         courseSubject.getText().toString(),
                         Integer.parseInt(categoryNum.getText().toString()),
-                        courseTitle.getText().toString(),
+                        courseTitle.getText().toString()
+                        /*
                         startHour,
                         startMin,
                         endHour,
@@ -135,7 +143,8 @@ public class AddCourse extends AppCompatActivity {
                         wedChecked,
                         thurChecked,
                         friChecked,
-                        buildingRoom.getText().toString());
+                        buildingRoom.getText().toString()
+                        */);
                 addCourse(course);
             }
         });
@@ -152,7 +161,7 @@ public class AddCourse extends AppCompatActivity {
         courseReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                //showMessage("Course Added successfully");
+                showMessage("Course Added successfully");
             }
         });
     }
