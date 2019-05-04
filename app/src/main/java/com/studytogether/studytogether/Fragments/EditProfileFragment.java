@@ -14,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +38,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Adapters.CourseAdapter;
 import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.R;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -60,6 +64,11 @@ public class EditProfileFragment extends Fragment {
     TextView editUserName, editUserEmail;
     Button addCourse;
 
+
+    RecyclerView courseRecyclerView;
+    CourseAdapter courseAdapter;
+    List<Course> courseList;
+
     public EditProfileFragment() {
     }
 
@@ -68,8 +77,11 @@ public class EditProfileFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.edit_profile, viewGroup, false);
 
         // Firebase
+        firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+
+        String currentUserId = firebaseUser.getUid();
 
         String userName = firebaseUser.getDisplayName();
         String userEmail = firebaseUser.getEmail();
@@ -78,10 +90,36 @@ public class EditProfileFragment extends Fragment {
         editUserEmail = fragmentView.findViewById(R.id.edit_profile_user_email);
         editUserPhoto = fragmentView.findViewById(R.id.edit_profile_user_photo);
 
-
-
         editUserName.setText(userName);
         editUserEmail.setText(userEmail);
+
+
+        courseRecyclerView  = fragmentView.findViewById(R.id.courseListRV);
+        courseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        courseRecyclerView.setHasFixedSize(true);
+
+        DatabaseReference tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId);
+        tutorCourseListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                courseList = new ArrayList<>();
+                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+                    Course course = coursesnap.getValue(Course.class);
+                    courseList.add(course);
+                }
+                courseAdapter = new CourseAdapter(getActivity(),courseList);
+                courseRecyclerView.setAdapter(courseAdapter);
+            }
+
+            // When the database doesn't response
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
+
 
         // Grab the image
         Glide.with(this).load(firebaseUser.getPhotoUrl()).into(editUserPhoto);

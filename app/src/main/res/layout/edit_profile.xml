@@ -95,6 +95,7 @@
         android:text="ADD a course" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/courseListRV"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
