@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
 import com.studytogether.studytogether.Adapters.UserAdapter;
+import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.GroupChat;
 import com.studytogether.studytogether.Models.User;
@@ -105,16 +106,30 @@ public class GroupDetailActivity extends AppCompatActivity {
         // Create intent
         Intent intent = getIntent();
         // Get info through intent
+        String courseSubject = intent.getExtras().getString("GroupCourseSubject");
+        String courseCategoryNum = intent.getExtras().getString("GroupCourseCategoryNum");
+
         String groupName = intent.getExtras().getString("GroupName");
         String groupPlace = intent.getExtras().getString("GroupPlace");
         String groupGoal = intent.getExtras().getString("GroupGoal");
-        String tutor = intent.getExtras().getString("tutor");
-        String numOfGroupMember = intent.getExtras().getString("numOfGroupMember");
-        String startTime = intent.getExtras().getString("startTime");
-        String endTime = intent.getExtras().getString("endTime");
-        String groupPicture = getIntent().getStringExtra("GroupPicture");
-        String ownerId = intent.getExtras().getString("OwnerId");
+
+
+        String startTime = intent.getExtras().getString("GroupStartTime");
+        int startHour = intent.getExtras().getInt("GroupStartHour");
+        int startMin = intent.getExtras().getInt("GroupStartMin");
+
+        String endTime = intent.getExtras().getString("GroupEndTime");
+        int endHour = intent.getExtras().getInt("GroupEndHour");
+        int endMin = intent.getExtras().getInt("GroupEndMin");
+
+        int groupMaxMembers = intent.getExtras().getInt("GroupMaxMembers");
+        int groupCurrentMembers = intent.getExtras().getInt("GroupCurrentMembers");
+
+        String ownerId = intent.getExtras().getString("GroupOwnerId");
         String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
+
+        String groupPicture = getIntent().getStringExtra("GroupPicture");
+
         String groupKey = intent.getExtras().getString("GroupKey");
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
@@ -175,46 +190,90 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailJoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Group group = new Group(courseSubject, courseCategoryNum ,groupName, groupGoal, groupPlace, groupMaxMembers, startHour, startMin, endHour, endMin, groupPicture, ownerId, groupOwnerPhoto );
 
-                DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey).push();
+                if(group.getMaximumGroupMembers() <= group.getCurrentGroupMembers()) {
+                    showMessage("The group is FULL, SORRY");
+                } else {
 
-                DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+                    DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey).push();
 
-                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
+                    DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
 
-                String userEmail = firebaseUser.getEmail();
-                String userId = firebaseUser.getUid();
-                String userName = firebaseUser.getDisplayName();
-                String userImage = firebaseUser.getPhotoUrl().toString();
-                User user = new User(userEmail,userId,userImage,userName);
+                    DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
 
-                userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        buttonController(true, firebaseUser.getUid(), groupKey);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showMessage("fail to add comment : "+e.getMessage());
-                    }
-                });
+                    String userEmail = firebaseUser.getEmail();
+                    String userId = firebaseUser.getUid();
+                    String userName = firebaseUser.getDisplayName();
+                    String userImage = firebaseUser.getPhotoUrl().toString();
+                    User user = new User(userEmail,userId,userImage,userName);
+
+                    userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            buttonController(true, firebaseUser.getUid(), groupKey);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showMessage("fail to add comment : "+e.getMessage());
+                        }
+                    });
 
 
-                Group group = new Group(groupName, groupGoal, groupPlace, tutor, numOfGroupMember, startTime, endTime, groupPicture, ownerId, groupOwnerPhoto );
-                UserGroupList userGroupList = new UserGroupList(group, groupKey);
+                    UserGroupList userGroupList = new UserGroupList(group, groupKey);
 
-                userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        buttonController(true, firebaseUser.getUid(), groupKey);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showMessage("fail to add comment : "+e.getMessage());
-                    }
-                });
+                    userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            group.addGroupMembers();
+                            buttonController(true, firebaseUser.getUid(), groupKey);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showMessage("fail to add comment : "+e.getMessage());
+                        }
+                    });
+
+
+                    DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+                    tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                Course course = coursesnap.getValue(Course.class);
+                                if(course.getSubject().equals(group.getGroupCourseSubject())) {
+                                    if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+                                        group.setTutorHere(true);
+
+                                        groupReference.addValueEventListener(new ValueEventListener() {
+
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                dataSnapshot.getRef().child("tutorHere").setValue(false);
+                                                dataSnapshot.getRef().child("currentGroupMembers").setValue(group.getCurrentGroupMembers()+1);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            }
+                                        });
+
+                                        Toast.makeText(GroupDetailActivity.this, "Find tutor!!!!", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
             }
         });
 
@@ -228,9 +287,12 @@ public class GroupDetailActivity extends AppCompatActivity {
                 firebaseAuth = FirebaseAuth.getInstance();
                 firebaseUser = firebaseAuth.getCurrentUser();
 
+                String userId = firebaseUser.getUid();
+
+
                 DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey);
 
-                DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+                DatabaseReference groupReference = firebaseDatabase.getReference("Groups");
 
                 DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
 
@@ -250,6 +312,48 @@ public class GroupDetailActivity extends AppCompatActivity {
                             if(groupKey.equals(userGroupList.getGroupKey())) {
                                 userGroupListReference.child(groupsnap.getKey()).setValue(null);
                                 alreadyJoined = false;
+
+
+
+                                Group group = groupsnap.getValue(Group.class);
+
+                                DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+                                tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                            Course course = coursesnap.getValue(Course.class);
+                                            if(course.getSubject().equals(group.getGroupCourseSubject())) {
+                                                if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+
+                                                    group.setTutorHere(false);
+
+                                                    groupReference.addValueEventListener(new ValueEventListener() {
+
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            dataSnapshot.getRef().child("tutorHere").setValue(false);
+                                                            dataSnapshot.getRef().child("currentGroupMembers").setValue(group.getCurrentGroupMembers()-1);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        }
+                                                    });
+
+                                                    Toast.makeText(GroupDetailActivity.this, "Tutor Out!!!!", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
                             }
                         }
 

@@ -22,7 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.studytogether.studytogether.Activities.GroupChatActivity;
 import com.studytogether.studytogether.Activities.GroupDetailActivity;
+import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.Models.User;
 import com.studytogether.studytogether.Models.UserGroupList;
 import com.studytogether.studytogether.R;
 
@@ -54,14 +56,79 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Get view type
     @Override
     public int getItemViewType(int position) {
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         // Take a specific group
         final Group group = filteredGroup.get(position);
+        String currentGroupKey = group.getGroupKey();
+
+        DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(currentGroupKey);
+        DatabaseReference userListReference = firebaseDatabase.getReference("User").child(currentGroupKey);
+        userListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot usersnap: dataSnapshot.getChildren()) {
+
+                    User user = usersnap.getValue(User.class);
+
+                    DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(user.getuserId());
+                    tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                Course course = coursesnap.getValue(Course.class);
+                                if(course.getSubject().equals(group.getGroupCourseSubject())) {
+                                    if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+                                        group.setTutorHere(true);
+                                        //group.child("leftSpace").setValue(newValue);
+
+
+
+                                        groupReference.addValueEventListener(new ValueEventListener() {
+
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                dataSnapshot.getRef().child("tutorHere").setValue(true);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            // When the database doesn't response
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
         // Check the group whether it is for tutoring or not
-        if (group.getTutor().toLowerCase().contains("true")) {
+        if (group.isTutorHere()) {
             return TYPE_TUTOR;
         } else {
             return TYPE_STUDY;
         }
+
     }
 
     // Recycler viewHolder
@@ -105,7 +172,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 MyViewHolder myViewHolder = (MyViewHolder) holder;
                 myViewHolder.tvGroupName.setText(group.getGroupName());
                 myViewHolder.tvGroupPlace.setText(group.getGroupPlace());
-                myViewHolder.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
+                myViewHolder.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolder.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolder.tvEndTimeInput.setText(group.getEndTime());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolder.imgGroup);
@@ -115,7 +182,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 MyViewHolderTutor myViewHolderTutor = (MyViewHolderTutor) holder;
                 myViewHolderTutor.tvGroupName.setText(group.getGroupName());
                 myViewHolderTutor.tvGroupPlace.setText(group.getGroupPlace());
-                myViewHolderTutor.tvNumOfGroupMembers.setText(group.getNum_of_group_members());
+                myViewHolderTutor.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolderTutor.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolderTutor.tvEndTimeInput.setText(group.getEndTime());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolderTutor.imgGroup);
@@ -191,9 +258,26 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupChatActivity.putExtra("GroupPosition",position);
                                 groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
+                                groupChatActivity.putExtra("GroupCourseSubject",filteredGroup.get(position).getGroupCourseSubject());
+                                groupChatActivity.putExtra("GroupCourseCategoryNum",filteredGroup.get(position).getGroupCourseCategoryNum());
                                 groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                                 groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+
+                                groupChatActivity.putExtra("GroupStartTime",filteredGroup.get(position).getStartTime());
+                                groupChatActivity.putExtra("GroupStartHour",filteredGroup.get(position).getStartHour());
+                                groupChatActivity.putExtra("GroupStartMin",filteredGroup.get(position).getStartMin());
+
+                                groupChatActivity.putExtra("GroupEndTime",filteredGroup.get(position).getEndTime());
+                                groupChatActivity.putExtra("GroupEndHour",filteredGroup.get(position).getEndHour());
+                                groupChatActivity.putExtra("GroupEndMin",filteredGroup.get(position).getEndMin());
+
+                                groupChatActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
+                                groupChatActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
+
+                                groupChatActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
+                                groupChatActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
+
                                 groupChatActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
                                 groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
                                 long timestamp = (long) filteredGroup.get(position).getTimeStamp();
@@ -207,9 +291,26 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupDetailActivity.putExtra("GroupPosition",position);
                                 groupDetailActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
+                                groupDetailActivity.putExtra("GroupCourseSubject",filteredGroup.get(position).getGroupCourseSubject());
+                                groupDetailActivity.putExtra("GroupCourseCategoryNum",filteredGroup.get(position).getGroupCourseCategoryNum());
                                 groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                                 groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
+                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+
+                                groupDetailActivity.putExtra("GroupStartTime",filteredGroup.get(position).getStartTime());
+                                groupDetailActivity.putExtra("GroupStartHour",filteredGroup.get(position).getStartHour());
+                                groupDetailActivity.putExtra("GroupStartMin",filteredGroup.get(position).getStartMin());
+
+                                groupDetailActivity.putExtra("GroupEndTime",filteredGroup.get(position).getEndTime());
+                                groupDetailActivity.putExtra("GroupEndHour",filteredGroup.get(position).getEndHour());
+                                groupDetailActivity.putExtra("GroupEndMin",filteredGroup.get(position).getEndMin());
+
+                                groupDetailActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
+                                groupDetailActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
+
+                                groupDetailActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
+                                groupDetailActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
+
                                 groupDetailActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
                                 groupDetailActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
                                 long timestamp = (long) filteredGroup.get(position).getTimeStamp();
@@ -244,6 +345,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvEndTimeInput;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
+        ImageView imgTutorHere;
         CardView cardView;
 
 
@@ -263,6 +365,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
+            imgTutorHere = itemView.findViewById(R.id.row_tutor_here_image);
             cardView = itemView.findViewById(R.id.cardview_group);
 
             // Click Listener to touch each group
@@ -295,10 +398,27 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupChatActivity.putExtra("GroupPosition",position);
                                 groupChatActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
+                                groupChatActivity.putExtra("GroupCourseSubject",filteredGroup.get(position).getGroupCourseSubject());
+                                groupChatActivity.putExtra("GroupCourseCategoryNum",filteredGroup.get(position).getGroupCourseCategoryNum());
                                 groupChatActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                                 groupChatActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                                groupChatActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                                groupChatActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+
+                                groupChatActivity.putExtra("GroupStartTime",filteredGroup.get(position).getStartTime());
+                                groupChatActivity.putExtra("GroupStartHour",filteredGroup.get(position).getStartHour());
+                                groupChatActivity.putExtra("GroupStartMin",filteredGroup.get(position).getStartMin());
+
+                                groupChatActivity.putExtra("GroupEndTime",filteredGroup.get(position).getEndTime());
+                                groupChatActivity.putExtra("GroupEndHour",filteredGroup.get(position).getEndHour());
+                                groupChatActivity.putExtra("GroupEndMin",filteredGroup.get(position).getEndMin());
+
+                                groupChatActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
+                                groupChatActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
+
+                                groupChatActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
+                                groupChatActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
+
+                                groupChatActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
                                 groupChatActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
                                 long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                                 groupChatActivity.putExtra("addedDate", timestamp);
@@ -311,10 +431,27 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupDetailActivity.putExtra("GroupPosition",position);
                                 groupDetailActivity.putExtra("GroupKey",filteredGroup.get(position).getGroupKey());
 
+                                groupDetailActivity.putExtra("GroupCourseSubject",filteredGroup.get(position).getGroupCourseSubject());
+                                groupDetailActivity.putExtra("GroupCourseCategoryNum",filteredGroup.get(position).getGroupCourseCategoryNum());
                                 groupDetailActivity.putExtra("GroupName",filteredGroup.get(position).getGroupName());
-                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
                                 groupDetailActivity.putExtra("GroupGoal",filteredGroup.get(position).getGroupGoal());
-                                groupDetailActivity.putExtra("GroupImg",filteredGroup.get(position).getGroupPicture());
+                                groupDetailActivity.putExtra("GroupPlace",filteredGroup.get(position).getGroupPlace());
+
+                                groupDetailActivity.putExtra("GroupStartTime",filteredGroup.get(position).getStartTime());
+                                groupDetailActivity.putExtra("GroupStartHour",filteredGroup.get(position).getStartHour());
+                                groupDetailActivity.putExtra("GroupStartMin",filteredGroup.get(position).getStartMin());
+
+                                groupDetailActivity.putExtra("GroupEndTime",filteredGroup.get(position).getEndTime());
+                                groupDetailActivity.putExtra("GroupEndHour",filteredGroup.get(position).getEndHour());
+                                groupDetailActivity.putExtra("GroupEndMin",filteredGroup.get(position).getEndMin());
+
+                                groupDetailActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
+                                groupDetailActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
+
+                                groupDetailActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
+                                groupDetailActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
+
+                                groupDetailActivity.putExtra("GroupPicture",filteredGroup.get(position).getGroupPicture());
                                 groupDetailActivity.putExtra("groupKey",filteredGroup.get(position).getGroupKey());
                                 long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                                 groupDetailActivity.putExtra("addedDate", timestamp);

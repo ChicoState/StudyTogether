@@ -2,6 +2,7 @@ package com.studytogether.studytogether.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -22,11 +23,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -39,8 +44,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -48,6 +56,7 @@ import com.studytogether.studytogether.Fragments.HomeFragment;
 import com.studytogether.studytogether.Fragments.ProfileFragment;
 import com.studytogether.studytogether.Fragments.SettingsFragment;
 import com.studytogether.studytogether.Fragments.TutorFragment;
+import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.User;
 import com.studytogether.studytogether.Models.UserGroupList;
@@ -55,6 +64,7 @@ import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -72,6 +82,10 @@ public class Home extends AppCompatActivity
     private static final int REQUESCODE = 2;
 
     // Firebase
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
 
@@ -85,12 +99,14 @@ public class Home extends AppCompatActivity
     Dialog popAddGroup;
 
     // Items
-    ImageView popupUserImage, popupGroupImage, popupAddBtn;
-    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupNumOfGroupMembers, popupStartTimeInput, popupEndTimeInput;
+    Spinner popupSubjectSpinner, popupCategoryNumSpinner;
+    ImageView popupGroupImage, popupAddBtn;
+    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupMaximumGroupMembers, popupStartTimeInput, popupEndTimeInput;
     ProgressBar popupClickProgress;
-    Switch popupSwitch;
-    Boolean tutoring = false;
     private Uri pickedImgUri = null;
+
+    private int startHour, startMin, endHour, endMin;
+    private String courseSubject = null, courseCategoryNum = null;
 
     // Initialize the groupAdapter
     private void initGroupAdapter() {
@@ -226,33 +242,142 @@ public class Home extends AppCompatActivity
         // Create a new dialog for popup
         popAddGroup = new Dialog(this);
         // Set up the contentView into popup
-        popAddGroup.setContentView(R.layout.popup_add_post);
+        popAddGroup.setContentView(R.layout.popup_add_group);
         // Window setting
         popAddGroup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popAddGroup.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
         popAddGroup.getWindow().getAttributes().gravity = Gravity.TOP;
 
         // Initialize the popup items
-        popupUserImage = popAddGroup.findViewById(R.id.popup_user_img);
-        popupGroupImage = popAddGroup.findViewById(R.id.popup_img);
-        popupGroupName = popAddGroup.findViewById(R.id.popup_group_name);
-        popupGroupGoal = popAddGroup.findViewById(R.id.popup_group_goal);
-        popupGroupPlace = popAddGroup.findViewById(R.id.popup_group_place);
-        popupNumOfGroupMembers = popAddGroup.findViewById(R.id.popup_num_of_group_members);
-        popupStartTimeInput = popAddGroup.findViewById(R.id.popup_start_time_input);
-        popupEndTimeInput = popAddGroup.findViewById(R.id.popup_end_time_input);
-        popupAddBtn = popAddGroup.findViewById(R.id.popup_add);
-        popupClickProgress = popAddGroup.findViewById(R.id.popup_progressBar);
-        popupSwitch = popAddGroup.findViewById(R.id.popup_switch);
-        popupSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        popupSubjectSpinner = popAddGroup.findViewById(R.id.popup_subject_spinner);
+        popupCategoryNumSpinner = popAddGroup.findViewById(R.id.popup_category_num_spinner);
+
+        popupGroupName = popAddGroup.findViewById(R.id.popup_edit_groupName);
+        popupGroupGoal = popAddGroup.findViewById(R.id.popup_edit_groupGoal);
+        popupGroupPlace = popAddGroup.findViewById(R.id.popup_edit_groupPlace);
+
+        popupMaximumGroupMembers = popAddGroup.findViewById(R.id.popup_member_limit);
+
+        popupStartTimeInput = popAddGroup.findViewById(R.id.popup_edit_starttime);
+        popupEndTimeInput = popAddGroup.findViewById(R.id.popup_edit_endtime);
+
+        popupGroupImage = popAddGroup.findViewById(R.id.popup_groupImage);
+
+        popupAddBtn = popAddGroup.findViewById(R.id.popup_addButton);
+        popupClickProgress = popAddGroup.findViewById(R.id.popup_progressbar);
+
+
+
+        ArrayAdapter<String> popupSubjectAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.courseSubjectList));
+        popupSubjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        popupSubjectSpinner.setAdapter(popupSubjectAdapter);
+
+        ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.csciCategoryNum));
+        popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+
+        /*
+        if(!popupSubjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…") && (popupSubjectSpinner.getSelectedItem().toString() != null)) {
+            courseSubject = popupSubjectSpinner.getSelectedItem().toString();
+        }
+        if(!popupCategoryNumSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose course number…") && (popupCategoryNumSpinner.getSelectedItem().toString() != null)) {
+            courseCategoryNum = popupCategoryNumSpinner.getSelectedItem().toString();
+        }
+        */
+
+        popupSubjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                // Get the switch value and store into tutoring
-                tutoring = isChecked;
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int pos, long id) {
+                courseSubject = parent.getItemAtPosition(pos).toString();
+                showMessage(courseSubject);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
             }
         });
-        // Grab the image
-        Glide.with(Home.this).load(currentUser.getPhotoUrl()).into(popupUserImage);
+        popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int pos, long id) {
+                courseCategoryNum = parent.getItemAtPosition(pos).toString();
+                showMessage(courseCategoryNum);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+
+
+
+        popupStartTimeInput.setOnClickListener(view -> {
+            // Get Current Time
+            final Calendar c = Calendar.getInstance();
+            startHour = c.get(Calendar.HOUR_OF_DAY);
+            startMin = c.get(Calendar.MINUTE);
+
+            // Launch Time Picker Dialog
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                    new TimePickerDialog.OnTimeSetListener() {
+
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                              int minute) {
+
+                            if(hourOfDay > 12) {
+                                popupStartTimeInput.setText(hourOfDay + " : " + minute + " PM");
+                            } else {
+                                popupStartTimeInput.setText(hourOfDay + " : " + minute + " AM");
+                            }
+
+                            startHour = hourOfDay;
+                            startMin = minute;
+                        }
+                    }, startHour, startMin, false);
+            timePickerDialog.show();
+        });
+
+        popupEndTimeInput.setOnClickListener(view -> {
+            // Get Current Time
+            final Calendar c = Calendar.getInstance();
+            endHour = c.get(Calendar.HOUR_OF_DAY);
+            endMin = c.get(Calendar.MINUTE);
+
+            // Launch Time Picker Dialog
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                    new TimePickerDialog.OnTimeSetListener() {
+
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                              int minute) {
+                            if(hourOfDay > 12) {
+                                popupEndTimeInput.setText(hourOfDay + " : " + minute + " PM");
+                            } else {
+                                popupEndTimeInput.setText(hourOfDay + " : " + minute + " AM");
+                            }
+                            endHour = hourOfDay;
+                            endMin = minute;
+                        }
+                    }, endHour, endMin, false);
+            timePickerDialog.show();
+        });
+
+
+
 
         // Listener for add-button on popup
         popupAddBtn.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +388,7 @@ public class Home extends AppCompatActivity
                 popupClickProgress.setVisibility(View.VISIBLE);
 
                 // If all inputs is typed,
-                if (!popupGroupName.getText().toString().isEmpty() && !popupGroupGoal.getText().toString().isEmpty() && !popupGroupPlace.getText().toString().isEmpty() && !popupStartTimeInput.getText().toString().isEmpty() && !popupEndTimeInput.getText().toString().isEmpty() && pickedImgUri != null) {
+                if (!popupGroupName.getText().toString().isEmpty() && !popupGroupGoal.getText().toString().isEmpty() && !popupGroupPlace.getText().toString().isEmpty() /*&& !popupStartTimeInput.getText().toString().isEmpty() && !popupEndTimeInput.getText().toString().isEmpty() && pickedImgUri != null*/) {
 
                     // Get Groups's storage reference
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Groups");
@@ -279,13 +404,17 @@ public class Home extends AppCompatActivity
                                     String imageDownlaodLink = uri.toString();
 
                                     // Make the group object with user's inputs
-                                    Group group = new Group(popupGroupName.getText().toString(),
+                                    Group group = new Group(
+                                            courseSubject,
+                                            courseCategoryNum,
+                                            popupGroupName.getText().toString(),
                                             popupGroupGoal.getText().toString(),
                                             popupGroupPlace.getText().toString(),
-                                            tutoring.toString(),
-                                            popupNumOfGroupMembers.getText().toString(),
-                                            popupStartTimeInput.getText().toString(),
-                                            popupEndTimeInput.getText().toString(),
+                                            Integer.parseInt(popupMaximumGroupMembers.getText().toString()),
+                                            startHour,
+                                            startMin,
+                                            endHour,
+                                            endMin,
                                             imageDownlaodLink,
                                             currentUser.getUid(),
                                             currentUser.getPhotoUrl().toString());
@@ -323,6 +452,12 @@ public class Home extends AppCompatActivity
     // Add a group
     private void addGroup(Group group) {
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+        String userId = firebaseUser.getUid();
+
         // Firebase
         // Get database instance
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -330,16 +465,16 @@ public class Home extends AppCompatActivity
         DatabaseReference myRef = database.getReference("Groups").push();
 
         // Get the current user's Auth key
-        String key = myRef.getKey();
+        String groupKey = myRef.getKey();
         // Set up the groupKey with the user's key
-        group.setGroupKey(key);
+        group.setGroupKey(groupKey);
 
         // SuccessListener
         myRef.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 // If a group is added successfully, print a success message
-                showMessage("Group Added successfully");
+                //showMessage("Group Added successfully");
                 // Back up the add-button and let the progress-button disappear
                 popupClickProgress.setVisibility(View.INVISIBLE);
                 popupAddBtn.setVisibility(View.VISIBLE);
@@ -349,13 +484,13 @@ public class Home extends AppCompatActivity
         });
 
 
-        userReference = database.getReference("User").child(key).push();
+
+        userReference = database.getReference("User").child(groupKey).push();
 
         userGroupListReference = database.getReference("UserGroupList").child(currentUser.getUid()).push();
 
 
         String userEmail = currentUser.getEmail();
-        String userId = currentUser.getUid();
         String userName = currentUser.getDisplayName();
         String userImage = currentUser.getPhotoUrl().toString();
         User user = new User(userEmail,userId,userImage,userName);
@@ -364,7 +499,7 @@ public class Home extends AppCompatActivity
         userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                showMessage("Successfully added");
+                //showMessage("Successfully added");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -374,12 +509,12 @@ public class Home extends AppCompatActivity
         });
 
 
-        UserGroupList userGroupList = new UserGroupList(group, key);
+        UserGroupList userGroupList = new UserGroupList(group, groupKey);
 
         userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                showMessage("Successfully added");
+                //showMessage("Successfully added");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

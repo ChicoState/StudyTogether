@@ -17,8 +17,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
+import com.studytogether.studytogether.Models.Course;
 import com.studytogether.studytogether.Models.Group;
+import com.studytogether.studytogether.Models.User;
 import com.studytogether.studytogether.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +53,8 @@ public class HomeFragment extends Fragment {
     List<Group> groupList;
 
     // Firebase
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference ;
 
@@ -183,6 +189,10 @@ public class HomeFragment extends Fragment {
 
     // Update groupList
     private void updateList() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         // Update groupList when a group is added
         databaseReference.addValueEventListener(new ValueEventListener() {
             // Detect the changes
@@ -195,6 +205,8 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                     Group group = groupsnap.getValue(Group.class);
+
+                    //updateTutor(group);
                     // Add group
                     groupList.add(group) ;
                 }
@@ -203,6 +215,7 @@ public class HomeFragment extends Fragment {
 
                 // Set recyclerView using groupAdapter
                 groupAdapter = new GroupAdapter(getActivity(),groupList);
+                groupAdapter.notifyDataSetChanged();
                 groupRecyclerView.setAdapter(groupAdapter);
             }
 
@@ -226,5 +239,55 @@ public class HomeFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    private void updateTutor(Group group) {
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+
+        String currentGroupKey = group.getGroupKey();
+
+        DatabaseReference userListReference = firebaseDatabase.getReference("User").child(currentGroupKey);
+        userListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot usersnap: dataSnapshot.getChildren()) {
+
+                    User user = usersnap.getValue(User.class);
+
+                    DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(user.getuserId());
+                    tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                Course course = coursesnap.getValue(Course.class);
+                                if(course.getSubject().equals(group.getGroupCourseSubject())) {
+                                    if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+                                        group.setTutorHere(true);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            // When the database doesn't response
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
     }
 }

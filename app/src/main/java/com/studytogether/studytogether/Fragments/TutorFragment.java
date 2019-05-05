@@ -112,7 +112,7 @@ public class TutorFragment extends Fragment {
                                 // If groupName, groupPlace, or groupGoal holds query
                                 if (group.getGroupName().toLowerCase().contains(query.toLowerCase()) || group.getGroupPlace().toLowerCase().contains(query.toLowerCase()) || group.getGroupGoal().toLowerCase().contains(query.toLowerCase())) {
                                     // Add only tutor groups
-                                    if (group.getTutor().contains("true")) {
+                                    if (group.isTutorHere()) {
                                         //  Add the group in groupList
                                         groupList.add(group);
                                     }
@@ -192,8 +192,6 @@ public class TutorFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // tutoringFilter Flag
-                String tutoringFilter = "true";
 
                 // Reinitialize the groupList
                 groupList = new ArrayList<>();
@@ -202,7 +200,7 @@ public class TutorFragment extends Fragment {
 
                     Group group = groupsnap.getValue(Group.class);
                     // If the group is for tutoring,
-                    if(group.getTutor().toLowerCase().contains(tutoringFilter.toLowerCase())){
+                    if(group.isTutorHere()){
                         // Add the group
                         groupList.add(group);
                     }

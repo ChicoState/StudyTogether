@@ -109,7 +109,11 @@
                 android:id="@+id/edit_add_course_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ADD a course" />
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="ADD a course"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/red_stroke_button"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
