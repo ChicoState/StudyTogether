@@ -58,7 +58,7 @@ public class GroupDetailActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
 
     // Create items
-    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
+    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription;
     Button detailJoinButton, detailQuitButton, detailTerminateGroupButton;
 
     List<User> userList;
@@ -86,6 +86,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupPlace = findViewById(R.id.detail_group_place);
         detailGroupGoal = findViewById(R.id.detail_group_goal);
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
+        detailTerminateDescription = findViewById(R.id.detail_terminate_description);
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
         detailQuitButton = findViewById(R.id.detail_quit_btn);
@@ -93,6 +94,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailJoinButton.setVisibility(View.GONE);
         detailQuitButton.setVisibility(View.GONE);
         detailTerminateGroupButton.setVisibility(View.GONE);
+        detailTerminateDescription.setVisibility(View.GONE);
 
         userRecyclerView  = findViewById(R.id.userRV);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -520,14 +522,17 @@ public class GroupDetailActivity extends AppCompatActivity {
                             detailJoinButton.setVisibility(View.GONE);
                             if (currentUserId.equals(currentGroupOwnerId)) {
                                 detailTerminateGroupButton.setVisibility(View.VISIBLE);
+                                detailTerminateDescription.setVisibility(View.VISIBLE);
                             } else {
                                 detailTerminateGroupButton.setVisibility(View.GONE);
+                                detailTerminateDescription.setVisibility(View.GONE);
                                 detailQuitButton.setVisibility(View.VISIBLE);
                             }
                         } else {
                             if(firebaseUser.getUid().equals(currentGroupOwnerId)){
                                 detailJoinButton.setVisibility(View.GONE);
                                 detailTerminateGroupButton.setVisibility(View.VISIBLE);
+                                detailTerminateDescription.setVisibility(View.VISIBLE);
                             } else {
                                 detailJoinButton.setVisibility(View.VISIBLE);
                             }

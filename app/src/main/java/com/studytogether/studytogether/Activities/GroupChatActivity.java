@@ -89,20 +89,38 @@ public class GroupChatActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 
+        // Create intent
         Intent intent = getIntent();
+        // Get info through intent
+        String courseSubject = intent.getExtras().getString("GroupCourseSubject");
+        String courseCategoryNum = intent.getExtras().getString("GroupCourseCategoryNum");
 
         String groupName = intent.getExtras().getString("GroupName");
         String groupPlace = intent.getExtras().getString("GroupPlace");
         String groupGoal = intent.getExtras().getString("GroupGoal");
-        String tutor = intent.getExtras().getString("tutor");
-        String numOfGroupMember = intent.getExtras().getString("numOfGroupMember");
-        String startTime = intent.getExtras().getString("startTime");
-        String endTime = intent.getExtras().getString("endTime");
-        String groupPicture = getIntent().getStringExtra("GroupPicture");
-        String ownerId = intent.getExtras().getString("OwnerId");
+
+
+        String startTime = intent.getExtras().getString("GroupStartTime");
+        int startHour = intent.getExtras().getInt("GroupStartHour");
+        int startMin = intent.getExtras().getInt("GroupStartMin");
+
+        String endTime = intent.getExtras().getString("GroupEndTime");
+        int endHour = intent.getExtras().getInt("GroupEndHour");
+        int endMin = intent.getExtras().getInt("GroupEndMin");
+
+        int groupMaxMembers = intent.getExtras().getInt("GroupMaxMembers");
+        int groupCurrentMembers = intent.getExtras().getInt("GroupCurrentMembers");
+
+        String ownerId = intent.getExtras().getString("GroupOwnerId");
         String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
+
+        String groupPicture = getIntent().getStringExtra("GroupPicture");
+
         String groupKey = intent.getExtras().getString("GroupKey");
-        String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
+        long groupCreated = intent.getExtras().getLong("addedDate");
+        //String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
+
+        String userId = firebaseUser.getUid();
 
 
 
@@ -127,19 +145,30 @@ public class GroupChatActivity extends AppCompatActivity {
                 Intent groupDetailActivity = new Intent(getApplicationContext(), GroupDetailActivity.class);
 
                 // passing data to the GroupDetailActivity
-                groupDetailActivity.putExtra("GroupName", groupName);
-                groupDetailActivity.putExtra("GroupGoal", groupGoal);
-                groupDetailActivity.putExtra("GroupPlace", groupPlace);
-                groupDetailActivity.putExtra("GroupImg", groupOwnerPhoto);
-                groupDetailActivity.putExtra("tutor",tutor);
-                groupDetailActivity.putExtra("numOfGroupMember",numOfGroupMember);
-                groupDetailActivity.putExtra("startTime",startTime);
-                groupDetailActivity.putExtra("endTime",endTime);
-                groupDetailActivity.putExtra("GroupPicture",groupPicture);
-                groupDetailActivity.putExtra("OwnerId",ownerId);
+                groupDetailActivity.putExtra("GroupKey",groupKey);
+
+                groupDetailActivity.putExtra("GroupCourseSubject",courseSubject);
+                groupDetailActivity.putExtra("GroupCourseCategoryNum",courseCategoryNum);
+                groupDetailActivity.putExtra("GroupName",groupName);
+                groupDetailActivity.putExtra("GroupGoal",groupGoal);
+                groupDetailActivity.putExtra("GroupPlace",groupPlace);
+
+                groupDetailActivity.putExtra("GroupStartTime",startTime);
+                groupDetailActivity.putExtra("GroupStartHour",startHour);
+                groupDetailActivity.putExtra("GroupStartMin",startMin);
+
+                groupDetailActivity.putExtra("GroupEndTime",endTime);
+                groupDetailActivity.putExtra("GroupEndHour",endHour);
+                groupDetailActivity.putExtra("GroupEndMin",endMin);
+
+                groupDetailActivity.putExtra("GroupMaxMembers",groupMaxMembers);
+                groupDetailActivity.putExtra("GroupCurrentMembers",groupCurrentMembers);
+
+                groupDetailActivity.putExtra("GroupOwnerId",ownerId);
                 groupDetailActivity.putExtra("GroupOwnerPhoto",groupOwnerPhoto);
 
-                groupDetailActivity.putExtra("GroupKey", groupKey);
+                groupDetailActivity.putExtra("GroupPicture",groupPicture);
+                //long timestamp = (long) filteredGroup.get(position).getTimeStamp();
                 groupDetailActivity.putExtra("addedDate", groupCreated);
 
                 startActivity(groupDetailActivity);

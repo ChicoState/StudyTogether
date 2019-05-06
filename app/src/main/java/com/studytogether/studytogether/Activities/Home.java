@@ -382,7 +382,8 @@ public class Home extends AppCompatActivity
                                               int minute) {
 
                             if(hourOfDay > 12) {
-                                popupStartTimeInput.setText(hourOfDay + " : " + minute + " PM");
+                                int newHour = hourOfDay-12;
+                                popupStartTimeInput.setText(newHour + " : " + minute + " PM");
                             } else {
                                 popupStartTimeInput.setText(hourOfDay + " : " + minute + " AM");
                             }
@@ -408,7 +409,8 @@ public class Home extends AppCompatActivity
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
                             if(hourOfDay > 12) {
-                                popupEndTimeInput.setText(hourOfDay + " : " + minute + " PM");
+                                int newHour = hourOfDay-12;
+                                popupStartTimeInput.setText(newHour + " : " + minute + " PM");
                             } else {
                                 popupEndTimeInput.setText(hourOfDay + " : " + minute + " AM");
                             }
@@ -685,61 +687,6 @@ public class Home extends AppCompatActivity
     }
 
 
-
-
-
-    private void chooseCategoryNum(String courseSubject){
-        /*
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
-        DatabaseReference courseReference = firebaseDatabase.getReference("Course");
-
-        courseReference.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
-
-                    categoryList = new ArrayList<>();
-                    Course course = coursesnap.getValue(Course.class);
-                    if(course.getSubject().equals(courseSubject)) {
-                        categoryList.add(String.valueOf(course.getCategoryNum()));
-                        showMessage(String.valueOf(course.getCategoryNum()) + " is in List !!!!!");
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-        */
-        ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.csciCategoryNum));
-        popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
-
-
-        popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent,
-                                       View view, int pos, long id) {
-                courseCategoryNum = parent.getItemAtPosition(pos).toString();
-                showMessage(courseCategoryNum);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-
-    }
 
 
     public class subjectOnClickListener implements AdapterView.OnItemSelectedListener {

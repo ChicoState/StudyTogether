@@ -87,7 +87,7 @@ public class Group {
     public String getStartTime() {
         String time = "12 : 0 pm";
         if(startHour >= 12) {
-            time = String.valueOf(startHour) + " : " + String.valueOf(startMin) + " PM";
+            time = String.valueOf(startHour-12) + " : " + String.valueOf(startMin) + " PM";
         } else {
             time = String.valueOf(startHour) + " : " + String.valueOf(startMin) + " AM";
         }
@@ -97,7 +97,7 @@ public class Group {
     public String getEndTime() {
         String time = "12 : 0 pm";
         if(startHour >= 12) {
-            time = String.valueOf(startHour) + " : " + String.valueOf(startMin) + " PM";
+            time = String.valueOf(startHour-12) + " : " + String.valueOf(startMin) + " PM";
         } else {
             time = String.valueOf(startHour) + " : " + String.valueOf(startMin) + " AM";
         }
