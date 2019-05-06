@@ -22,21 +22,66 @@
         <item>EECE</item>
     </string-array>
     <string-array name="csciCategoryNum">
-        <item>Choose course number…</item>
-        <item>111</item>
-        <item>211</item>
-        <item>311</item>
+        <item>"Choose course number…"</item>
+        <item>"101: Intro to Computer Science"</item>
+        <item>"102: Living With Technology"</item>
+        <item>"111: Programming and Algorithms I"</item>
+        <item>"211: Programming and Algorithms II"</item>
+        <item>"300: Computer Science Seminar"</item>
+        <item>"301W: Comp's Impact on Society(W)"</item>
+        <item>"311: Algorithms and Data Structures"</item>
+        <item>"315: Programming Languages"</item>
+        <item>"340: Operating Systems"</item>
+        <item>"344: Shell Programming"</item>
+        <item>"389: Industry Internship"</item>
+        <item>"400: Computer Science Activity"</item>
+        <item>"430: Software Engineering"</item>
+        <item>"431: Usability Engineering"</item>
+        <item>"446: Intro to Computer Networks"</item>
+        <item>"490: CSCI Capstone"</item>
+        <item>"499: Special Problems"</item>
+        <item>"515: Compiler Design"</item>
+        <item>"540: Systems Programming"</item>
+        <item>"550: Design/Analysis of Algorithms"</item>
+        <item>"551: Numerical/Parallel Programming"</item>
+        <item>"567: Mobile Application Development"</item>
+        <item>"580: Artificial Intelligence"</item>
     </string-array>
     <string-array name="cinsCategoryNum">
-        <item>Choose course number…</item>
-        <item>122</item>
-        <item>222</item>
-        <item>322</item>
+        <item>"Choose course number…"</item>
+        <item>"220: PCs and Peripherals"</item>
+        <item>"370: Introduction to Databases"</item>
+        <item>"448: PComputer Security"</item>
+        <item>"465: Web Programming Fundamentals"</item>
+        <item>"490: CINS Capstone"</item>
     </string-array>
     <string-array name="eeceCategoryNum">
-        <item>Choose course number…</item>
-        <item>133</item>
-        <item>233</item>
-        <item>333</item>
+        <item>"Choose course number…"</item>
+        <item>"110: Basic Electricity/Instruments"</item>
+        <item>"144: Logic Design Fundamentals"</item>
+        <item>"211: Linear Circuits I"</item>
+        <item>"211L: Linear Circuits I Activity"</item>
+        <item>"237: Embedded Systems Development"</item>
+        <item>"237X: Embedded Systems Prob Solv"</item>
+        <item>"311: Linear Circuits II"</item>
+        <item>"315: Electronics I"</item>
+        <item>"316: Electronics II"</item>
+        <item>"320: System Architec/Performance"</item>
+        <item>"343: Advanced Logic Design"</item>
+        <item>"344: Digital Systems Design"</item>
+        <item>"365: Signals, Systems and Transforms"</item>
+        <item>"375: Fields and Waves"</item>
+        <item>"425: Advanced Computer Architecture"</item>
+        <item>"451: Lasers and Their Applications"</item>
+        <item>"453: Communication Systems Design"</item>
+        <item>"481: Electromechanical Conversion"</item>
+        <item>"483: Power Systems Operation	"</item>
+        <item>"490B: Senior Project II	"</item>
+        <item>"499: Special Problems"</item>
+        <item>"555: Advanced Computer Networks"</item>
+        <item>"598: Special Topics"</item>
+        <item>"637: Advanced Embedded Systems"</item>
+        <item>"679: Independent Study"</item>
+        <item>"699P: Master's Project"</item>
     </string-array>
 </resources>

@@ -59,7 +59,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate;
-    Button detailJoinButton, detailQuickButton, detailTerminateGroupButton;
+    Button detailJoinButton, detailQuitButton, detailTerminateGroupButton;
 
     List<User> userList;
 
@@ -88,10 +88,10 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
-        detailQuickButton = findViewById(R.id.detail_quick_btn);
+        detailQuitButton = findViewById(R.id.detail_quit_btn);
         detailTerminateGroupButton = findViewById(R.id.detail_terminate_btn);
         detailJoinButton.setVisibility(View.GONE);
-        detailQuickButton.setVisibility(View.GONE);
+        detailQuitButton.setVisibility(View.GONE);
         detailTerminateGroupButton.setVisibility(View.GONE);
 
         userRecyclerView  = findViewById(R.id.userRV);
@@ -280,7 +280,8 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
 
-        detailQuickButton.setOnClickListener(new View.OnClickListener() {
+
+        detailQuitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -521,7 +522,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                                 detailTerminateGroupButton.setVisibility(View.VISIBLE);
                             } else {
                                 detailTerminateGroupButton.setVisibility(View.GONE);
-                                detailQuickButton.setVisibility(View.VISIBLE);
+                                detailQuitButton.setVisibility(View.VISIBLE);
                             }
                         } else {
                             if(firebaseUser.getUid().equals(currentGroupOwnerId)){
@@ -530,7 +531,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                             } else {
                                 detailJoinButton.setVisibility(View.VISIBLE);
                             }
-                            detailQuickButton.setVisibility(View.GONE);
+                            detailQuitButton.setVisibility(View.GONE);
                         }
 
                     }

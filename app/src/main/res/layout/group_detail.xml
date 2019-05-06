@@ -69,17 +69,19 @@
                     android:textColor="#42b9f4"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginTop="2dp"
                     android:text="Join in" />
 
                 <Button
-                    android:id="@+id/detail_quick_btn"
+                    android:id="@+id/detail_quit_btn"
                     android:textColor="@color/colorPrimary"
                     android:background="@drawable/red_stroke_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginTop="2dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Quick this group" />
+                    android:text="Quit this group" />
 
             </RelativeLayout>
 

@@ -76,6 +76,7 @@ public class Home extends AppCompatActivity
     GroupAdapter adapter;
     // Declare the groupList and initialize to empty list
     List<Group> groupList = new ArrayList<>();
+    List<String> categoryList = new ArrayList<>();
 
     // Flags
     private static final int PReqCode = 2;
@@ -239,6 +240,10 @@ public class Home extends AppCompatActivity
     // Initialize popup
     private void iniPopup() {
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         // Create a new dialog for popup
         popAddGroup = new Dialog(this);
         // Set up the contentView into popup
@@ -273,15 +278,14 @@ public class Home extends AppCompatActivity
                 getResources().getStringArray(R.array.courseSubjectList));
         popupSubjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         popupSubjectSpinner.setAdapter(popupSubjectAdapter);
+        popupSubjectSpinner.setOnItemSelectedListener(new subjectOnClickListener());
 
-        ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.csciCategoryNum));
-        popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+
 
 
         /*
+
         if(!popupSubjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…") && (popupSubjectSpinner.getSelectedItem().toString() != null)) {
             courseSubject = popupSubjectSpinner.getSelectedItem().toString();
         }
@@ -290,12 +294,61 @@ public class Home extends AppCompatActivity
         }
         */
 
+
+
+
+
+        /*
+
+
+
+        ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.csciCategoryNum));
+        popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+
+
+
         popupSubjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent,
                                        View view, int pos, long id) {
-                courseSubject = parent.getItemAtPosition(pos).toString();
+                switch (parent.getId()) {
+                    case R.id.popup_subject_spinner:
+                        courseSubject = parent.getItemAtPosition(pos).toString();
+
+                        DatabaseReference courseReference = firebaseDatabase.getReference("Course");
+                        courseReference.addValueEventListener(new ValueEventListener() {
+
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                                    categoryList = new ArrayList<>();
+                                    Course course = coursesnap.getValue(Course.class);
+                                    if(course.getSubject().equals(courseSubject)) {
+                                        categoryList.add(String.valueOf(course.getCategoryNum()));
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+
+                        break;
+                    case R.id.popup_category_num_spinner:
+                        // do stuffs with you spinner 2
+                        break;
+                    default:
+                        break;
+                }
+
+
                 showMessage(courseSubject);
             }
 
@@ -305,21 +358,11 @@ public class Home extends AppCompatActivity
 
             }
         });
-        popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        */
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent,
-                                       View view, int pos, long id) {
-                courseCategoryNum = parent.getItemAtPosition(pos).toString();
-                showMessage(courseCategoryNum);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
 
-            }
-        });
+
 
 
 
@@ -525,6 +568,7 @@ public class Home extends AppCompatActivity
 
     }
 
+
     // Print Message into user
     private void showMessage(String message) {
         // Long time showed up message
@@ -639,4 +683,103 @@ public class Home extends AppCompatActivity
 
         Glide.with(this).load(currentUser.getPhotoUrl()).into(navUserPhoto);
     }
+
+
+
+
+
+    private void chooseCategoryNum(String courseSubject){
+        /*
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+        DatabaseReference courseReference = firebaseDatabase.getReference("Course");
+
+        courseReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                    categoryList = new ArrayList<>();
+                    Course course = coursesnap.getValue(Course.class);
+                    if(course.getSubject().equals(courseSubject)) {
+                        categoryList.add(String.valueOf(course.getCategoryNum()));
+                        showMessage(String.valueOf(course.getCategoryNum()) + " is in List !!!!!");
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        */
+        ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.csciCategoryNum));
+        popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+
+        popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int pos, long id) {
+                courseCategoryNum = parent.getItemAtPosition(pos).toString();
+                showMessage(courseCategoryNum);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+    }
+
+
+    public class subjectOnClickListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int pos,
+                                   long id) {
+
+            parent.getItemAtPosition(pos);
+
+            if (parent.getItemAtPosition(pos).toString().equals("CSCI")){
+
+                ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(Home.this,
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.csciCategoryNum));
+                popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                popupCategoryNumAdapter.notifyDataSetChanged();
+                popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+            } else if(parent.getItemAtPosition(pos).toString().equals("CINS")){
+                ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(Home.this,
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.cinsCategoryNum));
+                popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                popupCategoryNumAdapter.notifyDataSetChanged();
+                popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+            } else if (parent.getItemAtPosition(pos).toString().equals("EECE")){
+                ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(Home.this,
+                        android.R.layout.simple_spinner_item,
+                        getResources().getStringArray(R.array.eeceCategoryNum));
+                popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                popupCategoryNumAdapter.notifyDataSetChanged();
+                popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+            }
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
 }

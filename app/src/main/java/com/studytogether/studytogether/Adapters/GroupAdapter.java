@@ -87,8 +87,6 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 if(course.getSubject().equals(group.getGroupCourseSubject())) {
                                     if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
                                         group.setTutorHere(true);
-                                        //group.child("leftSpace").setValue(newValue);
-
 
 
                                         groupReference.addValueEventListener(new ValueEventListener() {
