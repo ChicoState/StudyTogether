@@ -160,6 +160,12 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Bind viewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+        //DatabaseReference
         // Take the specific group
         final Group group = filteredGroup.get(position);
 
@@ -173,6 +179,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 myViewHolder.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolder.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolder.tvEndTimeInput.setText(group.getEndTime());
+                myViewHolder.tvOwnerName.setText(firebaseUser.getDisplayName());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolder.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolder.imgOwnerProfile);
                 break;
@@ -183,6 +190,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 myViewHolderTutor.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolderTutor.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolderTutor.tvEndTimeInput.setText(group.getEndTime());
+                myViewHolderTutor.tvOwnerName.setText(firebaseUser.getDisplayName());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolderTutor.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolderTutor.imgOwnerProfile);
                 break;
@@ -204,6 +212,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvNumOfGroupMembers;
         TextView tvStartTimeInput;
         TextView tvEndTimeInput;
+        TextView tvOwnerName;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
         CardView cardView;
@@ -223,6 +232,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
             tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
+            tvOwnerName = itemView.findViewById(R.id.row_group_owner_name);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
             cardView = itemView.findViewById(R.id.cardview_group);
@@ -341,6 +351,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvNumOfGroupMembers;
         TextView tvStartTimeInput;
         TextView tvEndTimeInput;
+        TextView tvOwnerName;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
         ImageView imgTutorHere;
@@ -361,6 +372,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
             tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
+            tvOwnerName = itemView.findViewById(R.id.row_group_owner_name);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
             imgTutorHere = itemView.findViewById(R.id.row_tutor_here_image);

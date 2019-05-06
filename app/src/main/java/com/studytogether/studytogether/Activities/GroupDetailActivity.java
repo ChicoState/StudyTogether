@@ -59,6 +59,8 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     // Create items
     TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription, detailCourseSubject, detailCategoryNum, detailCourseDescription;
+    TextView detailStartTime, detailEndtime;
+    TextView detailMaxMembers, detailCurrentMembers;
     Button detailJoinButton, detailQuitButton, detailTerminateGroupButton;
 
     List<User> userList;
@@ -91,6 +93,10 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailCourseSubject = findViewById(R.id.detail_course_subject);
         detailCategoryNum = findViewById(R.id.detail_course_category_num);
         detailCourseDescription = findViewById(R.id.detail_course_description);
+        detailStartTime = findViewById(R.id.detail_start_time);
+        detailEndtime = findViewById(R.id.detail_end_time);
+        detailMaxMembers = findViewById(R.id.detail_maximum_members);
+        detailCurrentMembers = findViewById(R.id.detail_current_members);
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
         detailQuitButton = findViewById(R.id.detail_quit_btn);
@@ -161,6 +167,10 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupAddedDate.setText(groupCreated);
         detailCourseSubject.setText(courseSubject);
         detailCategoryNum.setText(courseCategoryNum);
+        detailStartTime.setText(startTime);
+        detailEndtime.setText(endTime);
+        detailMaxMembers.setText(String.valueOf(groupMaxMembers));
+        detailCurrentMembers.setText(String.valueOf(groupCurrentMembers));
 
 
 
@@ -226,7 +236,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Group group = new Group(courseSubject, courseCategoryNum ,groupName, groupGoal, groupPlace, groupMaxMembers, startHour, startMin, endHour, endMin, groupPicture, ownerId, groupOwnerPhoto );
 
-                if(group.getMaximumGroupMembers() <= group.getCurrentGroupMembers()) {
+                if((group.getMaximumGroupMembers() <= group.getCurrentGroupMembers()) && (group.getMaximumGroupMembers() != 1)) {
                     showMessage("The group is FULL, SORRY");
                 } else {
 
