@@ -58,10 +58,11 @@ public class GroupDetailActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
 
     // Create items
-    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription;
+    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription, detailCourseSubject, detailCategoryNum, detailCourseDescription;
     Button detailJoinButton, detailQuitButton, detailTerminateGroupButton;
 
     List<User> userList;
+    String courseTitle;
 
 
     private RecyclerView userRecyclerView;
@@ -87,6 +88,9 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupGoal = findViewById(R.id.detail_group_goal);
         detailGroupAddedDate = findViewById(R.id.detail_group_added);
         detailTerminateDescription = findViewById(R.id.detail_terminate_description);
+        detailCourseSubject = findViewById(R.id.detail_course_subject);
+        detailCategoryNum = findViewById(R.id.detail_course_category_num);
+        detailCourseDescription = findViewById(R.id.detail_course_description);
 
         detailJoinButton = findViewById(R.id.detail_join_btn);
         detailQuitButton = findViewById(R.id.detail_quit_btn);
@@ -155,6 +159,34 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailGroupPlace.setText(groupPlace);
         detailGroupGoal.setText(groupGoal);
         detailGroupAddedDate.setText(groupCreated);
+        detailCourseSubject.setText(courseSubject);
+        detailCategoryNum.setText(courseCategoryNum);
+
+
+
+        DatabaseReference courseReference = firebaseDatabase.getReference("Course");
+
+
+        // specify an adapter
+        courseReference.addValueEventListener(new ValueEventListener() {
+            // Detect the changes
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // Loop whole comments
+                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+
+                    Course course = coursesnap.getValue(Course.class);
+                    if(course.getSubject().equals(courseSubject) && String.valueOf(course.getCategoryNum()).equals(courseCategoryNum)) {
+                        detailCourseDescription.setText(course.getCourseTitle());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
 
         updateUser(groupKey);

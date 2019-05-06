@@ -109,31 +109,69 @@
                         android:textColor="#000" />
                 </LinearLayout>
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    tools:ignore="Orientation">
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/detail_course_subject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="Course Subject"
+                            android:textColor="#000" />
+                        <TextView
+                            android:id="@+id/detail_course_category_num"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="Category Number"
+                            android:textColor="#000" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/detail_course_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="(Courese Description)"
+                        android:textColor="#727375" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="Group Place:"
+                        android:textColor="#727375" />
 
                     <TextView
                         android:id="@+id/detail_group_place"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="8dp"
+                        android:textAlignment="textEnd"
+                        android:layout_marginRight="10dp"
                         android:text="Group Place"
-                        android:textColor="#000" />
-
-                    <TextView
-                        android:id="@+id/detail_group_goal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="Group Goal"
-                        android:textColor="#000" />
+                        android:textColor="#000"
+                        android:gravity="end"
+                        android:textSize="18dp"
+                        android:layout_marginLeft="8dp" />
 
                 </LinearLayout>
 
@@ -141,25 +179,56 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginBottom="8dp"
-                    tools:ignore="Orientation">
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:id="@+id/textView13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="Group Goal:"
+                        android:textColor="#727375" />
+
+                    <TextView
+                        android:id="@+id/detail_group_goal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="textEnd"
+                        android:layout_marginRight="10dp"
+                        android:text="Group Goal"
+                        android:textColor="#000"
+                        android:textSize="18dp"
+                        android:gravity="end" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:id="@+id/textView3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:text="Group added:  " />
+                        android:textColor="#727375"
+                        android:layout_marginLeft="8dp"
+                        android:text="Group added:" />
 
                     <TextView
                         android:id="@+id/detail_group_added"
-                        android:layout_width="wrap_content"
-                        android:layout_height="16dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginRight="16dp"
-                        android:text="Added Date"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="textEnd"
+                        android:layout_marginRight="10dp"
+                        android:text="Added Date"
+                        android:textColor="#000"
+                        android:gravity="end"
+                        android:textSize="18dp"
+                        android:layout_marginLeft="8dp" />
 
                 </LinearLayout>
             </LinearLayout>
