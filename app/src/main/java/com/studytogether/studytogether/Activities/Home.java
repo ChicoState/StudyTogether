@@ -64,6 +64,7 @@ import com.studytogether.studytogether.R;
 import com.studytogether.studytogether.Adapters.GroupAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -102,9 +103,12 @@ public class Home extends AppCompatActivity
     // Items
     Spinner popupSubjectSpinner, popupCategoryNumSpinner;
     ImageView popupGroupImage, popupAddBtn;
-    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupMaximumGroupMembers, popupStartTimeInput, popupEndTimeInput;
+    TextView popupGroupName, popupGroupGoal, popupGroupPlace, popupMaximumGroupMembers, popupStartTimeInput, popupEndTimeInput, popupImageDescription;
     ProgressBar popupClickProgress;
     private Uri pickedImgUri = null;
+    private boolean ownerPosition = false;
+    private boolean tutorPosition = false;
+
 
     private int startHour, startMin, endHour, endMin;
     private String courseSubject = null, courseCategoryNum = null;
@@ -213,12 +217,17 @@ public class Home extends AppCompatActivity
     // Open the user's gallery
     private void openGallery() {
 
+
         // Get intent
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         // set up the intent type
         galleryIntent.setType("image/*");
         // Get into gallery
         startActivityForResult(galleryIntent, REQUESCODE);
+
+        popupImageDescription.setVisibility(View.GONE);
+
+
     }
 
     // Grab the image
@@ -233,6 +242,7 @@ public class Home extends AppCompatActivity
             pickedImgUri = data.getData();
             // Show up into popup the image
             popupGroupImage.setImageURI(pickedImgUri);
+            popupGroupImage.getBackground().setAlpha(255);
         }
     }
 
@@ -267,6 +277,7 @@ public class Home extends AppCompatActivity
         popupEndTimeInput = popAddGroup.findViewById(R.id.popup_edit_endtime);
 
         popupGroupImage = popAddGroup.findViewById(R.id.popup_groupImage);
+        popupImageDescription = popAddGroup.findViewById(R.id.popup_image_description);
 
         popupAddBtn = popAddGroup.findViewById(R.id.popup_addButton);
         popupClickProgress = popAddGroup.findViewById(R.id.popup_progressbar);
@@ -280,10 +291,6 @@ public class Home extends AppCompatActivity
         popupSubjectSpinner.setAdapter(popupSubjectAdapter);
         popupSubjectSpinner.setOnItemSelectedListener(new subjectOnClickListener());
 
-
-
-
-
         /*
 
         if(!popupSubjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…") && (popupSubjectSpinner.getSelectedItem().toString() != null)) {
@@ -295,21 +302,12 @@ public class Home extends AppCompatActivity
         */
 
 
-
-
-
         /*
-
-
-
         ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.csciCategoryNum));
         popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
-
-
-
 
         popupSubjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -362,11 +360,6 @@ public class Home extends AppCompatActivity
 
 
 
-
-
-
-
-
         popupStartTimeInput.setOnClickListener(view -> {
             // Get Current Time
             final Calendar c = Calendar.getInstance();
@@ -410,7 +403,7 @@ public class Home extends AppCompatActivity
                                               int minute) {
                             if(hourOfDay > 12) {
                                 int newHour = hourOfDay-12;
-                                popupStartTimeInput.setText(newHour + " : " + minute + " PM");
+                                popupEndTimeInput.setText(newHour + " : " + minute + " PM");
                             } else {
                                 popupEndTimeInput.setText(hourOfDay + " : " + minute + " AM");
                             }
@@ -462,8 +455,8 @@ public class Home extends AppCompatActivity
                                             endMin,
                                             imageDownlaodLink,
                                             currentUser.getUid(),
-                                            currentUser.getPhotoUrl().toString());
-
+                                            currentUser.getPhotoUrl().toString(),
+                                            currentUser.getDisplayName());
 
                                     // Add the group
                                     addGroup(group);
@@ -507,15 +500,16 @@ public class Home extends AppCompatActivity
         // Get database instance
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         // get reference of the database
-        DatabaseReference myRef = database.getReference("Groups").push();
+        DatabaseReference groupReference = database.getReference("Groups").push();
+        DatabaseReference groupsReference = database.getReference("Groups");
 
         // Get the current user's Auth key
-        String groupKey = myRef.getKey();
+        String groupKey = groupReference.getKey();
         // Set up the groupKey with the user's key
         group.setGroupKey(groupKey);
 
         // SuccessListener
-        myRef.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
+        groupReference.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 // If a group is added successfully, print a success message
@@ -538,20 +532,78 @@ public class Home extends AppCompatActivity
         String userEmail = currentUser.getEmail();
         String userName = currentUser.getDisplayName();
         String userImage = currentUser.getPhotoUrl().toString();
-        User user = new User(userEmail,userId,userImage,userName);
 
 
-        userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
+
+        groupsReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(Void aVoid) {
-                //showMessage("Successfully added");
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+                    Group group = groupsnap.getValue(Group.class);
+                    if(group.getGroupKey().equals(groupKey)) {
+                        if(group.getOwnerId().equals(userId)) {
+                            ownerPosition = true;
+                            //Toast.makeText(mContext, ("onwerPosition " + onwerPosition), Toast.LENGTH_SHORT).show();
+                        }
+                        DatabaseReference tutorCourseListOfUser = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+                        if(tutorCourseListOfUser != null) {
+                            tutorCourseListOfUser.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+                                        Course course = coursesnap.getValue(Course.class);
+                                        if(course.getSubject().equals(group.getGroupCourseSubject()) && String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+                                            tutorPosition = true;
+                                        }
+                                    }
+                                }
+                                // When the database doesn't response
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+                        }
+                    }
+                }
+                String position = "";
+
+                if(ownerPosition && tutorPosition) {
+                    position = "Owner & Tutor";
+                } else if(ownerPosition) {
+                    position = "Owner";
+                } else if(tutorPosition) {
+                    position = "Tutor";
+                }
+
+                User user = new User(userEmail,userId,userImage,userName, groupKey, position);
+
+
+                userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //showMessage("Successfully added");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showMessage("fail to add comment : "+e.getMessage());
+                    }
+                });
             }
-        }).addOnFailureListener(new OnFailureListener() {
+            // When the database doesn't response
             @Override
-            public void onFailure(@NonNull Exception e) {
-                showMessage("fail to add comment : "+e.getMessage());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
+
+
+
+
 
 
         UserGroupList userGroupList = new UserGroupList(group, groupKey);
@@ -696,6 +748,7 @@ public class Home extends AppCompatActivity
                                    long id) {
 
             parent.getItemAtPosition(pos);
+            courseSubject = parent.getItemAtPosition(pos).toString();
 
             if (parent.getItemAtPosition(pos).toString().equals("CSCI")){
 
@@ -706,6 +759,28 @@ public class Home extends AppCompatActivity
                 popupCategoryNumAdapter.notifyDataSetChanged();
                 popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
 
+
+                popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent,
+                                               View view, int pos, long id) {
+                        switch (parent.getId()) {
+                            case R.id.popup_category_num_spinner:
+                                String selected = parent.getItemAtPosition(pos).toString();
+                                String[] strArray = selected.split(":");
+                                courseCategoryNum = strArray[0];
+                                //showMessage(courseCategoryNum);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+
             } else if(parent.getItemAtPosition(pos).toString().equals("CINS")){
                 ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(Home.this,
                         android.R.layout.simple_spinner_item,
@@ -713,6 +788,28 @@ public class Home extends AppCompatActivity
                 popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 popupCategoryNumAdapter.notifyDataSetChanged();
                 popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+                popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent,
+                                               View view, int pos, long id) {
+                        switch (parent.getId()) {
+                            case R.id.popup_category_num_spinner:
+                                String selected = parent.getItemAtPosition(pos).toString();
+                                String[] strArray = selected.split(":");
+                                courseCategoryNum = strArray[0];
+                                //showMessage(courseCategoryNum);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+
             } else if (parent.getItemAtPosition(pos).toString().equals("EECE")){
                 ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(Home.this,
                         android.R.layout.simple_spinner_item,
@@ -720,6 +817,27 @@ public class Home extends AppCompatActivity
                 popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 popupCategoryNumAdapter.notifyDataSetChanged();
                 popupCategoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+                popupCategoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent,
+                                               View view, int pos, long id) {
+                        switch (parent.getId()) {
+                            case R.id.popup_category_num_spinner:
+                                String selected = parent.getItemAtPosition(pos).toString();
+                                String[] strArray = selected.split(":");
+                                courseCategoryNum = strArray[0];
+                                //showMessage(courseCategoryNum);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+                    }
+                });
             }
         }
         @Override

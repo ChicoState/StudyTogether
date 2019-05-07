@@ -111,6 +111,7 @@ public class GroupChatActivity extends AppCompatActivity {
         int groupMaxMembers = intent.getExtras().getInt("GroupMaxMembers");
         int groupCurrentMembers = intent.getExtras().getInt("GroupCurrentMembers");
 
+        String groupOwnerName = intent.getExtras().getString("GroupOwnerName");
         String ownerId = intent.getExtras().getString("GroupOwnerId");
         String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
 
@@ -164,6 +165,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 groupDetailActivity.putExtra("GroupMaxMembers",groupMaxMembers);
                 groupDetailActivity.putExtra("GroupCurrentMembers",groupCurrentMembers);
 
+                groupDetailActivity.putExtra("GroupOwnerName", groupOwnerName);
                 groupDetailActivity.putExtra("GroupOwnerId",ownerId);
                 groupDetailActivity.putExtra("GroupOwnerPhoto",groupOwnerPhoto);
 

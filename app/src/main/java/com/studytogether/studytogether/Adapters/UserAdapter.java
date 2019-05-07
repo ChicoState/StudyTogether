@@ -8,20 +8,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.studytogether.studytogether.Models.Course;
+import com.studytogether.studytogether.Models.Group;
 import com.studytogether.studytogether.Models.User;
 import com.studytogether.studytogether.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    // Declare groupChats
     private List<User> users;
 
-    // ChatAdapter Constructor
     public UserAdapter(Context mContext, List<User> users) {
         this.mContext = mContext;
         this.users = users;
@@ -47,13 +56,15 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final User user = users.get(position);
 
-        UserViewHolder chatViewHolder = (UserViewHolder) holder;
+
+        UserViewHolder userViewHolder = (UserViewHolder) holder;
 
         if(user != null) {
             if(user.getuserName() != null && user.getUserEmail() != null && user.getuserImage() != null) {
-                chatViewHolder.tvUserUserName.setText(user.getuserName());
-                chatViewHolder.tvUserUserEmail.setText(user.getUserEmail());
-                Glide.with(mContext).load(user.getuserImage()).into(chatViewHolder.imgUserUserPhoto);
+                userViewHolder.tvUserUserName.setText(user.getuserName());
+                userViewHolder.tvUserUserEmail.setText(user.getUserEmail());
+                userViewHolder.tvUserUserPosition.setText(user.getUserPosition());
+                Glide.with(mContext).load(user.getuserImage()).into(userViewHolder.imgUserUserPhoto);
             }
         }
     }
@@ -67,6 +78,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public class UserViewHolder extends RecyclerView.ViewHolder {
         TextView tvUserUserName;
         TextView tvUserUserEmail;
+        TextView tvUserUserPosition;
         ImageView imgUserUserPhoto;
 
 
@@ -78,6 +90,7 @@ public class UserAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // Set the attributes with each item
             tvUserUserName = itemView.findViewById(R.id.row_big_user_name);
             tvUserUserEmail = itemView.findViewById(R.id.row_user_email);
+            tvUserUserPosition = itemView.findViewById(R.id.row_user_position);
             imgUserUserPhoto = itemView.findViewById(R.id.row_user_image);
 
         }

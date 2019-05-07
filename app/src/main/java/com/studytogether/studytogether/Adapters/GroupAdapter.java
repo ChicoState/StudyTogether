@@ -46,6 +46,8 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Context mContext;
     // Declare filteredGroup
     private List<Group> filteredGroup;
+    String userName;
+
 
     // groupAdapter Constructor
     public GroupAdapter(Context mContext, List<Group> srcGroups) {
@@ -161,10 +163,6 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
         //DatabaseReference
         // Take the specific group
         final Group group = filteredGroup.get(position);
@@ -174,23 +172,25 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (holder.getItemViewType()) {
             case TYPE_STUDY:
                 MyViewHolder myViewHolder = (MyViewHolder) holder;
+
                 myViewHolder.tvGroupName.setText(group.getGroupName());
                 myViewHolder.tvGroupPlace.setText(group.getGroupPlace());
                 myViewHolder.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolder.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolder.tvEndTimeInput.setText(group.getEndTime());
-                myViewHolder.tvOwnerName.setText(firebaseUser.getDisplayName());
+                myViewHolder.tvOwnerName.setText(group.getOwnerName());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolder.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolder.imgOwnerProfile);
                 break;
             case TYPE_TUTOR:
                 MyViewHolderTutor myViewHolderTutor = (MyViewHolderTutor) holder;
+
                 myViewHolderTutor.tvGroupName.setText(group.getGroupName());
                 myViewHolderTutor.tvGroupPlace.setText(group.getGroupPlace());
                 myViewHolderTutor.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolderTutor.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolderTutor.tvEndTimeInput.setText(group.getEndTime());
-                myViewHolderTutor.tvOwnerName.setText(firebaseUser.getDisplayName());
+                myViewHolderTutor.tvOwnerName.setText(group.getOwnerName());
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolderTutor.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolderTutor.imgOwnerProfile);
                 break;
@@ -283,6 +283,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupChatActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
                                 groupChatActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
 
+                                groupChatActivity.putExtra("GroupOwnerName",filteredGroup.get(position).getOwnerName());
                                 groupChatActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
                                 groupChatActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
 
@@ -316,6 +317,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupDetailActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
                                 groupDetailActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
 
+                                groupDetailActivity.putExtra("GroupOwnerName",filteredGroup.get(position).getOwnerName());
                                 groupDetailActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
                                 groupDetailActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
 
@@ -425,6 +427,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupChatActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
                                 groupChatActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
 
+                                groupChatActivity.putExtra("GroupOwnerName",filteredGroup.get(position).getOwnerName());
                                 groupChatActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
                                 groupChatActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
 
@@ -458,6 +461,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 groupDetailActivity.putExtra("GroupMaxMembers",filteredGroup.get(position).getMaximumGroupMembers());
                                 groupDetailActivity.putExtra("GroupCurrentMembers",filteredGroup.get(position).getCurrentGroupMembers());
 
+                                groupDetailActivity.putExtra("GroupOwnerName",filteredGroup.get(position).getOwnerName());
                                 groupDetailActivity.putExtra("GroupOwnerId",filteredGroup.get(position).getOwnerId());
                                 groupDetailActivity.putExtra("GroupOwnerPhoto",filteredGroup.get(position).getGroupOwnerPhoto());
 

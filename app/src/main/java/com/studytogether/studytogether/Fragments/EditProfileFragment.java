@@ -269,7 +269,12 @@ public class EditProfileFragment extends Fragment {
                                         Course course = coursesnap.getValue(Course.class);
                                         String courseNum = String.valueOf(course.getCategoryNum());
 
-                                        if((course.getSubject().contains(subjectSpinner.getSelectedItem().toString())) && (courseNum.contains(categoryNumSpinner.getSelectedItem().toString()))) {
+                                        String selected = categoryNumSpinner.getSelectedItem().toString();
+
+                                        String[] strArray = selected.split(":");
+                                        String courseCategoryNum = strArray[0];
+
+                                        if((course.getSubject().contains(subjectSpinner.getSelectedItem().toString())) && (courseNum.contains(courseCategoryNum))) {
                                             // SuccessListener
                                             tutorCourseListReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override

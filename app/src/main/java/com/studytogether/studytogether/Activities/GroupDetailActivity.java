@@ -58,13 +58,15 @@ public class GroupDetailActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
 
     // Create items
-    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription, detailCourseSubject, detailCategoryNum, detailCourseDescription;
+    TextView detailGroupName, detailGroupPlace, detailGroupGoal, detailGroupAddedDate, detailTerminateDescription;
+    TextView detailCourseSubject, detailCategoryNum, detailCourseDescription;
     TextView detailStartTime, detailEndtime;
     TextView detailMaxMembers, detailCurrentMembers;
     Button detailJoinButton, detailQuitButton, detailTerminateGroupButton;
 
     List<User> userList;
-    String courseTitle;
+    private boolean ownerPosition = false;
+    private boolean tutorPosition = false;
 
 
     private RecyclerView userRecyclerView;
@@ -137,6 +139,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         int groupMaxMembers = intent.getExtras().getInt("GroupMaxMembers");
         int groupCurrentMembers = intent.getExtras().getInt("GroupCurrentMembers");
 
+        String groupOwnerName = intent.getExtras().getString("GroupOwnerName");
         String ownerId = intent.getExtras().getString("GroupOwnerId");
         String groupOwnerPhoto = intent.getStringExtra("GroupOwnerPhoto");
 
@@ -146,6 +149,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         String groupCreated = timestampToString(getIntent().getExtras().getLong("addedDate"));
 
         String userId = firebaseUser.getUid();
+        String userName = firebaseUser.getDisplayName();
 
 
         final Toolbar toolbar = findViewById(R.id.detail_toolbar);
@@ -189,6 +193,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     Course course = coursesnap.getValue(Course.class);
                     if(course.getSubject().equals(courseSubject) && String.valueOf(course.getCategoryNum()).equals(courseCategoryNum)) {
                         detailCourseDescription.setText(course.getCourseTitle());
+                        //showMessage("catNum: " + courseCategoryNum + " || desc: " + course.getCourseTitle());
                     }
                 }
             }
@@ -234,15 +239,16 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailJoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Group group = new Group(courseSubject, courseCategoryNum ,groupName, groupGoal, groupPlace, groupMaxMembers, startHour, startMin, endHour, endMin, groupPicture, ownerId, groupOwnerPhoto );
+                Group group = new Group(courseSubject, courseCategoryNum ,groupName, groupGoal, groupPlace, groupMaxMembers, startHour, startMin, endHour, endMin, groupPicture, ownerId, groupOwnerPhoto, groupOwnerName );
 
-                if((group.getMaximumGroupMembers() <= group.getCurrentGroupMembers()) && (group.getMaximumGroupMembers() != 1)) {
+                if((group.getMaximumGroupMembers() <= group.getCurrentGroupMembers())) {
                     showMessage("The group is FULL, SORRY");
                 } else {
 
                     DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey).push();
 
                     DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+                    DatabaseReference groupsReference = firebaseDatabase.getReference("Groups");
 
                     DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
 
@@ -250,19 +256,78 @@ public class GroupDetailActivity extends AppCompatActivity {
                     String userId = firebaseUser.getUid();
                     String userName = firebaseUser.getDisplayName();
                     String userImage = firebaseUser.getPhotoUrl().toString();
-                    User user = new User(userEmail,userId,userImage,userName);
 
-                    userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
+
+
+                    groupsReference.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            buttonController(true, firebaseUser.getUid(), groupKey);
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                            for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
+                                Group group = groupsnap.getValue(Group.class);
+                                if(group.getGroupKey().equals(groupKey)) {
+                                    if(group.getOwnerId().equals(userId)) {
+                                        ownerPosition = true;
+                                        //Toast.makeText(mContext, ("onwerPosition " + onwerPosition), Toast.LENGTH_SHORT).show();
+                                    }
+                                    DatabaseReference tutorCourseListOfUser = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+                                    if(tutorCourseListOfUser != null) {
+                                        tutorCourseListOfUser.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
+                                                    Course course = coursesnap.getValue(Course.class);
+                                                    if(course.getSubject().equals(group.getGroupCourseSubject()) && String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
+                                                        tutorPosition = true;
+
+                                                    }
+                                                }
+                                            }
+                                            // When the database doesn't response
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            String position = "";
+
+                            if(ownerPosition && tutorPosition) {
+                                position = "Owner & Tutor";
+                            } else if(ownerPosition) {
+                                position = "Owner";
+                            } else if(tutorPosition) {
+                                position = "Tutor";
+                            }
+
+                            User user = new User(userEmail,userId,userImage,userName, groupKey, position);
+
+
+                            userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    //showMessage("Successfully added");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    showMessage("fail to add comment : "+e.getMessage());
+                                }
+                            });
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
+                        // When the database doesn't response
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            showMessage("fail to add comment : "+e.getMessage());
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
+
+
+
+
 
 
                     UserGroupList userGroupList = new UserGroupList(group, groupKey);
@@ -548,6 +613,11 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     private void buttonController(Boolean alreadyJoined, String currentUserId, String groupKey) {
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+
         DatabaseReference currentGroupReference = firebaseDatabase.getReference("Groups");
 
         currentGroupReference.addValueEventListener(new ValueEventListener() {
@@ -562,7 +632,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                         if (alreadyJoined) {
                             detailJoinButton.setVisibility(View.GONE);
-                            if (currentUserId.equals(currentGroupOwnerId)) {
+                            if (currentUserId.contentEquals(currentGroupOwnerId)) {
                                 detailTerminateGroupButton.setVisibility(View.VISIBLE);
                                 detailTerminateDescription.setVisibility(View.VISIBLE);
                             } else {
@@ -571,7 +641,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                                 detailQuitButton.setVisibility(View.VISIBLE);
                             }
                         } else {
-                            if(firebaseUser.getUid().equals(currentGroupOwnerId)){
+                            if(firebaseUser.getUid().contentEquals(currentGroupOwnerId)){
                                 detailJoinButton.setVisibility(View.GONE);
                                 detailTerminateGroupButton.setVisibility(View.VISIBLE);
                                 detailTerminateDescription.setVisibility(View.VISIBLE);
