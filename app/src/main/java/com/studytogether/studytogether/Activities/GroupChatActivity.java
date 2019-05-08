@@ -12,10 +12,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,6 +83,7 @@ public class GroupChatActivity extends AppCompatActivity {
         commentRecyclerView  = findViewById(R.id.commentRV);
         commentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentRecyclerView.setHasFixedSize(true);
+
 
         // use a linear layout manager
         chatLayoutManager = new LinearLayoutManager(this);
@@ -181,23 +184,24 @@ public class GroupChatActivity extends AppCompatActivity {
         updateComment(groupKey);
 
 
+
+
         btnAddComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                btnAddComment.setVisibility(View.INVISIBLE);
                 DatabaseReference commentReference = firebaseDatabase.getReference("GroupChat").child(groupKey).push();
+
+
                 String comment_content = userComment.getText().toString();
-                String userId = firebaseUser.getUid();
                 String userName = firebaseUser.getDisplayName();
                 String userImage = firebaseUser.getPhotoUrl().toString();
-                GroupChat groupChat = new GroupChat(comment_content,userId,userImage,userName);
+                GroupChat groupChat = new GroupChat(comment_content,userId,userImage,userName, groupKey, true);
 
                 commentReference.setValue(groupChat).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         userComment.setText("");
-                        btnAddComment.setVisibility(View.VISIBLE);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -207,6 +211,40 @@ public class GroupChatActivity extends AppCompatActivity {
                 });
             }
         });
+
+
+
+        userComment.setOnKeyListener(new View.OnKeyListener() {
+
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // TODO Auto-generated method stub
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) { //Whenever you got user click enter. Get text in edittext and check it equal test1. If it's true do your code in listenerevent of button3
+
+                    DatabaseReference commentsReference = firebaseDatabase.getReference("GroupChat").child(groupKey).push();
+
+
+                    String comment_content = userComment.getText().toString();
+                    String userName = firebaseUser.getDisplayName();
+                    String userImage = firebaseUser.getPhotoUrl().toString();
+                    GroupChat groupChat = new GroupChat(comment_content,userId,userImage,userName, groupKey, true);
+
+                    commentsReference.setValue(groupChat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            userComment.setText("");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showMessage("fail to add comment : "+e.getMessage());
+                        }
+                    });
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -251,6 +289,11 @@ public class GroupChatActivity extends AppCompatActivity {
                 // Set recyclerView using chatAdapter
                 chatAdapter = new ChatAdapter(GroupChatActivity.this,commentList);
                 commentRecyclerView.setAdapter(chatAdapter);
+                showMessage("list size is : " + commentList.size());
+                //commentRecyclerView.smoothScrollToPosition(commentRecyclerView.getAdapter().getItemCount() - 1);
+
+                commentRecyclerView.smoothScrollToPosition(29);
+
             }
 
             @Override

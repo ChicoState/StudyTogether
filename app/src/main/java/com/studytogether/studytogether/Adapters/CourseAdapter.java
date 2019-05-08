@@ -78,7 +78,6 @@ public class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvSubject = itemView.findViewById(R.id.row_subject);
             tvCategoryNum = itemView.findViewById(R.id.row_category_num);
             tvCourseTitle = itemView.findViewById(R.id.row_course_title);
-            Toast.makeText(mContext," Adapter in CourseViewHolder",Toast.LENGTH_LONG).show();
 
 
         }

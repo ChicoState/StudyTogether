@@ -2,6 +2,7 @@ package com.studytogether.studytogether.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,7 @@ import com.studytogether.studytogether.Models.UserGroupList;
 import com.studytogether.studytogether.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 // GroupAdapter for recyclerView
@@ -163,9 +165,36 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
+        final Calendar c = Calendar.getInstance();
+        int currentHour = c.get(Calendar.HOUR_OF_DAY);
+        int currentMin = c.get(Calendar.MINUTE);
+        String groupActive = "Closed";
+        String groupActiveColor = "#000";
+
         //DatabaseReference
         // Take the specific group
         final Group group = filteredGroup.get(position);
+        if((currentHour > group.getStartHour()) && (currentHour < group.getEndHour())) {
+            groupActive = "Open";
+        }else if((currentHour == group.getStartHour()) && (currentHour == group.getEndHour())) {
+            if((group.getStartMin() <= currentMin) && (group.getEndMin() >= currentMin)) {
+                groupActive = "Open";
+            }
+        } else if((currentHour == group.getStartHour()) && (currentHour < group.getEndHour())) {
+            if(group.getStartMin() <= currentMin) {
+                groupActive = "Open";
+            }
+        } else if((currentHour > group.getStartHour()) && (currentHour == group.getEndHour())) {
+            if(group.getEndMin() >= currentMin) {
+                groupActive = "Open";
+            }
+        }
+
+        if(groupActive == "Open") {
+            groupActiveColor = "#00d32a";
+        } else {
+            groupActiveColor = "#c60139";
+        }
 
         // Seperate holder by viewType
         // Pass the information of the group into viewHolder
@@ -175,10 +204,14 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 myViewHolder.tvGroupName.setText(group.getGroupName());
                 myViewHolder.tvGroupPlace.setText(group.getGroupPlace());
-                myViewHolder.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
+                myViewHolder.tvNumOfGroupMembers.setText(String.valueOf(group.getCurrentGroupMembers()));
+                myViewHolder.tvMaxMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolder.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolder.tvEndTimeInput.setText(group.getEndTime());
                 myViewHolder.tvOwnerName.setText(group.getOwnerName());
+                myViewHolder.tvGroupActive.setText(groupActive);
+                myViewHolder.tvGroupActive.setTextColor(Color.parseColor(groupActiveColor));
+
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolder.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolder.imgOwnerProfile);
                 break;
@@ -187,12 +220,17 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 myViewHolderTutor.tvGroupName.setText(group.getGroupName());
                 myViewHolderTutor.tvGroupPlace.setText(group.getGroupPlace());
-                myViewHolderTutor.tvNumOfGroupMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
+                myViewHolderTutor.tvNumOfGroupMembers.setText(String.valueOf(group.getCurrentGroupMembers()));
+                myViewHolderTutor.tvMaxMembers.setText(String.valueOf(group.getMaximumGroupMembers()));
                 myViewHolderTutor.tvStartTimeInput.setText(group.getStartTime());
                 myViewHolderTutor.tvEndTimeInput.setText(group.getEndTime());
                 myViewHolderTutor.tvOwnerName.setText(group.getOwnerName());
+                myViewHolderTutor.tvGroupActive.setText(groupActive);
+                myViewHolderTutor.tvGroupActive.setTextColor(Color.parseColor(groupActiveColor));
+
                 Glide.with(mContext).load(group.getGroupPicture()).into(myViewHolderTutor.imgGroup);
                 Glide.with(mContext).load(group.getGroupOwnerPhoto()).into(myViewHolderTutor.imgOwnerProfile);
+
                 break;
         }
     }
@@ -210,9 +248,11 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvGroupName;
         TextView tvGroupPlace;
         TextView tvNumOfGroupMembers;
+        TextView tvMaxMembers;
         TextView tvStartTimeInput;
         TextView tvEndTimeInput;
         TextView tvOwnerName;
+        TextView tvGroupActive;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
         CardView cardView;
@@ -230,9 +270,11 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvGroupName = itemView.findViewById(R.id.row_group_name);
             tvGroupPlace = itemView.findViewById(R.id.row_group_place);
             tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
+            tvMaxMembers = itemView.findViewById(R.id.row_max_members);
             tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             tvOwnerName = itemView.findViewById(R.id.row_group_owner_name);
+            tvGroupActive = itemView.findViewById(R.id.row_group_active);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
             cardView = itemView.findViewById(R.id.cardview_group);
@@ -351,9 +393,11 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvGroupName;
         TextView tvGroupPlace;
         TextView tvNumOfGroupMembers;
+        TextView tvMaxMembers;
         TextView tvStartTimeInput;
         TextView tvEndTimeInput;
         TextView tvOwnerName;
+        TextView tvGroupActive;
         ImageView imgGroup;
         ImageView imgOwnerProfile;
         ImageView imgTutorHere;
@@ -372,9 +416,11 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvGroupName = itemView.findViewById(R.id.row_group_name);
             tvGroupPlace = itemView.findViewById(R.id.row_group_place);
             tvNumOfGroupMembers = itemView.findViewById(R.id.row_num_of_group_members);
+            tvMaxMembers = itemView.findViewById(R.id.row_max_members);
             tvStartTimeInput = itemView.findViewById(R.id.row_start_time_input);
             tvEndTimeInput = itemView.findViewById(R.id.row_end_time_input);
             tvOwnerName = itemView.findViewById(R.id.row_group_owner_name);
+            tvGroupActive = itemView.findViewById(R.id.row_group_active);
             imgGroup = itemView.findViewById(R.id.row_group_img);
             imgOwnerProfile = itemView.findViewById(R.id.row_owner_profile_img);
             imgTutorHere = itemView.findViewById(R.id.row_tutor_here_image);

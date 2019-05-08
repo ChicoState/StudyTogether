@@ -179,6 +179,31 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
         DatabaseReference courseReference = firebaseDatabase.getReference("Course");
+        DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
+
+        DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey);
+
+        DatabaseReference groupsReference = firebaseDatabase.getReference("Groups");
+        DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
+        DatabaseReference userPushReference = firebaseDatabase.getReference("User").child(groupKey).push();
+
+        DatabaseReference userGroupListPushReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
+        DatabaseReference tutorCourseListOfUser = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+
+        DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
+
+
+
+
+        DatabaseReference usersReference = firebaseDatabase.getReference("User");
+
+        DatabaseReference userGroupListsReference = firebaseDatabase.getReference("UserGroupList");
+
+        DatabaseReference groupChatReference = firebaseDatabase.getReference("GroupChat");
+
+
+
+
 
 
         // specify an adapter
@@ -208,7 +233,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
 
 
-        DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
         userGroupListReference.addValueEventListener(new ValueEventListener() {
             Boolean alreadyJoined = false;
 
@@ -245,12 +269,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                     showMessage("The group is FULL, SORRY");
                 } else {
 
-                    DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey).push();
-
-                    DatabaseReference groupReference = firebaseDatabase.getReference("Groups").child(groupKey);
-                    DatabaseReference groupsReference = firebaseDatabase.getReference("Groups");
-
-                    DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId).push();
 
                     String userEmail = firebaseUser.getEmail();
                     String userId = firebaseUser.getUid();
@@ -271,9 +289,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                                 if(group.getGroupKey().equals(groupKey)) {
                                     if(group.getOwnerId().equals(userId)) {
                                         ownerPosition = true;
-                                        //Toast.makeText(mContext, ("onwerPosition " + onwerPosition), Toast.LENGTH_SHORT).show();
                                     }
-                                    DatabaseReference tutorCourseListOfUser = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
                                     if(tutorCourseListOfUser != null) {
                                         tutorCourseListOfUser.addValueEventListener(new ValueEventListener() {
                                             @Override
@@ -307,7 +323,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                             User user = new User(userEmail,userId,userImage,userName, groupKey, position);
 
 
-                            userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            userPushReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     //showMessage("Successfully added");
@@ -332,10 +348,9 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                     UserGroupList userGroupList = new UserGroupList(group, groupKey);
 
-                    userGroupListReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    userGroupListPushReference.setValue(userGroupList).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            group.addGroupMembers();
                             buttonController(true, firebaseUser.getUid(), groupKey);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -346,7 +361,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                     });
 
 
-                    DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
                     tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
 
                         @Override
@@ -363,8 +377,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                dataSnapshot.getRef().child("tutorHere").setValue(false);
-                                                dataSnapshot.getRef().child("currentGroupMembers").setValue(group.getCurrentGroupMembers()+1);
+                                                dataSnapshot.getRef().child("tutorHere").setValue(true);
                                             }
 
                                             @Override
@@ -382,6 +395,17 @@ public class GroupDetailActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
+
+
+                    groupReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            dataSnapshot.getRef().child("currentGroupMembers").setValue(groupCurrentMembers+1);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
                 }
             }
         });
@@ -393,19 +417,6 @@ public class GroupDetailActivity extends AppCompatActivity {
         detailQuitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                firebaseAuth = FirebaseAuth.getInstance();
-                firebaseUser = firebaseAuth.getCurrentUser();
-
-                String userId = firebaseUser.getUid();
-
-
-                DatabaseReference userReference = firebaseDatabase.getReference("User").child(groupKey);
-
-                DatabaseReference groupReference = firebaseDatabase.getReference("Groups");
-
-                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList").child(userId);
-
 
                 userGroupListReference.addValueEventListener(new ValueEventListener() {
                     // Detect the changes
@@ -420,14 +431,10 @@ public class GroupDetailActivity extends AppCompatActivity {
                             UserGroupList userGroupList = groupsnap.getValue(UserGroupList.class);
 
                             if(groupKey.equals(userGroupList.getGroupKey())) {
-                                userGroupListReference.child(groupsnap.getKey()).setValue(null);
                                 alreadyJoined = false;
-
-
 
                                 Group group = groupsnap.getValue(Group.class);
 
-                                DatabaseReference tutorCourseListOfUserReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(userId);
                                 tutorCourseListOfUserReference.addValueEventListener(new ValueEventListener() {
 
                                     @Override
@@ -439,22 +446,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                                             if(course.getSubject().equals(group.getGroupCourseSubject())) {
                                                 if(String.valueOf(course.getCategoryNum()).equals(group.getGroupCourseCategoryNum())) {
 
-                                                    group.setTutorHere(false);
-
-                                                    groupReference.addValueEventListener(new ValueEventListener() {
-
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            dataSnapshot.getRef().child("tutorHere").setValue(false);
-                                                            dataSnapshot.getRef().child("currentGroupMembers").setValue(group.getCurrentGroupMembers()-1);
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                        }
-                                                    });
-
-                                                    Toast.makeText(GroupDetailActivity.this, "Tutor Out!!!!", Toast.LENGTH_LONG).show();
+                                                    groupsReference.child(groupKey).child("tutorHere").setValue(false);
                                                 }
                                             }
                                         }
@@ -464,6 +456,10 @@ public class GroupDetailActivity extends AppCompatActivity {
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
                                     }
                                 });
+
+                                groupsReference.child(groupKey).child("currentGroupMembers").setValue(groupCurrentMembers-1);
+                                userGroupListReference.child(groupsnap.getKey()).setValue(null);
+
                             }
                         }
 
@@ -480,7 +476,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     // Detect the changes
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Boolean alreadyJoined = false;
+                        Boolean alreadyJoined = true;
 
 
 
@@ -501,7 +497,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                         buttonController(alreadyJoined, firebaseUser.getUid(), groupKey);
 
-                        if(alreadyJoined == false) {
+                        if(!alreadyJoined) {
                             Intent homeIntent = new Intent(GroupDetailActivity.this, Home.class);
                             startActivity(homeIntent);
                             finish();
@@ -515,7 +511,18 @@ public class GroupDetailActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
-
+                /*
+                groupReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        dataSnapshot.getRef().child("currentGroupMembers").setValue(groupCurrentMembers-1);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+                */
+                showMessage("current members: " + groupCurrentMembers + " -> " + (groupCurrentMembers-1));
             }
         });
 
@@ -524,28 +531,13 @@ public class GroupDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
+                usersReference.child(groupKey).setValue(null);
 
-                firebaseAuth = FirebaseAuth.getInstance();
-                firebaseUser = firebaseAuth.getCurrentUser();
-
-                DatabaseReference userReference = firebaseDatabase.getReference("User");
-
-                DatabaseReference userGroupListReference = firebaseDatabase.getReference("UserGroupList");
-
-                DatabaseReference groupChatReference = firebaseDatabase.getReference("GroupChat");
-
-                DatabaseReference groupReference = firebaseDatabase.getReference("Groups");
-
-
-
-
-                userReference.child(groupKey).setValue(null);
-
-                userGroupListReference.child(groupKey).setValue(null);
+                userGroupListsReference.child(groupKey).setValue(null);
 
                 groupChatReference.child(groupKey).setValue(null);
 
-                groupReference.child(groupKey).setValue(null);
+                groupsReference.child(groupKey).setValue(null);
 
 
 
@@ -612,11 +604,6 @@ public class GroupDetailActivity extends AppCompatActivity {
     }
 
     private void buttonController(Boolean alreadyJoined, String currentUserId, String groupKey) {
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
 
         DatabaseReference currentGroupReference = firebaseDatabase.getReference("Groups");
 

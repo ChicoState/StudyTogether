@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -125,6 +126,7 @@ public class HomeFragment extends Fragment {
                             // Set recyclerView through groupAdapter
                             groupAdapter = new GroupAdapter(getActivity(),groupList);
                             groupRecyclerView.setAdapter(groupAdapter);
+                            //groupRecyclerView.addItemDecoration(new DividerItemDecoration(groupRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
                         }
 
                         // When the database doesn't response

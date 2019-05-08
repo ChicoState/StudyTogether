@@ -5,28 +5,23 @@ import com.google.firebase.database.ServerValue;
 
 public class GroupChat {
 
-    private String content,userId,userImage,userName;
+    private String content,userId,userImage,userName, groupKey;
     private Object timestamp;
+    private  boolean myComment;
 
 
     public GroupChat() {
     }
 
-    public GroupChat(String content, String userId, String userImage, String userName) {
+    public GroupChat(String content, String userId, String userImage, String userName, String groupKey, boolean myComment) {
         this.content = content;
         this.userId = userId;
         this.userImage = userImage;
         this.userName = userName;
         this.timestamp = ServerValue.TIMESTAMP;
+        this.groupKey = groupKey;
+        this.myComment = myComment;
 
-    }
-
-    public GroupChat(String content, String userId, String userImage, String userName, Object timestamp) {
-        this.content = content;
-        this.userId = userId;
-        this.userImage = userImage;
-        this.userName = userName;
-        this.timestamp = timestamp;
     }
 
     public String getContent() {
@@ -67,5 +62,21 @@ public class GroupChat {
 
     public void setTimestamp(Object timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getGroupKey() {
+        return groupKey;
+    }
+
+    public void setGroupKey(String groupKey) {
+        this.groupKey = groupKey;
+    }
+
+    public boolean isMyComment() {
+        return myComment;
+    }
+
+    public void setMyComment(boolean myComment) {
+        this.myComment = myComment;
     }
 }

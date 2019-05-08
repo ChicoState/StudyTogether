@@ -122,12 +122,32 @@
                 android:id="@+id/row_num_of_group_members"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Num"
                 android:textColor="#000"
                 app:layout_constraintStart_toEndOf="@+id/row_members"
+                app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textColor="#000"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="4dp"
+                app:layout_constraintStart_toEndOf="@+id/row_num_of_group_members"
+                app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
+
+            <TextView
+                android:id="@+id/row_max_members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="MAX"
+                android:textColor="#000"
+                app:layout_constraintStart_toEndOf="@+id/textView20"
                 app:layout_constraintTop_toBottomOf="@+id/row_group_place" />
 
             <TextView
@@ -147,8 +167,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="Start"
                 android:textColor="#000"
                 app:layout_constraintEnd_toStartOf="@+id/row_dash"
@@ -159,8 +177,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text=" - "
                 android:textColor="#000"
                 app:layout_constraintEnd_toStartOf="@+id/row_end_time_input"

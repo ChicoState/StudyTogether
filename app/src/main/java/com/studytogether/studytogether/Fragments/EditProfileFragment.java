@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -70,6 +71,8 @@ public class EditProfileFragment extends Fragment {
     List<Course> courseList;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
 
+    private String courseSubject = null, courseCategoryNum = null;
+
     public EditProfileFragment() {
     }
 
@@ -96,6 +99,7 @@ public class EditProfileFragment extends Fragment {
 
 
         courseRecyclerView  = fragmentView.findViewById(R.id.courseListRV);
+        //courseRecyclerView.setNestedScrollingEnabled(false);
 
 
 
@@ -144,12 +148,7 @@ public class EditProfileFragment extends Fragment {
     private void updateTutorCourseList() {
 
         courseRecyclerView.setLayoutManager(linearLayoutManager);
-        courseRecyclerView.setHasFixedSize(true);
 
-        // Firebase
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
 
         String currentUserId = firebaseUser.getUid();
 
@@ -162,10 +161,16 @@ public class EditProfileFragment extends Fragment {
                 for (DataSnapshot coursesnap: dataSnapshot.getChildren()) {
                     Course course = coursesnap.getValue(Course.class);
                     courseList.add(course);
-                    //Toast.makeText(getContext()," Currenr userid: " + currentUserId + "  course name: " + course.getCourseTitle(),Toast.LENGTH_LONG).show();
                 }
                 courseAdapter = new CourseAdapter(getActivity(),courseList);
                 courseRecyclerView.setAdapter(courseAdapter);
+
+                int courseListSize = courseList.size();
+
+
+                ViewGroup.LayoutParams params = courseRecyclerView.getLayoutParams();
+                params.height = 225*courseListSize;
+                courseRecyclerView.setLayoutParams(params);
             }
 
             // When the database doesn't response
@@ -180,9 +185,6 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Firebase
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
 
         String userName = firebaseUser.getDisplayName();
 
@@ -221,9 +223,6 @@ public class EditProfileFragment extends Fragment {
         updateTutorCourseList();
 
         // Firebase
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
         String currentUserId = firebaseUser.getUid();
         tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId).push();
         courseReference = firebaseDatabase.getReference("Course");
@@ -246,18 +245,128 @@ public class EditProfileFragment extends Fragment {
                 subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 subjectSpinner.setAdapter(subjectAdapter);
 
+
+                /*
                 ArrayAdapter<String> categoryNumAdapter = new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_spinner_item,
                         getResources().getStringArray(R.array.csciCategoryNum));
                 categoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 categoryNumSpinner.setAdapter(categoryNumAdapter);
+                */
+
+
+
+
+
+
+
+                subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        if (adapterView.getItemAtPosition(i).toString().equals("CSCI")){
+
+                            ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(getContext(),
+                                    android.R.layout.simple_spinner_item,
+                                    getResources().getStringArray(R.array.csciCategoryNum));
+                            popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            popupCategoryNumAdapter.notifyDataSetChanged();
+                            categoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+
+                            categoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent,
+                                                           View view, int pos, long id) {
+                                    switch (parent.getId()) {
+                                        case R.id.popup_category_num_spinner:
+                                            String selected = parent.getItemAtPosition(pos).toString();
+                                            String[] strArray = selected.split(":");
+                                            courseCategoryNum = strArray[0];
+                                            //showMessage(courseCategoryNum);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                @Override
+                                public void onNothingSelected(AdapterView<?> arg0) {
+                                    // TODO Auto-generated method stub
+                                }
+                            });
+
+                        } else if(adapterView.getItemAtPosition(i).toString().equals("CINS")){
+                            ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(getContext(),
+                                    android.R.layout.simple_spinner_item,
+                                    getResources().getStringArray(R.array.cinsCategoryNum));
+                            popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            popupCategoryNumAdapter.notifyDataSetChanged();
+                            categoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+                            categoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent,
+                                                           View view, int pos, long id) {
+                                    switch (parent.getId()) {
+                                        case R.id.popup_category_num_spinner:
+                                            String selected = parent.getItemAtPosition(pos).toString();
+                                            String[] strArray = selected.split(":");
+                                            courseCategoryNum = strArray[0];
+                                            //showMessage(courseCategoryNum);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                @Override
+                                public void onNothingSelected(AdapterView<?> arg0) {
+                                    // TODO Auto-generated method stub
+                                }
+                            });
+
+                        } else if (adapterView.getItemAtPosition(i).toString().equals("EECE")){
+                            ArrayAdapter<String> popupCategoryNumAdapter = new ArrayAdapter<String>(getContext(),
+                                    android.R.layout.simple_spinner_item,
+                                    getResources().getStringArray(R.array.eeceCategoryNum));
+                            popupCategoryNumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            popupCategoryNumAdapter.notifyDataSetChanged();
+                            categoryNumSpinner.setAdapter(popupCategoryNumAdapter);
+
+                            categoryNumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent,
+                                                           View view, int pos, long id) {
+                                    switch (parent.getId()) {
+                                        case R.id.popup_category_num_spinner:
+                                            String selected = parent.getItemAtPosition(pos).toString();
+                                            String[] strArray = selected.split(":");
+                                            courseCategoryNum = strArray[0];
+                                            //showMessage(courseCategoryNum);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                @Override
+                                public void onNothingSelected(AdapterView<?> arg0) {
+                                    // TODO Auto-generated method stub
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+
+
 
                 spinnerBuilder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if((!subjectSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose subject…")) && (!categoryNumSpinner.getSelectedItem().toString().equalsIgnoreCase("Choose course number…"))) {
-                            Toast.makeText(getActivity(), subjectSpinner.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-
 
                             courseReference.addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -329,6 +438,5 @@ public class EditProfileFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
 
 }
