@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
                 public boolean onQueryTextChange(final String query) {
                     // Check groupAdapter
                     if (groupAdapter == null) {
-                        Toast.makeText(getContext(), "GroupAdapter is null", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getContext(), "GroupAdapter is null", Toast.LENGTH_LONG).show();
                         return false;
                     }
 

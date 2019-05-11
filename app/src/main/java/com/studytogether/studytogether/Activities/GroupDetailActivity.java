@@ -218,7 +218,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                     Course course = coursesnap.getValue(Course.class);
                     if(course.getSubject().equals(courseSubject) && String.valueOf(course.getCategoryNum()).equals(courseCategoryNum)) {
                         detailCourseDescription.setText(course.getCourseTitle());
-                        //showMessage("catNum: " + courseCategoryNum + " || desc: " + course.getCourseTitle());
                     }
                 }
             }
@@ -522,7 +521,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     }
                 });
                 */
-                showMessage("current members: " + groupCurrentMembers + " -> " + (groupCurrentMembers-1));
+                //showMessage("current members: " + groupCurrentMembers + " -> " + (groupCurrentMembers-1));
             }
         });
 

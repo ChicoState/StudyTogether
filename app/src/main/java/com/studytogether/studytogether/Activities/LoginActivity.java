@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 Log.w(TAG, "Google sign in failed - onActivityResult()", e);
-                showMessage("error");
+                //showMessage("error");
                 updateUIGoogle(null);
             }
         }
@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(HomeActivity);
             finish();
         } else {
-            showMessage("Could not log in");
+            //showMessage("Could not log in");
             //SignInGoogle();
         }
     }

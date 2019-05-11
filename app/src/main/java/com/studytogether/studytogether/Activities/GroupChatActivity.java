@@ -289,10 +289,11 @@ public class GroupChatActivity extends AppCompatActivity {
                 // Set recyclerView using chatAdapter
                 chatAdapter = new ChatAdapter(GroupChatActivity.this,commentList);
                 commentRecyclerView.setAdapter(chatAdapter);
-                showMessage("list size is : " + commentList.size());
-                //commentRecyclerView.smoothScrollToPosition(commentRecyclerView.getAdapter().getItemCount() - 1);
 
-                commentRecyclerView.smoothScrollToPosition(29);
+                //commentRecyclerView.scro(chatAdapter.getItemCount() - 1);
+
+
+                //commentRecyclerView.smoothScrollToPosition(29);
 
             }
 

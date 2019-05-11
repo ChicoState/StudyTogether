@@ -224,7 +224,7 @@ public class EditProfileFragment extends Fragment {
 
         // Firebase
         String currentUserId = firebaseUser.getUid();
-        tutorCourseListReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId).push();
+        DatabaseReference tutorCourseListPushReference = firebaseDatabase.getReference("TutorCourseListOfUser").child(currentUserId).push();
         courseReference = firebaseDatabase.getReference("Course");
 
         addCourse = (Button) getActivity().findViewById(R.id.edit_add_course_button);
@@ -385,7 +385,7 @@ public class EditProfileFragment extends Fragment {
 
                                         if((course.getSubject().contains(subjectSpinner.getSelectedItem().toString())) && (courseNum.contains(courseCategoryNum))) {
                                             // SuccessListener
-                                            tutorCourseListReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            tutorCourseListPushReference.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Toast.makeText(getContext(),"Successfully added",Toast.LENGTH_SHORT).show();
