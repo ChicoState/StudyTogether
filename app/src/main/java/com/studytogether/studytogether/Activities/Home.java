@@ -537,6 +537,7 @@ public class Home extends AppCompatActivity
 
 
 
+        /*
         groupsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -597,6 +598,23 @@ public class Home extends AppCompatActivity
             // When the database doesn't response
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        */
+
+
+        User user = new User(userEmail,userId,userImage,userName, groupKey, "");
+
+
+        userReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                //showMessage("Successfully added");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showMessage("fail to add comment : "+e.getMessage());
             }
         });
 

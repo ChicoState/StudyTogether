@@ -177,6 +177,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 groupDetailActivity.putExtra("addedDate", groupCreated);
 
                 startActivity(groupDetailActivity);
+                finish();
             }
         });
 
