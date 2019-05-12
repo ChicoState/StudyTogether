@@ -10,6 +10,19 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+
+        // Specifies the application ID for the test APK.
+        testApplicationId "com.test.foo"
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        // If set to 'true', enables the instrumentation class to start and stop profiling.
+        // If set to false (default), profiling occurs the entire time the instrumentation
+        // class is running.
+        testHandleProfiling true
+        // If set to 'true', indicates that the Android system should run the instrumentation
+        // class as a functional test. The default value is 'false'
+        testFunctionalTest true
     }
     buildTypes {
         release {
@@ -22,6 +35,10 @@ android {
         targetCompatibility = '1.8'
     }
 
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -59,6 +76,7 @@ dependencies {
 
 
 
+    testCompile 'org.mockito:mockito-core:1.10.19'
     // TEST
     // Core library
     androidTestImplementation 'androidx.test:core:1.0.0'
