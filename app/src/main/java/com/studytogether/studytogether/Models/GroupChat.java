@@ -9,10 +9,6 @@ public class GroupChat {
     private Object timestamp;
     private  boolean myComment;
 
-
-    public GroupChat() {
-    }
-
     public GroupChat(String content, String userId, String userImage, String userName, String groupKey, boolean myComment) {
         this.content = content;
         this.userId = userId;
@@ -22,6 +18,9 @@ public class GroupChat {
         this.groupKey = groupKey;
         this.myComment = myComment;
 
+    }
+
+    public GroupChat() {
     }
 
     public String getContent() {

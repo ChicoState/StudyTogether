@@ -18,12 +18,12 @@ public class TutorCourseListOfUser {
     public TutorCourseListOfUser() {
     }
 
-    public Course getCourse() {
-        return course;
-    }
-
     public String getCourseKey() {
         return courseKey;
+    }
+
+    public Course getCourse() {
+        return course;
     }
 
     public void setCourse(Course course) {

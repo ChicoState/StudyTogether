@@ -223,7 +223,7 @@ public class GroupListFragment extends Fragment {
                             for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                                 Group group = groupsnap.getValue(Group.class);
-                                if(groupKey.contains(group.getGroupKey())) {
+                                if(groupKey.equals(group.getGroupKey())) {
                                     myGroupList.add(group);
                                 }
                             }

@@ -9,13 +9,12 @@ public class UserGroupList {
     private Group group;
     private String groupKey;
 
-
-    public UserGroupList() {
-    }
-
     public UserGroupList(Group group, String groupKey) {
         this.group = group;
         this.groupKey = groupKey;
+    }
+
+    public UserGroupList() {
     }
 
     public Group getGroup() {
