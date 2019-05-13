@@ -10,6 +10,19 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+
+        // Specifies the application ID for the test APK.
+        testApplicationId "com.test.foo"
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        // If set to 'true', enables the instrumentation class to start and stop profiling.
+        // If set to false (default), profiling occurs the entire time the instrumentation
+        // class is running.
+        testHandleProfiling true
+        // If set to 'true', indicates that the Android system should run the instrumentation
+        // class as a functional test. The default value is 'false'
+        testFunctionalTest true
     }
     buildTypes {
         release {
@@ -17,7 +30,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -32,13 +53,16 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
     //Firebase auth
-    implementation 'com.google.firebase:firebase-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-auth:16.0.4'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
     //Firebase storage
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
+    implementation 'com.google.firebase:firebase-storage:16.0.4'
     //Firebase database
-    implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.google.firebase:firebase-database:16.0.4'
+
+    implementation 'com.squareup.picasso:picasso:2.5.0'
 
     //Glide Library
     implementation 'com.android.support:support-v4:27.1.1'
@@ -49,6 +73,30 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    // TEST
+    // Core library
+    androidTestImplementation 'androidx.test:core:1.0.0'
+
+    // AndroidJUnitRunner and JUnit Rules
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+
+    // Assertions
+    androidTestImplementation 'androidx.test.ext:junit:1.0.0'
+    androidTestImplementation 'androidx.test.ext:truth:1.0.0'
+    androidTestImplementation 'com.google.truth:truth:0.42'
+
+    // Espresso dependencies
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.1.0'
+    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

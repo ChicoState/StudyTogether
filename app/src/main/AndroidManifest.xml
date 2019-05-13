@@ -3,6 +3,7 @@
     package="com.studytogether.studytogether">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.RegisterActivity"></activity>
+        <activity android:name=".Activities.RegisterActivity" />
         <activity android:name=".Activities.HomeActivity" />
         <activity android:name=".Activities.LoginActivity">
             <intent-filter>
@@ -23,9 +24,21 @@
         <activity
             android:name=".Activities.Home"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".Activities.GroupDetailActivity"/>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Activities.GroupDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:windowSoftInputMode="adjustPan|adjustResize"
+            android:name=".Activities.GroupChatActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Activities.AddCourse"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

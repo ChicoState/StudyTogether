@@ -5,36 +5,57 @@ import com.google.firebase.database.ServerValue;
 public class Group {
 
     // All attributes
+    private String groupCourseSubject;
+    private String groupCourseCategoryNum;
     private String groupName;
     private String groupGoal;
     private String groupPlace;
-    private String num_of_group_members;
-    private String startTime;
-    private String endTime;
+    private int currentGroupMembers = 1;
+    private int maximumGroupMembers;
+    private int startHour;
+    private int startMin;
+    private int endHour;
+    private int endMin;
     private String groupPicture;
     private String groupKey;
+    private String groupOwnerName;
     private String ownerId;
     private String groupOwnerPhoto;
-    private String groupActive;
-    private String tutor;
     private Object timeStamp;
+    private boolean tutorHere;
 
     // Constructor
-    public Group(String groupName, String groupGoal, String groupPlace, String tutor, String num_of_group_members, String startTime, String endTime, String groupPicture, String ownerId, String groupOwnerPhoto) {
+
+    public Group(String groupCourseSubject, String groupCourseCategoryNum, String groupName, String groupGoal, String groupPlace, int maximumGroupMembers, int startHour, int startMin, int endHour, int endMin, String groupPicture, String ownerId, String groupOwnerPhoto, String groupOwnerName) {
+        this.groupCourseSubject = groupCourseSubject;
+        this.groupCourseCategoryNum = groupCourseCategoryNum;
         this.groupName = groupName;
         this.groupGoal = groupGoal;
         this.groupPlace = groupPlace;
-        this.tutor = tutor;
-        this.num_of_group_members = num_of_group_members;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.maximumGroupMembers = maximumGroupMembers;
+        this.startHour = startHour;
+        this.startMin = startMin;
+        this.endHour = endHour;
+        this.endMin = endMin;
         this.groupPicture = groupPicture;
+        this.groupOwnerName = groupOwnerName;
         this.ownerId = ownerId;
         this.groupOwnerPhoto = groupOwnerPhoto;
-        this.groupActive = "Open";
         this.timeStamp = ServerValue.TIMESTAMP;
+        this.tutorHere = false;
+
     }
+
     public Group() {
+    }
+
+
+    public String getGroupCourseSubject() {
+        return groupCourseSubject;
+    }
+
+    public String getGroupCourseCategoryNum() {
+        return groupCourseCategoryNum;
     }
 
     public String getGroupName() {
@@ -49,16 +70,90 @@ public class Group {
         return groupPlace;
     }
 
-    public String getNum_of_group_members() {
-        return num_of_group_members;
+    public int getCurrentGroupMembers() {
+        return currentGroupMembers;
+    }
+
+    public int getMaximumGroupMembers() {
+        return maximumGroupMembers;
+    }
+
+    public int getStartHour() {
+        return startHour;
+    }
+
+    public int getStartMin() {
+        return startMin;
     }
 
     public String getStartTime() {
-        return startTime;
+        String time = "12 : 0 pm";
+        String min, hour;
+        if(startMin < 10) {
+            min = "0" + String.valueOf(startMin);
+        } else {
+            min = String.valueOf(startMin);
+        }
+
+        if(startHour < 10 && startHour > 0) {
+            hour = "0" + String.valueOf(startHour);
+        } else if (startHour == 0) {
+            hour = "12";
+        } else if (startHour > 12) {
+            hour = String.valueOf(startHour-12);
+        } else{
+            hour = String.valueOf(startHour);
+        }
+
+        if(startHour == 12) {
+            time = hour + " : " + min + " PM";
+        } else if(startHour == 0) {
+            time = hour + " : " + min + " AM";
+        } else if(startHour > 12) {
+            time = hour + " : " + min + " PM";
+        } else {
+            time = hour + " : " + min + " AM";
+        }
+        return time;
     }
 
     public String getEndTime() {
-        return endTime;
+        String time = "12 : 0 pm";
+        String min, hour;
+        if(endMin < 10) {
+            min = "0" + String.valueOf(endMin);
+        } else {
+            min = String.valueOf(endMin);
+        }
+
+        if(endHour < 10 && endHour > 0) {
+            hour = "0" + String.valueOf(endHour);
+        } else if (endHour == 0) {
+            hour = "12";
+        } else if (endHour > 12) {
+            hour = String.valueOf(endHour-12);
+        } else{
+            hour = String.valueOf(endHour);
+        }
+
+        if(endHour == 12) {
+            time = hour + " : " + min + " PM";
+        } else if(endHour == 0) {
+            time = hour + " : " + min + " AM";
+        } else if(endHour > 12) {
+            time = hour + " : " + min + " PM";
+        } else {
+            time = hour + " : " + min + " AM";
+        }
+        return time;
+    }
+
+    public int getEndHour() {
+        return endHour;
+    }
+
+    public int getEndMin() {
+        return endMin;
     }
 
     public String getGroupPicture() {
@@ -69,6 +164,10 @@ public class Group {
         return groupKey;
     }
 
+    public String getOwnerName() {
+        return groupOwnerName;
+    }
+
     public String getOwnerId() {
         return ownerId;
     }
@@ -77,25 +176,21 @@ public class Group {
         return groupOwnerPhoto;
     }
 
-    public String getGroupActive() {
-        return groupActive;
-    }
-
-    public String getTutor() {
-        return tutor;
-    }
-
     public Object getTimeStamp() {
         return timeStamp;
     }
 
-    public boolean getHasTutor() {
-        if (getTutor() != null)
-            return true;
-        else
-            return false;
+    public boolean isTutorHere() {
+        return tutorHere;
     }
 
+    public void setGroupCourseSubject(String groupCourseSubject) {
+        this.groupCourseSubject = groupCourseSubject;
+    }
+
+    public void setGroupCourseCategoryNum(String groupCourseCategoryNum) {
+        this.groupCourseCategoryNum = groupCourseCategoryNum;
+    }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -109,16 +204,28 @@ public class Group {
         this.groupPlace = groupPlace;
     }
 
-    public void setNum_of_group_members(String num_of_group_members) {
-        this.num_of_group_members = num_of_group_members;
+    public void setCurrentGroupMembers(int currentGroupMembers) {
+        this.currentGroupMembers = currentGroupMembers;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setMaximumGroupMembers(int maximumGroupMembers) {
+        this.maximumGroupMembers = maximumGroupMembers;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setStartHour(int startHour) {
+        this.startHour = startHour;
+    }
+
+    public void setStartMin(int startMin) {
+        this.startMin = startMin;
+    }
+
+    public void setEndHour(int endHour) {
+        this.endHour = endHour;
+    }
+
+    public void setEndMin(int endMin) {
+        this.endMin = endMin;
     }
 
     public void setGroupPicture(String groupPicture) {
@@ -129,6 +236,10 @@ public class Group {
         this.groupKey = groupKey;
     }
 
+    public void setOwnerName(String ownerName) {
+        this.groupOwnerName = ownerName;
+    }
+
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
@@ -137,16 +248,19 @@ public class Group {
         this.groupOwnerPhoto = groupOwnerPhoto;
     }
 
-    public void setGroupActive(String groupActive) {
-        this.groupActive = groupActive;
-    }
-
-    public void setTutor(String tutor) {
-        this.tutor = tutor;
-    }
-
     public void setTimeStamp(Object timeStamp) {
         this.timeStamp = timeStamp;
     }
 
+
+    public void addGroupMembers() {
+        currentGroupMembers += 1;
+    }
+    public void reduceGroupMembers() {
+        currentGroupMembers -= 1;
+    }
+
+    public void setTutorHere(boolean tutorHere) {
+        this.tutorHere = tutorHere;
+    }
 }

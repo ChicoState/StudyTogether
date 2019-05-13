@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff">
+
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Add a Study Group"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textColor="#000"/>
+
+    <Spinner
+        android:id="@+id/popup_subject_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:textAlignment="center"
+        android:layout_weight="1" />
+    <Spinner
+        android:id="@+id/popup_category_num_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="25dp"
+        android:paddingBottom="20dp"
+        android:layout_weight="1" />
+
+    <EditText
+        android:id="@+id/popup_edit_groupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="20"
+        android:inputType="textPersonName"
+        android:hint="Group Name" />
+
+    <EditText
+        android:id="@+id/popup_edit_groupGoal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="20"
+        android:inputType="textPersonName"
+        android:hint="Group Goal" />
+    <EditText
+        android:id="@+id/popup_edit_groupPlace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="20"
+        android:inputType="textPersonName"
+        android:hint="Group Place" />
+
+    <EditText
+        android:id="@+id/popup_member_limit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="Maximum Member Limit"
+        android:inputType="number" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/popup_edit_starttime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="20"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:hint="Start Time" />
+
+        <EditText
+            android:id="@+id/popup_edit_endtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="20"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:hint="End Time" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/popup_groupImage"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/red_tutor_here"
+                android:alpha="0.8"
+                android:layout_weight="1"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <TextView
+                android:id="@+id/popup_image_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Set up a Group Image"
+                android:textAlignment="center"
+                android:layout_below="@+id/popup_groupImage"
+                android:layout_marginTop="-120dp"
+                android:textSize="30dp"
+                android:textColor="#fff"/>
+
+            <ImageView
+                android:id="@+id/popup_addButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/circle_bg"
+                android:padding="12dp"
+                android:layout_below="@+id/popup_groupImage"
+                android:layout_marginTop="-28dp"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_add_red_24dp" />
+
+            <ProgressBar
+                android:id="@+id/popup_progressbar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circle_bg"
+                android:padding="4dp"
+                android:layout_below="@+id/popup_groupImage"
+                android:layout_marginTop="-28dp"
+                android:layout_centerHorizontal="true"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/popup_addButton"
+                app:layout_constraintEnd_toEndOf="@+id/popup_addButton"
+                app:layout_constraintStart_toStartOf="@+id/popup_addButton"
+                app:layout_constraintTop_toTopOf="@+id/popup_addButton" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>
