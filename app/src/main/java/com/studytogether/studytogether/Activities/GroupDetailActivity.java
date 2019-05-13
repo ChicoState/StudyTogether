@@ -403,8 +403,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                             }
                                         });
-
-                                        Toast.makeText(GroupDetailActivity.this, "Find tutor!!!!", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
@@ -685,7 +683,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 for (DataSnapshot groupsnap: dataSnapshot.getChildren()) {
 
                     Group group = groupsnap.getValue(Group.class);
-                    if(groupKey.contains(group.getGroupKey())) {
+                    if(groupKey.equals(group.getGroupKey())) {
                         String currentGroupOwnerId = group.getOwnerId();
 
                         if (alreadyJoined) {

@@ -29,15 +29,9 @@ public class AddCourse extends AppCompatActivity {
     FirebaseUser firebaseUser;
     FirebaseDatabase firebaseDatabase;
 
-    EditText courseSubject, categoryNum, courseTitle, startTime, endTime, buildingRoom;
+    EditText courseSubject, categoryNum, courseTitle;
     Button addCourseButton;
-    //CheckBox mon, tue, wed, tur, fri;
 
-    //private int startHour, startMin, endHour, endMin;
-    //private boolean monCheck, tueCheck, wedCheck, turCheck, friCheck;
-
-
-    //TimePickerDialog timePickerDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,64 +49,6 @@ public class AddCourse extends AppCompatActivity {
 
         addCourseButton = findViewById(R.id.add_course_button);
 
-        /*
-        startTime = findViewById(R.id.edit_start_time);
-        endTime = findViewById(R.id.edit_end_time);
-        buildingRoom = findViewById(R.id.edit_building_room);
-
-
-
-        mon = findViewById(R.id.mon);
-        tue = findViewById(R.id.tue);
-        wed = findViewById(R.id.wed);
-        tur = findViewById(R.id.thur);
-        fri = findViewById(R.id.fri);
-
-
-
-        startTime.setOnClickListener(view -> {
-            // Get Current Time
-            final Calendar c = Calendar.getInstance();
-            startHour = c.get(Calendar.HOUR_OF_DAY);
-            startMin = c.get(Calendar.MINUTE);
-
-            // Launch Time Picker Dialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                    new TimePickerDialog.OnTimeSetListener() {
-
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay,
-                                              int minute) {
-
-                            startTime.setText(hourOfDay + " : " + minute);
-                            startHour = hourOfDay;
-                            startMin = minute;
-                        }
-                    }, startHour, startMin, false);
-            timePickerDialog.show();
-        });
-
-        endTime.setOnClickListener(view -> {
-            // Get Current Time
-            final Calendar c = Calendar.getInstance();
-            endHour = c.get(Calendar.HOUR_OF_DAY);
-            endMin = c.get(Calendar.MINUTE);
-
-            // Launch Time Picker Dialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                    new TimePickerDialog.OnTimeSetListener() {
-
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay,
-                                              int minute) {
-                            endTime.setText(hourOfDay + " : " + minute);
-                            endHour = hourOfDay;
-                            endMin = minute;
-                        }
-                    }, endHour, endMin, false);
-            timePickerDialog.show();
-        });
-        */
 
 
 
@@ -121,30 +57,12 @@ public class AddCourse extends AppCompatActivity {
         addCourseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                boolean monChecked = ((CheckBox) findViewById(R.id.mon)).isChecked();
-                boolean tueChecked = ((CheckBox) findViewById(R.id.tue)).isChecked();
-                boolean wedChecked = ((CheckBox) findViewById(R.id.wed)).isChecked();
-                boolean thurChecked = ((CheckBox) findViewById(R.id.thur)).isChecked();
-                boolean friChecked = ((CheckBox) findViewById(R.id.fri)).isChecked();
-                showMessage("mon: "+ monChecked + "tue: "+ tueChecked);
-                */
+
                 Course course = new Course(
                         courseSubject.getText().toString(),
                         Integer.parseInt(categoryNum.getText().toString()),
                         courseTitle.getText().toString()
-                        /*
-                        startHour,
-                        startMin,
-                        endHour,
-                        endMin,
-                        monChecked,
-                        tueChecked,
-                        wedChecked,
-                        thurChecked,
-                        friChecked,
-                        buildingRoom.getText().toString()
-                        */);
+                        );
                 addCourse(course);
             }
         });

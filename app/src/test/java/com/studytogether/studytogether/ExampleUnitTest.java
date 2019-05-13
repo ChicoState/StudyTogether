@@ -149,19 +149,118 @@ public class ExampleUnitTest {
         assertEquals("userId", groupChat.getuserId());
         assertEquals("userImage", groupChat.getuserImage());
         assertEquals("userName", groupChat.getuserName());
+        assertEquals(false, groupChat.isMyComment());
     }
 
     @Test
     public void setGroupChatTEST() {
         groupChat = new GroupChat("hi", "userId", "userImage", "userName", "groupKey", false);
-        //groupChat
+        groupChat.setContent("hello");
+        groupChat.setGroupKey("groupKey2");
+        groupChat.setMyComment(true);
+        groupChat.setuserId("userId2");
+        groupChat.setuserImage("userImage2");
+        groupChat.setuserName("userName2");
 
-        assertEquals("hi", groupChat.getContent());
-        assertEquals("groupKey", groupChat.getGroupKey());
-        assertEquals("userId", groupChat.getuserId());
-        assertEquals("userImage", groupChat.getuserImage());
-        assertEquals("userName", groupChat.getuserName());
+        assertEquals("hello", groupChat.getContent());
+        assertEquals("groupKey2", groupChat.getGroupKey());
+        assertEquals("userId2", groupChat.getuserId());
+        assertEquals("userImage2", groupChat.getuserImage());
+        assertEquals("userName2", groupChat.getuserName());
+        assertEquals(true, groupChat.isMyComment());
     }
+
+
+    @Test
+    public void initializeGroupTEST() {
+        group = new Group("CSCI", "111", "StudyTogether", "Test", "Library", 4, 0, 0, 12, 0, "groupPicture", "111", "groupOwnerPhoto", "groupOwnerName");
+
+        assertEquals("CSCI", group.getGroupCourseSubject());
+        assertEquals("111", group.getGroupCourseCategoryNum());
+        assertEquals("StudyTogether", group.getGroupName());
+        assertEquals("Test", group.getGroupGoal());
+        assertEquals("Library", group.getGroupPlace());
+        assertEquals(4, group.getMaximumGroupMembers());
+        assertEquals(1, group.getCurrentGroupMembers());
+        assertEquals(0, group.getStartHour());
+        assertEquals(0, group.getStartMin());
+        assertEquals(12, group.getEndHour());
+        assertEquals(0, group.getEndMin());
+        assertEquals("groupPicture", group.getGroupPicture());
+        assertEquals("111", group.getOwnerId());
+        assertEquals("groupOwnerPhoto", group.getGroupOwnerPhoto());
+        assertEquals("groupOwnerName", group.getOwnerName());
+        assertEquals("groupPicture", group.getGroupPicture());
+        assertEquals(false, group.isTutorHere());
+
+
+    }
+    @Test
+    public void setGroupTEST() {
+        group = new Group("CSCI", "111", "StudyTogether", "Test", "Library", 4, 0, 0, 12, 0, "groupPicture", "111", "groupOwnerPhoto", "groupOwnerName");
+        group.setTutorHere(true);
+        group.setGroupCourseSubject("EECE");
+        group.setGroupCourseCategoryNum("211");
+        group.setGroupName("Study");
+        group.setGroupGoal("Meeting");
+        group.setGroupPlace("OCNL");
+        group.setMaximumGroupMembers(2);
+        group.setCurrentGroupMembers(1);
+        group.setStartHour(1);
+        group.setStartMin(30);
+        group.setEndHour(1);
+        group.setEndMin(30);
+        group.setGroupPicture("groupPicture2");
+        group.setOwnerId("222");
+        group.setGroupOwnerPhoto("groupOwnerPhoto2");
+        group.setOwnerName("groupOwnerName2");
+
+
+        assertEquals("EECE", group.getGroupCourseSubject());
+        assertEquals("211", group.getGroupCourseCategoryNum());
+        assertEquals("Study", group.getGroupName());
+        assertEquals("Meeting", group.getGroupGoal());
+        assertEquals("OCNL", group.getGroupPlace());
+        assertEquals(2, group.getMaximumGroupMembers());
+        assertEquals(1, group.getCurrentGroupMembers());
+        assertEquals(1, group.getStartHour());
+        assertEquals(30, group.getStartMin());
+        assertEquals(1, group.getEndHour());
+        assertEquals(30, group.getEndMin());
+        assertEquals("groupPicture2", group.getGroupPicture());
+        assertEquals("222", group.getOwnerId());
+        assertEquals("groupOwnerPhoto2", group.getGroupOwnerPhoto());
+        assertEquals("groupOwnerName2", group.getOwnerName());
+        assertEquals(true, group.isTutorHere());
+    }
+
+    @Test
+    public void startEndTimeGroupTEST() {
+        group = new Group("CSCI", "111", "StudyTogether", "Test", "Library", 4, 0, 0, 12, 0, "groupPicture", "111", "groupOwnerPhoto", "groupOwnerName");
+
+        assertEquals("12 : 00 AM", group.getStartTime());
+        assertEquals("12 : 00 PM", group.getEndTime());
+    }
+
+    @Test
+    public void addCurrentMemberGroupTEST() {
+        group = new Group("CSCI", "111", "StudyTogether", "Test", "Library", 4, 0, 0, 12, 0, "groupPicture", "111", "groupOwnerPhoto", "groupOwnerName");
+
+        group.addGroupMembers();
+        assertEquals(2, group.getCurrentGroupMembers());
+    }
+
+    @Test
+    public void reduceCurrentMemberGroupTEST() {
+        group = new Group("CSCI", "111", "StudyTogether", "Test", "Library", 4, 0, 0, 12, 0, "groupPicture", "111", "groupOwnerPhoto", "groupOwnerName");
+
+        group.addGroupMembers();
+        group.addGroupMembers();
+        group.addGroupMembers();
+        group.reduceGroupMembers();
+        assertEquals(3, group.getCurrentGroupMembers());
+    }
+
 
 
 }
